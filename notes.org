@@ -2,6 +2,11 @@ Curse of Dimensionality: Notes
 
 Let $d$ be dimension, in all that follows...
 
+* General notes
+Various authors, e.g. Donoho (2000) and Zimek et al. (2012) note that the 'curse
+of dimensionality' is a vague term, which manifests in different ways in
+different fields.
+
 * Wiki article
 [[https://en.wikipedia.org/wiki/Curse_of_dimensionality][Breaks down]] the various manifestations of the curse in different domains.
 
@@ -27,15 +32,78 @@ Let $d$ be dimension, in all that follows...
     dimensionality" (2000)
 
 * To Read
-** TODO Hughes, Gordon (1967) "On the mean accuracy of statistical pattern recognizers"
-Hughes, Gordon (1967) "On the mean accuracy of statistical pattern recognizers"
-
 ** TODO Zimek et al., (2012) "... unsupervised outlier... high-dimensional data"
 Zimek et al., (2012) "A survey on unsupervised outlier detection in
 high-dimensional numerical data"
 
-** TODO Beyer et al., (1999) "When is "Nearest Neighbor" meaningful?"
-Beyer et al., (1999) "When is "Nearest Neighbor" meaningful?"
+Contains a large number of simulations; the authors demonstrate that the
+/distance concentration effect/ (Beyer 1999) is not the only culprit behind the
+curse of dimensionality
+
+Within data mining, the curse of dimensionality refers to:
+- 'distance concentration'
+- presence of irrelevant attributes
+- efficiency issues
+
+``... there is a widespread mistaken belief that every point in high-
+dimensional space is an outlier.''
+
+``... a fundamental paper on the ‘curse of dimensionality’ by Beyer et al.
+[12]'' -- the authors revisit Beyer
+
+The authors refer to the distance conditions of Beyer et al. Theorem 1 as the
+/concentration effect/
+
+``In ref. 23, the authors showed by means of an analytic argument that L_1 and
+L_2 are the only integer norms useful for higher dimensions.''
+
+The authors note that for the unit cube, the maximum distance and average
+distance have the same dimensional scaling -- this suggests ``at first sight''
+that rescaling might be feasible. This turns out /not/ to be the case.
+
+The authors present two cases with a 'manual' outlier along the one-vector on a
+uniform and gaussian background, and note that the outlier gets /easier/ to
+distinguish with increasing dimensions.
+
+``The fundamental differences between singly distributed data and multiply
+distributed data are already discussed in detail in ref. 30.'' -- introduces
+the notion of /pairwise (cluster) stability/
+
+``... for example, two Gaussian distributions with widely separated means may
+find that their separability improves as the data dimension increases. However,
+it should also be noted that these arguments are based on the assumption that
+all dimensions bear information relevant to the different clusters, classes, or
+distributions.''
+
+``A more general picture has been drawn by Durrant and Kabán [57]. They show
+that the correlation between attributes is an important effect for avoiding the
+concen- tration of distances. Correlated attributes will also result in an
+intrinsic dimensionality that is considerably lower than the representational
+dimensionality, an effect that also led to opposing the curse of dimensionality
+with the ‘self-similarity blessing’ [58].''
+
+Section 2.3 has multiple examples carefully studying the change in (hyper)volume
+of spheres of increasing dimension.
+
+Small changes to the radius of a sphere lead to increasingly large changes to
+the volume in high dimensions. This is problematic for selecting threshold
+distances!
+
+Section 2.4 describes issues related to subspace selection
+
+Summary of problems:
+1. Concentration of scores
+2. Noise attributes
+3. Definition of reference-sets
+4. Bias of scores
+5. Interpretation & contrast of scores
+6. Exponential search space
+7. Data-snooping bias
+8. Hubness
+
+** TODO Lafferty et al. (2008) "Ch 7 Concentration of Measure"
+Lafferty, Liu, and Wasserman (2008) "Chapter 7: Concentration of Measure"
+Book chapter
 
 ** TODO Bellman, Richard (1961) "Adaptive Control Processes..."
 Bellman, Richard (1961) "Adaptive Control Processes: A Guided Tour"
@@ -48,6 +116,79 @@ Owen, Art (1999) "Assessing linearity in high dimensions"
 
 ** TODO Shenk, David (1998) "Data smog: Surviving the information glut"
 Shenk, David (1998) "Data smog: Surviving the information glut"
+** DONE Beyer et al., (1999) "When is "Nearest Neighbor" meaningful?"
+Beyer et al., (1999) "When is "Nearest Neighbor" meaningful?"
+
+Nearest Neighbor (NN) problem: ``Given a collection of data points and a query
+point in an m-dimensional metric space, find the data point that is closest to
+the query point.''
+
+``We show that under a broad set of conditions (much broader than iid), as
+dimensionality increases, the distance to the nearest data point approaches the
+distance to the farthest data point.''
+
+The authors recommend caution when studying similarity in high-dimensional
+settings, and recommend checking separation for typical (known) queries, before
+proceeding to the 'real' problem.
+
+Theorem 1 is a technical condition relating the behavior of a given distance
+function to the author's definition of 'stability' of the NN concept.
+
+They then study a number of data settings:
+
+Ex. 1: IID Dimensions
+- Studied prior to this work, Theorem 1 holds
+
+Ex. 2: Identical dimensions
+- Dimensions increase, but all coordinates are perfectly correlated. Here the
+  problem collapses to 1D, and thus Theorem 1 does not hold
+
+Ex. 3: Unique dimensions with correlation between all dimensions
+- Each coordinate has a dependence with its 'previous' coordinate;
+  here Theorem 1 holds
+
+Ex. 4: Variance converging to 0
+- The X_i are independent, and X_i ~ N(0, 1/i), then Theorem 1 holds
+
+Ex. 5: Marginal data
+- Uniform density on the boundary of the hyper-cube; Theorem 1 holds
+
+The authors also identify high-dimensional settings where NN /are still
+meaningful/
+
+4.2 Implicitly Low Dimensionality
+
+``Another possible scenario where high dimensional nearest neighbor queries are
+meaningful occurs when the underlying dimensionality of the data is much lower
+than the actual dimensionality. There has been recent work on identifying these
+situations (e.g. [17,8,16]) and determining the useful dimensions (e.g. [20],
+which uses PCA to identify meaningful dimensions). Of course, these techniques
+are only useful if NN in the underlying dimensionality is meaningful.''
+
+``In [11,5] it was observed that in some high dimensional cases, the estimate of
+NN query cost (using some index structure) can be very poor if "boundary
+effects" are not taken into account. The boundary effect is that the query
+region (i.e., a sphere whose center is the query point) is mainly outside the
+hyper-cubic data space.''
+** DONE Hughes, Gordon (1967) "On the mean accuracy of statistical pattern recognizers"
+Hughes, Gordon (1967) "On the mean accuracy of statistical pattern recognizers"
+
+The author builds up a simple binary classification problem based on
+observations of a discrete random variable, allowed to take a (fixed)
+parameterized number of values (dimension). He assumes equally likely
+ground truth distributions for the two classes, and considers mean
+probability of success.
+
+He analyzes this problem in the case of infinite samples, and finds that
+increased dimension leads to improved accuracy.
+
+He analyzes the problem in the case of /finite/ samples, and finds an analytic
+expression for the mean probability. At one dimension, the probability of
+success is the prior class probability. As dimension increases, the mean
+Pr_success increases until an /optimal dimension/, then decays.
+
+Furthermore, there is a maximum acceptable dimension for any fixed sample size;
+beyond this the Bayes classifier does worse than random guessing.
 
 ** DONE Donoho "High-dim. data analysis:" (2000)
 Donoho, "High-dimensional data analysis:" (2000)
