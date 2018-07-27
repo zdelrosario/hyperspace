@@ -1,0 +1,143 @@
+Curse of Dimensionality: Notes
+
+Let $d$ be dimension, in all that follows...
+
+* Wiki article
+[[https://en.wikipedia.org/wiki/Curse_of_dimensionality][Breaks down]] the various manifestations of the curse in different domains.
+
+- Combinatorics
+  + The combinatorial explosion for binary variables is O(2 ^ d)
+
+- Sampling
+  + The volume of a hypercube increases exponentially with d; requiring
+  a minimal distance between points then requires an exponential scaling
+  in sampling
+
+- Machine Learning
+  + Trunk, "A problem of dimensionality: A simple example" (1979)
+  + Hughes, "On the mean accuracy of statistical pattern recognizers" (1967)
+
+- Distance
+  + Beyer et al., "When is "Nearest Neighbor" meaningful?" (1999)
+  + Zimek et al., "A survey on unsupervised outlier detection in
+    high-dimensional numerical data" (2012)
+
+- References
+  + Donoho, "High-dimensional data analysis: The curses and blessings of
+    dimensionality" (2000)
+
+* To Read
+** TODO Hughes, Gordon (1967) "On the mean accuracy of statistical pattern recognizers"
+Hughes, Gordon (1967) "On the mean accuracy of statistical pattern recognizers"
+
+** TODO Zimek et al., (2012) "... unsupervised outlier... high-dimensional data"
+Zimek et al., (2012) "A survey on unsupervised outlier detection in
+high-dimensional numerical data"
+
+** TODO Beyer et al., (1999) "When is "Nearest Neighbor" meaningful?"
+Beyer et al., (1999) "When is "Nearest Neighbor" meaningful?"
+
+** TODO Bellman, Richard (1961) "Adaptive Control Processes..."
+Bellman, Richard (1961) "Adaptive Control Processes: A Guided Tour"
+
+** TODO Johnstone, Ian (1998) "Oracle inequalities..."
+Johnstone, Ian (1998) "Oracle inequalities and nonparameteric functional estimation"
+
+** TODO Owen, Art (1999) "Assessing linearity in high dimensions"
+Owen, Art (1999) "Assessing linearity in high dimensions"
+
+** TODO Shenk, David (1998) "Data smog: Surviving the information glut"
+Shenk, David (1998) "Data smog: Surviving the information glut"
+
+** DONE Donoho "High-dim. data analysis:" (2000)
+Donoho, "High-dimensional data analysis:" (2000)
+
+Transcript(?) from a talk Donoho gave on the centennial anniversery of Hilbert's
+famous `Mathematical Problems' talk. Also given in memory of John Tukey.
+
+``The trend today is towards more observations but even more so, to radically
+larger numbers of variables – voracious, automatic, systematic collection of
+hyper-informative detail about each observed instance. We are seeing examples
+where the observations gathered on individual instances are curves, or spectra,
+or images, or even movies, so that a single observation has dimensions in the
+thousands or billions, while there are only tens or hundreds of instances
+available for study. Classical methods are simply not designed to cope with this
+kind of explosive growth of dimensionality of the observation vector.''
+
+Curse of dimensionality (in this paper) refers to (apparent) intractability of:
+- Searching a high-dimensional space
+- Approximating a high-dimensional function
+- Integrating a high-dimensional function
+
+Blessings of dimensionality
+- Concentration of measure
+
+``Many in the audience will know of Tukey’s more visible distinctions. He coined
+the words ‘Software’ and ‘Bit’, creating a lasting contribution to the English
+language; he and collaborators discovered two FFT algorithms and thereby
+fomented a revolution in signal processing and applied mathematics.''
+
+Tukey encouraged a separation of data analysis from mathematical statistics.
+Donoho suggests that data analysis has developed separately from mathematics for
+some time, but is now in need of new math. Enter dimensionality.
+
+Increase in computer simulation and visualization: e-cell [18] has attracted a
+large amount of attention.[7] MCell [42] will probably be more popular.
+
+``One can easily make the case that we are gathering too much data already, and
+that fewer data would lead to better decisions and better lives [57].''
+
+``Reiterating: throughout science, engineering, government administration, and
+business we are seeing major efforts to gather data into databases. Much of this
+is based, frankly, on blind faith, a kind of scientism, that feels that it is
+somehow intrinsically of worth to collect and manage data.''
+
+``Good references on some of these issues (in data analysis) include [41, 51,
+66]; I use these often in teaching.''
+
+``The colorful phrase the ‘curse of dimensionality’ was apparently coined by
+Richard Belman in [3], in connection with the difficulty of optimization by
+exhaustive enumeration on product spaces.''
+
+Classical examples of the curse of dimensionality:
+- Optimization: Exhaustive search requires exponential samples
+- Function Approximation: For uniform approximation error e, we need
+  order (1/e)^d evaluations on a grid
+- Numerical Integration: For integration error e, we need order (1/e)^d
+  evaluations on a grid
+
+``The “concentration of measure phenomenon” is a terminology introduced by V.
+Milman for a pervasive fact about probabilities on product spaces in high
+dimensions.''
+
+On model (regression feature) selection: ``A variety of results indicated that
+this form of logarithmic penalty is both necessary and sufficient, for a survey
+see [31].'' ... ``That is to say, the presence of the exponential decay in the
+concentration of measure estimates (3) is ultimately responsible for the
+logarithmic form of the penalty.''
+
+``The key assumption that makes it hard to approximate a function of D-variables
+is that f may be an arbitrary Lipschitz function. With different assumptions, we
+could have entirely different results. /Perhaps there is a whole different set
+of notions of high- dimensional approximation theory, where we make different
+regularity assumptions and get very different picture./''
+
+[3] Bellman, Richard (1961) "Adaptive Control Processes: A Guided Tour"
+[31] Johnstone, Ian (1998) "Oracle inequalities and nonparameteric functional
+     estimation"
+[48] Owen, Art (1999) "Assessing linearity in high dimensions"
+[57] Shenk, David (1998) "Data smog: Surviving the information glut"
+
+** DONE Trunk "A problem of dimensionality: A simple example" (1979)
+The author builds up a simple (binary) hypothesis testing problem that
+illustrates some very strange effects due to dimension. The test is whether a
+multivariate mean parameter lies in the positive or negative orthant.
+
+When the mean is known exactly, the probability of error approaches zero as the
+dimension is increased.
+
+When the mean is /estimated/, the probability of error approaches 1/2 as the
+dimension is increased, for /any/ finite value of M.
+
+At a fixed sample size, increasing the dimension /does not monatonically affect
+the error probability/.
