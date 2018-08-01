@@ -3,8 +3,8 @@ Curse of Dimensionality: Notes
 Let $d$ be dimension, in all that follows...
 
 * General notes
-Various authors, e.g. Donoho (2000) and Zimek et al. (2012) note that the 'curse
-of dimensionality' is a vague term, which manifests in different ways in
+Various authors -- e.g. Donoho (2000) and Zimek et al. (2012) -- note that the
+'curse of dimensionality' is a vague term; it manifests in different ways in
 different fields.
 
 * Wiki article
@@ -32,7 +32,52 @@ different fields.
     dimensionality" (2000)
 
 * To Read
-** TODO Zimek et al., (2012) "... unsupervised outlier... high-dimensional data"
+** TODO Bellman, Richard (1961) "Adaptive Control Processes..."
+Bellman, Richard (1961) "Adaptive Control Processes: A Guided Tour"
+
+Where Bellman coined the term "curse of dimensionality"
+
+** TODO Miller, George (1956) "The Magical Number Seven..."
+Miller, George (1956) "The Magical Number Seven, Plus or Minus Two: Some Limits
+on Our Capacity for Processing Information"
+Psychology
+
+Classic reference on '7 registers' in working memory
+
+** TODO Owen, Art (1999) "Assessing linearity in high dimensions"
+Owen, Art (1999) "Assessing linearity in high dimensions"
+Dimension Reduction
+
+Presents a bias-corrected 'quasi-regression' that recovers approximate linearity
+in high dimensions.
+
+** TODO Shenk, David (1998) "Data smog: Surviving the information glut"
+Shenk, David (1998) "Data smog: Surviving the information glut"
+
+A journalist's perspective on the IT revolution.
+
+** TODO Johnstone, Iain (1998) "Oracle inequalities..."
+Johnstone, Iain (1998) "Oracle inequalities and nonparameteric functional estimation"
+Estimation
+
+Donoho references this as background on the appropriateness of the logarithmic
+penalty in model selection.
+
+** DONE Lafferty et al. (2008) "Ch 7 Concentration of Measure"
+Lafferty, Liu, and Wasserman (2008) "Chapter 7: Concentration of Measure"
+Book chapter
+
+Inequalities of the form
+
+Pr[ |f(Z_1, ..., Z_d) - E[f]| > e ] < \delta_n
+
+``... are known as /concentration inequalities/ and the phenomenon that many
+random quantities are close to their mean with high probability is called
+/concentration of measure/.''
+
+The remainder of this document is a number of example concentration inequalities.
+
+** DONE Zimek et al., (2012) "... unsupervised outlier... high-dimensional data"
 Zimek et al., (2012) "A survey on unsupervised outlier detection in
 high-dimensional numerical data"
 
@@ -101,21 +146,8 @@ Summary of problems:
 7. Data-snooping bias
 8. Hubness
 
-** TODO Lafferty et al. (2008) "Ch 7 Concentration of Measure"
-Lafferty, Liu, and Wasserman (2008) "Chapter 7: Concentration of Measure"
-Book chapter
-
-** TODO Bellman, Richard (1961) "Adaptive Control Processes..."
-Bellman, Richard (1961) "Adaptive Control Processes: A Guided Tour"
-
-** TODO Johnstone, Ian (1998) "Oracle inequalities..."
-Johnstone, Ian (1998) "Oracle inequalities and nonparameteric functional estimation"
-
-** TODO Owen, Art (1999) "Assessing linearity in high dimensions"
-Owen, Art (1999) "Assessing linearity in high dimensions"
-
-** TODO Shenk, David (1998) "Data smog: Surviving the information glut"
-Shenk, David (1998) "Data smog: Surviving the information glut"
+Much more specialized stuff on outlier detection... I don't want to go down this
+rabbit hole right now.
 ** DONE Beyer et al., (1999) "When is "Nearest Neighbor" meaningful?"
 Beyer et al., (1999) "When is "Nearest Neighbor" meaningful?"
 
@@ -266,8 +298,14 @@ regularity assumptions and get very different picture./''
 [3] Bellman, Richard (1961) "Adaptive Control Processes: A Guided Tour"
 [31] Johnstone, Ian (1998) "Oracle inequalities and nonparameteric functional
      estimation"
+[41] K. V. Mardia, J. T. Kent, J. M. Bibby. Multivariate analysis , London; New
+     York: Academic Press, 1979.
 [48] Owen, Art (1999) "Assessing linearity in high dimensions"
+[51] Ripley, Brian D. (1996). Pattern recognition and neural networks. New York:
+     Cambridge University Press, 1996.
 [57] Shenk, David (1998) "Data smog: Surviving the information glut"
+[66] W.N. Venables, B.D. Ripley. Modern applied statistics with S-PLUS, 3rd ed.
+     New York: Springer, 1999.
 
 ** DONE Trunk "A problem of dimensionality: A simple example" (1979)
 The author builds up a simple (binary) hypothesis testing problem that

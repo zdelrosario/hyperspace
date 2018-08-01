@@ -1,0 +1,47 @@
+* Aircraft design                                         :cold_open:lecture:
+- Lots of people have flown on aircraft (relevant)
+- Lots of considerations -- focus on structural sizing; bulkheads
+- Data matrix: soft introduction
+
+* Modeling 							    :lecture:
+- Building planes is expensive -- build a model instead
+- Engineers build models with physics
+- Statisticians build models with data (crude distinction!)
+
+* Computer Experiment 						    :lecture:
+- Thought experiment -- cheap model runs in 1 second
+- Increase number of bulkheads considered, 10 points per bulkhead
+- Exponential scaling!
+
+* Curse of Dimensionality 					    :lecture:
+- 'Cost increases exponentially with dimension'
+- Vague term; manifests differently across fields
+
+* Big Data 							    :lecture:
+- Related, but distinct
+- Dimensionality == Number of columns in data matrix
+
+* Cursed! Concentrated Staring 					    :lecture:
+- Can't visualize more than 3 dimensions
+- Can't store more than ~7 items
+
+* Cursed! Integration 						    :lecture:
+- Square vs circle hypervolume
+- Nearly all points on boundary
+- Requires exponential samples for integration
+
+* Cursed! Regression 						    :lecture:
+- Number of fitted values grows with dimension
+- Makes fitting high-dimensional models difficult
+
+* Approach: Dimension Reduction 				    :lecture:
+- Direct solution: /reduce dimensionality/
+
+* Solution? Few Features 					    :lecture:
+- /Compressed sensing/
+
+* Solution? Few Directions 					    :lecture:
+- /Principle Component Analysis/
+- /Active subspace/
+
+* Concentrated Staring 						       :demo:
