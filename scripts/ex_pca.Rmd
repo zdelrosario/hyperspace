@@ -1,0 +1,89 @@
+---
+title: "PCA Example"
+author: "Zach"
+date: 2018-08-10
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(broom)
+library(knitr)
+library(ggrepel)
+```
+
+Following https://tbradley1013.github.io/2018/02/01/pca-in-a-tidy-verse-framework/
+
+```{r data}
+df_arrests <-
+    USArrests %>%
+    rownames_to_column(var = "state") %>%
+    rename_all(tolower) %>%
+    as_tibble()
+```
+
+```{r pca}
+df_pca <-
+    df_arrests %>%
+    nest() %>%
+    mutate(
+        pca = map(data, ~ prcomp(
+                           .x %>% select(-state),
+                           center = TRUE,
+                           scale = TRUE
+                       )),
+        pca_aug = map2(pca, data, ~ augment(.x, data = .y))
+    )
+```
+
+```{r variance}
+df_var <-
+    df_pca %>%
+    unnest(pca_aug) %>%
+    summarize_at(.vars = vars(contains("PC")), .funs = funs(var)) %>%
+    gather(key = pc, value = variance) %>%
+    mutate(
+        var_exp = variance / sum(variance),
+        cum_var_exp = cumsum(var_exp),
+        pc = str_replace(pc, ".fitted", "")
+    )
+```
+
+```{r scree}
+df_var %>%
+    mutate(pc = as.integer(str_extract(pc, "\\d+"))) %>%
+    ggplot(aes(pc, variance)) +
+    geom_line()
+```
+
+```{r plot_pc}
+scale <- 2.0
+
+df_components <-
+    df_pca %>%
+    pull(pca) %>%
+    .[[1]] %>%
+    .$rotation %>%
+   as_tibble(rownames = "val")
+
+df_pca %>%
+    unnest(pca_aug) %>%
+    rename_all(~ str_replace(., patter = "\\.fitted", replacement = "")) %>%
+    ggplot(aes(PC1, PC2)) +
+    geom_segment(
+        data = df_components,
+        aes(x = 0, y = 0, xend = PC1 * scale, yend = PC2 * scale),
+        arrow = arrow(),
+        color = "red"
+    ) +
+    geom_text_repel(
+        data = df_components,
+        aes(PC1 * scale, PC2 * scale, label = val),
+        color = "red"
+    ) +
+    geom_point() +
+    geom_text_repel(aes(label = state))
+```

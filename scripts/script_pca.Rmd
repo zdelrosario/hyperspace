@@ -1,0 +1,80 @@
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(broom)
+```
+
+PCA helper function
+
+```{r fcn}
+normsum <- function(v) {
+    cumsum(v) / sum(v)
+}
+
+tidy_pca <- function(data, ..., doCenter = TRUE, doScale = TRUE) {
+    require(tidyverse)
+    require(broom)
+
+    group_var <- quos(...)
+
+    data %>%
+        nest() %>%
+        mutate(
+            pca = map(data, ~ prcomp(
+                               .x %>% select(!!! group_var),
+                               center = doCenter,
+                               scale = doScale
+                           )),
+            data_aug = map2(
+                pca,
+                data,
+                ~ augment(.x, data = .y) %>%
+                  select(-.rownames) %>%
+                    rename_all(~str_replace(., "\\.fitted", ""))
+            ),
+            pc_weights = map(
+                pca,
+                ~ .$rotation %>%
+                    as_tibble(rownames = "var")
+            ),
+            pc_frac = map(
+                pca,
+                ~ .$sdev %>%
+                    tibble(sig = ., sig_frac = normsum(.))
+            )
+        ) %>%
+        select(-data)
+}
+```
+
+Test PCA function
+
+```{r test}
+df_arrests <-
+    USArrests %>%
+    rownames_to_column(var = "state") %>%
+    rename_all(tolower) %>%
+    as_tibble()
+
+df_pca <-
+    df_arrests %>%
+    tidy_pca(-state)
+```
+
+Example application of PCA to flights data.
+
+```{r flights}
+library(nycflights13)
+
+df_flights_pca <-
+    flights %>%
+    filter(
+        !is.na(dep_time),
+        !is.na(sched_dep_time),
+        !is.na(arr_time),
+        !is.na(sched_arr_time),
+        !is.na(air_time),
+        !is.na(distance)
+    ) %>%
+    sample_n(5000) %>%
+    tidy_pca(dep_time, sched_dep_time, arr_time, sched_arr_time, air_time, distance)
+```
