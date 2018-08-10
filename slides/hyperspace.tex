@@ -2,9 +2,13 @@
 
 % Presento style file
 \usepackage{config/presento}
-
 % custom command and packages
 \input{config/custom-command}
+
+% Custom colors
+\usepackage{color}
+\definecolor{ao}{rgb}{0.0, 0.5, 0.0}
+
 
 % Information
 \title{LOST IN HYPERSPACE}
@@ -13,43 +17,78 @@
 \institute{zdr@stanford.edu}
 \date{\today}
 
+% --------------------------------------------------
 \begin{document}
+% --------------------------------------------------
 
-% Title page
+% -------------------------
 \begin{frame}[plain]
 \maketitle
 \end{frame}
 
-% sections in the presentation
-\begin{frame}{Presento}
- \begin{fullpageitemize}
-  \item \begin{center}\largetext{The design is \underline{clean}}\end{center}
-  \item \begin{center}\largetext{The rules are \underline{simple}}\end{center}
-  \item \begin{center}\largetext{The code is \underline{extensible}}\end{center}
- \end{fullpageitemize}
-\end{frame}
-
-\begin{frame}{Open Source Fonts}
- \begin{fullpageitemize}
-  \item {\montserratfont This is Montserrat}
-  \item {\notosansfont This is Noto Sans}
-  \item {\latolightfont This is Lato (light)}
-  \item {\inconsolatafont This is inconsolata}
-  \item \textsc{This is Alegreya Sans small caps}
- \end{fullpageitemize}
-\end{frame}
-
-\begin{frame}{Color Palette}
- \begin{center}
-  \crule[colordgray] \crule[colorhgray] \crule[colorblue] \crule[colorgreen] \crule[colororange]
- \end{center}
-\end{frame}
-
-\framecard[colorgreen]{{\color{white}\hugetext{BIG BOLD TEXT}}}
-
-\framepic[0.8]{images/skeleton}{
- \begin{textblock}{7}(7,2.5)
-    {\color{colorblue}\hugetext{\textbf{RUN!}}}
+% -------------------------
+\framepicv[1.0]{images/lax_shuttle-25p}{
+ \begin{textblock}{7}(0.0,5.7)
+    {\tiny By Aaron Barnaby aaronbarnaby}
  \end{textblock}
 }
+
+% -------------------------
+\framepicv[0.8]{images/gipsy_moth-25p}{
+ \begin{textblock}{7}(0.0,5.7)
+    {\tiny By Peripitus - Own work, CC BY-SA 3.0}
+ \end{textblock}%
+ \textblockcolor{white}
+ \textblockrulecolor{black}
+ \only<2>{
+   \begin{textblock}{4.5}(0.0,3.5)
+     {
+       \begin{tabular}{l|l}
+       \hline
+       Strength & Spar1\\
+       \hline
+       Stress? & Size?\\
+       \hline
+       \end{tabular}
+     }
+   \end{textblock}
+ }%
+ \only<3>{
+   \begin{textblock}{6.2}(0.0,3.5)
+     {
+       \begin{tabular}{l|l|l}
+       \hline
+       Strength & Spar1 & Spar2\\
+       \hline
+       Stress? & Size? & Size?\\
+       \hline
+       \end{tabular}
+     }
+   \end{textblock}
+ }%
+ \only<4>{
+   \begin{textblock}{11.0}(0.0,3.5)
+     {
+       \begin{tabular}{l|l|l|l|l|l}
+       \hline
+       Strength & Spar1 & Spar2 & Rib1 & Rib2 & Rib3\\
+       \hline
+       Stress? & Size? & Size? & Size? & Size? & Size?\\
+       \hline
+       \end{tabular}
+     }
+   \end{textblock}
+ }%
+ \textblockcolor{}
+ \textblockrulecolor{}
+}
+
+% -------------------------
+%% \framepich[0.8]{images/full_747}{
+%%  \begin{textblock}{7}(0.0,5.7)
+%%     {\tiny Jameson et al. (1986)}
+%%  \end{textblock}
+%% }
+
+
 \end{document}

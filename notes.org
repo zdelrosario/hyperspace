@@ -2,6 +2,11 @@ Curse of Dimensionality: Notes
 
 Let $d$ be dimension, in all that follows...
 
+* Punchlines
+1. Dimensionality is relevant and difficult
+2. Abstract reasoning is necessary in high dimension
+3. Dimension reduction is useful
+
 * General notes
 Various authors -- e.g. Donoho (2000) and Zimek et al. (2012) -- note that the
 'curse of dimensionality' is a vague term; it manifests in different ways in

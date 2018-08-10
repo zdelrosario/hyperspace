@@ -17,6 +17,9 @@
 - 'Cost increases exponentially with dimension'
 - Vague term; manifests differently across fields
 
+* Dimensionality 						    :lecture:
+-
+
 * Big Data 							    :lecture:
 - Related, but distinct
 - Dimensionality == Number of columns in data matrix
@@ -36,9 +39,6 @@
 
 * Approach: Dimension Reduction 				    :lecture:
 - Direct solution: /reduce dimensionality/
-
-* Solution? Few Features 					    :lecture:
-- /Compressed sensing/
 
 * Solution? Few Directions 					    :lecture:
 - /Principle Component Analysis/
