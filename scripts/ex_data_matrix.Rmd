@@ -1,0 +1,100 @@
+---
+title: "Data Matrix Example"
+author: "Zach"
+date: 2018-08-09
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+```{r gen_data}
+df1 <-
+    tribble(
+        ~Strength, ~Spar1,
+              "?",     1L,
+              "?",     2L,
+              "?",     3L
+    )
+
+df2 <-
+    map_dfr(seq(3), ~bind_cols(df1, tibble(Spar2 = rep(., times = dim(df1)[1]))))
+
+df3 <-
+    map_dfr(seq(3), ~bind_cols(df2, tibble(Rib1 = rep(., times = dim(df2)[1]))))
+
+df4 <-
+    map_dfr(seq(3), ~bind_cols(df3, tibble(Rib2 = rep(., times = dim(df3)[1]))))
+
+df5 <-
+    map_dfr(seq(3), ~bind_cols(df4, tibble(Rib3 = rep(., times = dim(df4)[1]))))
+```
+
+```{r print_data1}
+df1 %>%
+    knitr::kable(format = "latex")
+```
+
+```{r print_data2}
+df2 %>%
+    knitr::kable(format = "latex")
+```
+
+```{r print_data3}
+df3 %>%
+    knitr::kable(format = "latex")
+```
+
+```{r print_data4}
+df4 %>%
+    knitr::kable(format = "latex")
+```
+
+```{r plot_data1}
+df1 %>%
+    ggplot(aes(x = Spar1, y = 0)) +
+    geom_point() +
+    theme_minimal() +
+    scale_x_continuous(breaks = c(1,2,3)) +
+    scale_y_continuous(breaks = c(0)) +
+    labs(
+        y = NULL
+    )
+
+ggsave(filename = "../slides/images/points1.eps")
+```
+
+```{r plot_data2}
+df2 %>%
+    ggplot(aes(x = Spar1, y = Spar2)) +
+    geom_point() +
+    theme_minimal() +
+    scale_x_continuous(breaks = c(1,2,3)) +
+    scale_y_continuous(breaks = c(1,2,3))
+
+ggsave(filename = "../slides/images/points2.eps")
+```
+
+```{r plot_data3}
+library(scatterplot3d)
+
+png(filename =  "../slides/images/points3.png")
+scatterplot3d(
+    df3$Spar1,
+    df3$Spar2,
+    df3$Rib1 - 1,
+    tick.marks = FALSE,
+    xlab = "Spar1",
+    ylab = "Spar2",
+    zlab = "Rib1",
+    lty.axis = NULL,
+    grid = TRUE,
+    box = FALSE,
+    type = "h"
+)
+dev.off()
+```
