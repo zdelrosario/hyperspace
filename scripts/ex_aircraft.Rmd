@@ -6,14 +6,15 @@ output:
   pdf_document:
     latex_engine: xelatex
     toc: true
+urlcolor: blue
 ---
 
 The following is a glimpse at the FAA Aircraft Characteristic
-[https://www.faa.gov/airports/engineering/aircraft_char_database/](database).
-These data are used for sizing airport, so the database is likely representative
-of commercial aircraft in use today.
+[database](https://www.faa.gov/airports/engineering/aircraft_char_database/).
+These data are used for sizing airports and was updated January 2018, so the
+database is likely representative of commercial aircraft in use today.
 
-```{r setup}
+```{r setup, echo=FALSE}
 library(tidyverse)
 library(readxl)
 library(GGally)
@@ -66,7 +67,7 @@ tidy_pca <- function(data, ..., doCenter = TRUE, doScale = TRUE) {
 There are a number of comments at the top of this Excel FAA data; let's skip all
 of that.
 
-```{r load}
+```{r load, message=FALSE}
 df_raw <-
     filename_faa %>%
     read_excel(skip = 4)
@@ -76,13 +77,12 @@ First, some basic facts.
 
 ```{r first_look}
 names(df_raw)
-summary(df_raw)
 ```
 
-Some of these ought to be numeric, and the variable names are obnoxious. Let's
-do some wrangling.
+Looking at the Excel file, some of these ought to be numeric. Also, the variable
+names are obnoxious. Let's do some wrangling.
 
-```{r wrangle}
+```{r wrangle, message=FALSE, warning=FALSE}
 df_faa <-
     df_raw %>%
     rename_all(str_to_lower) %>%
@@ -92,91 +92,153 @@ df_faa <-
     rename_all(~str_replace_all(., pattern = "\\s+", replacement = "_")) %>%
     rename_all(~str_replace_all(., pattern = "#", replacement = "num")) %>%
     rename_all(~str_replace_all(., pattern = "/", replacement = "_")) %>%
+    rename(
+        cmg = cockpit_to_main_gear
+    ) %>%
     mutate_at(
-        .vars = vars(approach_speed, wingspan, length, tail_height, mtow),
+        .vars = vars(
+            approach_speed,
+            wingspan,
+            length,
+            tail_height,
+            mtow,
+            cmg,
+            mgw,
+            max_ramp_max_taxi
+        ),
         .funs = as.numeric
+    ) %>%
+    mutate(
+        num_engines = as.integer(num_engines)
     )
 ```
 
 Let's focus on the numeric variables for now. A set of pair plots will give us a
 first impression if there's any structure in the data.
 
-```{r num_pairs}
+```{r num_pairs, echo=FALSE, warning=FALSE}
 df_faa %>%
-    select(num_engines, approach_speed, wingspan, length, tail_height, mtow) %>%
-    ggpairs()
+    select_if(is.numeric) %>%
+    ggpairs(progress = FALSE)
 ```
 
-It seems there's quite a bit of structure! Dimensional Analysis would suggest
-that log-transforming the data might straighten things out.
+It seems there's quite a bit of structure! Dimensional Analysis (and John Tukey)
+would suggest that log-transforming the data might straighten things out.
 
-```{r log_pairs}
+```{r log_pairs, echo=FALSE, warning=FALSE}
 df_log <-
     df_faa %>%
-    mutate_at(
-        .vars = vars(approach_speed, wingspan, length, tail_height, mtow),
+    mutate_if(
+        .predicate = is.double,
         .funs = log10
     ) %>%
-    rename_at(
-        .vars = vars(approach_speed, wingspan, length, tail_height, mtow),
+    rename_if(
+        .predicate = is.double,
         .funs = ~str_c("log10_", .)
     )
 
 df_log %>%
-    select(
-        num_engines,
-        log10_approach_speed,
-        log10_wingspan,
-        log10_length,
-        log10_tail_height,
-        log10_mtow) %>%
-    ggpairs()
+    select_if(is.numeric) %>%
+    ggpairs(progress = FALSE)
 ```
 
 Now let's run a PCA to identify any low-dimensional structure.
 
-```{r log_pca}
+```{r log_pca, echo=FALSE, message=FALSE}
+do_pca <- function(df, ...) {
+    pca_vars <- quos(...)
+
+    df %>%
+    filter_at(
+        .vars = vars(!!! pca_vars),
+        all_vars(!is.na(.))
+    ) %>%
+    tidy_pca(!!! pca_vars)
+}
+
 df_pca_log <-
     df_log %>%
-    select(
-        num_engines,
+    do_pca(
         log10_approach_speed,
         log10_wingspan,
         log10_length,
         log10_tail_height,
-        log10_mtow) %>%
-    filter_all(all_vars(!is.na(.))) %>%
-    tidy_pca(-num_engines)
+        log10_mtow
+    )
+```
 
+```{r pca_report}
 df_pca_log %>% pull(pc_frac)
 ```
 
-About `87%` of the variance is explained by two directions; we can plot this.
+About `87%` of the variance is explained by two directions; this is something we
+can plot.
 
-```{r plot_pca}
-scale <- 2.0
+```{r fcn_plot_pca, echo=FALSE, message=FALSE}
+do_pca_plot <- function(df, col_var) {
+    col_var <- enquo(col_var)
 
-df_components <-
-    df_pca_log %>%
-    pull(pca) %>%
-    .[[1]] %>%
-    .$rotation %>%
-   as_tibble(rownames = "val")
+    scale <- 4.0
 
+    df_components <-
+        df %>%
+        pull(pca) %>%
+        .[[1]] %>%
+        .$rotation %>%
+       as_tibble(rownames = "val")
+
+    df %>%
+        unnest(data_aug) %>%
+        rename_all(~ str_replace(., patter = "\\.fitted", replacement = "")) %>%
+        ggplot(aes(PC1, PC2, color = as.factor(!! col_var))) +
+        geom_point() +
+        geom_segment(
+            data = df_components,
+            aes(x = 0, y = 0, xend = PC1 * scale, yend = PC2 * scale),
+            arrow = arrow(),
+            color = "red"
+        ) +
+        geom_text_repel(
+            data = df_components,
+            aes(PC1 * scale, PC2 * scale, label = val),
+            color = "red",
+            box.padding = 1.0
+        ) +
+        theme(legend.position = "bottom")
+}
+```
+
+```{r pca_plot}
 df_pca_log %>%
-    unnest(data_aug) %>%
-    rename_all(~ str_replace(., patter = "\\.fitted", replacement = "")) %>%
-    ggplot(aes(PC1, PC2)) +
-    geom_segment(
-        data = df_components,
-        aes(x = 0, y = 0, xend = PC1 * scale, yend = PC2 * scale),
-        arrow = arrow(),
-        color = "red"
-    ) +
-    geom_text_repel(
-        data = df_components,
-        aes(PC1 * scale, PC2 * scale, label = val),
-        color = "red"
-    ) +
-    geom_point()
+    do_pca_plot(aac)
+```
+
+[Approach
+speed](https://www.skybrary.aero/index.php/Approach_Speed_Categorisation) is
+legally stratified into classes A-E; a fact that is visible in the figure above.
+The first principal component is strongly dependent on the aircraft geometry,
+while the second is quite aligned with the approach speed.
+
+```{r approach_vs_engines}
+df_faa %>%
+    ggplot(aes(num_engines, approach_speed, group = num_engines)) +
+    geom_boxplot()
+```
+
+As we might expect, the approach speed does vary with the number of engines.
+
+```{r pca_2}
+df_pca_2 <-
+    df_log %>%
+    do_pca(
+        log10_wingspan,
+        log10_length,
+        log10_cmg,
+        log10_mtow
+    )
+
+df_pca_2 %>% pull(pc_frac)
+
+df_pca_2 %>%
+    do_pca_plot(num_engines)
 ```
