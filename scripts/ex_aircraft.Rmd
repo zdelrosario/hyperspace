@@ -1,0 +1,182 @@
+---
+title: "Aircraft Attributes"
+author: "ZDR"
+date: 2018-08-13
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+---
+
+The following is a glimpse at the FAA Aircraft Characteristic
+[https://www.faa.gov/airports/engineering/aircraft_char_database/](database).
+These data are used for sizing airport, so the database is likely representative
+of commercial aircraft in use today.
+
+```{r setup}
+library(tidyverse)
+library(readxl)
+library(GGally)
+library(ggrepel)
+
+## File location
+filename_faa <- "~/Documents/data/faa/FAA-Aircraft-Char-Database-v2-201801.xlsx"
+
+## Helper functions
+normsum <- function(v) {
+    cumsum(v) / sum(v)
+}
+
+tidy_pca <- function(data, ..., doCenter = TRUE, doScale = TRUE) {
+    require(tidyverse)
+    require(broom)
+
+    group_var <- quos(...)
+
+    data %>%
+        nest() %>%
+        mutate(
+            pca = map(data, ~ prcomp(
+                               .x %>% select(!!! group_var),
+                               center = doCenter,
+                               scale = doScale
+                           )),
+            data_aug = map2(
+                pca,
+                data,
+                ~ augment(.x, data = .y) %>%
+                  select(-.rownames) %>%
+                    rename_all(~str_replace(., "\\.fitted", ""))
+            ),
+            pc_weights = map(
+                pca,
+                ~ .$rotation %>%
+                    as_tibble(rownames = "var")
+            ),
+            pc_frac = map(
+                pca,
+                ~ .$sdev %>%
+                    tibble(sig = ., sig_frac = normsum(.))
+            )
+        ) %>%
+        select(-data)
+}
+```
+
+There are a number of comments at the top of this Excel FAA data; let's skip all
+of that.
+
+```{r load}
+df_raw <-
+    filename_faa %>%
+    read_excel(skip = 4)
+```
+
+First, some basic facts.
+
+```{r first_look}
+names(df_raw)
+summary(df_raw)
+```
+
+Some of these ought to be numeric, and the variable names are obnoxious. Let's
+do some wrangling.
+
+```{r wrangle}
+df_faa <-
+    df_raw %>%
+    rename_all(str_to_lower) %>%
+    rename_all(~str_remove(., pattern = "\\(.*\\)")) %>%
+    rename_all(~str_remove(., pattern = ",.*$")) %>%
+    rename_all(~str_remove(., pattern = "\\s+$")) %>%
+    rename_all(~str_replace_all(., pattern = "\\s+", replacement = "_")) %>%
+    rename_all(~str_replace_all(., pattern = "#", replacement = "num")) %>%
+    rename_all(~str_replace_all(., pattern = "/", replacement = "_")) %>%
+    mutate_at(
+        .vars = vars(approach_speed, wingspan, length, tail_height, mtow),
+        .funs = as.numeric
+    )
+```
+
+Let's focus on the numeric variables for now. A set of pair plots will give us a
+first impression if there's any structure in the data.
+
+```{r num_pairs}
+df_faa %>%
+    select(num_engines, approach_speed, wingspan, length, tail_height, mtow) %>%
+    ggpairs()
+```
+
+It seems there's quite a bit of structure! Dimensional Analysis would suggest
+that log-transforming the data might straighten things out.
+
+```{r log_pairs}
+df_log <-
+    df_faa %>%
+    mutate_at(
+        .vars = vars(approach_speed, wingspan, length, tail_height, mtow),
+        .funs = log10
+    ) %>%
+    rename_at(
+        .vars = vars(approach_speed, wingspan, length, tail_height, mtow),
+        .funs = ~str_c("log10_", .)
+    )
+
+df_log %>%
+    select(
+        num_engines,
+        log10_approach_speed,
+        log10_wingspan,
+        log10_length,
+        log10_tail_height,
+        log10_mtow) %>%
+    ggpairs()
+```
+
+Now let's run a PCA to identify any low-dimensional structure.
+
+```{r log_pca}
+df_pca_log <-
+    df_log %>%
+    select(
+        num_engines,
+        log10_approach_speed,
+        log10_wingspan,
+        log10_length,
+        log10_tail_height,
+        log10_mtow) %>%
+    filter_all(all_vars(!is.na(.))) %>%
+    tidy_pca(-num_engines)
+
+df_pca_log %>% pull(pc_frac)
+```
+
+About `87%` of the variance is explained by two directions; we can plot this.
+
+```{r plot_pca}
+scale <- 2.0
+
+df_components <-
+    df_pca_log %>%
+    pull(pca) %>%
+    .[[1]] %>%
+    .$rotation %>%
+   as_tibble(rownames = "val")
+
+df_pca_log %>%
+    unnest(data_aug) %>%
+    rename_all(~ str_replace(., patter = "\\.fitted", replacement = "")) %>%
+    ggplot(aes(PC1, PC2)) +
+    geom_segment(
+        data = df_components,
+        aes(x = 0, y = 0, xend = PC1 * scale, yend = PC2 * scale),
+        arrow = arrow(),
+        color = "red"
+    ) +
+    geom_text_repel(
+        data = df_components,
+        aes(PC1 * scale, PC2 * scale, label = val),
+        color = "red"
+    ) +
+    geom_point()
+```
