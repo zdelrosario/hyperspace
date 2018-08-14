@@ -1,5 +1,5 @@
 ---
-title: "Aircraft Attributes"
+title: "Aircraft Characteristics"
 author: "ZDR"
 date: 2018-08-13
 output:
@@ -9,10 +9,10 @@ output:
 urlcolor: blue
 ---
 
-The following is a glimpse at the FAA Aircraft Characteristic
+The following is a glimpse at the FAA Aircraft Characteristics
 [database](https://www.faa.gov/airports/engineering/aircraft_char_database/).
-These data are used for sizing airports and was updated January 2018, so the
-database is likely representative of commercial aircraft in use today.
+These data are used for sizing airports, and were most recently updated January
+2018.
 
 ```{r setup, echo=FALSE}
 library(tidyverse)
@@ -175,10 +175,8 @@ About `87%` of the variance is explained by two directions; this is something we
 can plot.
 
 ```{r fcn_plot_pca, echo=FALSE, message=FALSE}
-do_pca_plot <- function(df, col_var) {
+do_pca_plot <- function(df, col_var, scale = 2.0) {
     col_var <- enquo(col_var)
-
-    scale <- 4.0
 
     df_components <-
         df %>%
@@ -195,14 +193,15 @@ do_pca_plot <- function(df, col_var) {
         geom_segment(
             data = df_components,
             aes(x = 0, y = 0, xend = PC1 * scale, yend = PC2 * scale),
-            arrow = arrow(),
+            ## arrow = arrow(),
             color = "red"
         ) +
         geom_text_repel(
             data = df_components,
             aes(PC1 * scale, PC2 * scale, label = val),
             color = "red",
-            box.padding = 1.0
+            box.padding = 1.0,
+            segment.size = 0.1
         ) +
         theme(legend.position = "bottom")
 }
@@ -222,10 +221,15 @@ while the second is quite aligned with the approach speed.
 ```{r approach_vs_engines}
 df_faa %>%
     ggplot(aes(num_engines, approach_speed, group = num_engines)) +
-    geom_boxplot()
+    geom_boxplot() +
+    geom_text_repel(
+        data = df_faa %>% filter(approach_speed > 150, num_engines == 1L),
+        mapping = aes(label = model)
+    )
 ```
 
-As we might expect, the approach speed does vary with the number of engines.
+As we might expect, the approach speed varies with the number of engines. The
+fastest (on approach) single-engine aircraft are military.
 
 ```{r pca_2}
 df_pca_2 <-
@@ -234,7 +238,9 @@ df_pca_2 <-
         log10_wingspan,
         log10_length,
         log10_cmg,
-        log10_mtow
+        log10_mtow,
+        log10_tail_height,
+        log10_mgw
     )
 
 df_pca_2 %>% pull(pc_frac)
@@ -242,3 +248,22 @@ df_pca_2 %>% pull(pc_frac)
 df_pca_2 %>%
     do_pca_plot(num_engines)
 ```
+
+Many of these interrelations can be derived from scaling laws. For example, lift
+arises from a pressure differential, so it tends to scale proportional to wing
+area. Area has units of length squared; if we assume a constant aspect ratio
+across all aircraft (false, but certainly bounded), then the wing area scales as
+the wingspan squared. Maximum takeoff weight (MTOW) scales proportional to lift.
+Thus we may expect a roughly quadratic relation between wingspan and MTOW.
+
+```{r lift}
+df_log %>%
+    ggplot(aes(log10_wingspan, log10_mtow, color = log10_length)) +
+    geom_point() +
+    geom_smooth(se = FALSE) +
+    geom_abline(slope = 2, intercept = 1, linetype = 2)
+```
+
+Here we see the power-law fit captures a large part of the trend; coloring the
+points by aircraft length suggests that other geometric variations (i.e. varying
+aspect ratio) account for part of the misfit.
