@@ -36,6 +36,46 @@ different fields.
   + Donoho, "High-dimensional data analysis: The curses and blessings of
     dimensionality" (2000)
 
+* Chatting with Art
+2018-08-13
+
+Blessing of dimensionality is interesting
+
+Various tasks:
+- Find needle in haystack (grid search)
+
+The epsilon (1mm) band: Inside vs outside
+- It's like compound interest (all just exponentials)
+
+"All the mass is at the equator!"
+- Hypersphere example
+
+*Johnson-Linden-Strauss Lemma*
+- "that one is freaky"
+- Preserves distances at some Pr
+- "leave some mysteries..."
+- bag-of-words model is relevant
+
+See Art's quadrature notes for a high-d example
+
+PCA example:
+- Measuring features of birds: length, width,
+- Geometries of aircraft
+- "Usually it's the second factor that's interesting"
+  - Do a few pair plots to show it's high-d
+
+"Factor analysis I wouldn't do..."
+- But would do PCA
+
+Mention the curse in different areas, but drill down in 1-2 cases
+
+Beatles classification example
+
+Google has ML bootcamp
+- might have good images!
+
+Pique interest in some areas, do more detail in a few
+
 * To Read
 ** TODO Bellman, Richard (1961) "Adaptive Control Processes..."
 Bellman, Richard (1961) "Adaptive Control Processes: A Guided Tour"
