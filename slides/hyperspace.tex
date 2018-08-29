@@ -185,21 +185,51 @@
     \end{tikzpicture}
   }
   % Annotation
-  \only<4>{
-    \begin{textblock}{5}(5.5,4.5)
+  \only<4->{
+    \begin{textblock}{5}(5.5,2.5)
       {
-        That's a lot of planes!
+        That's a lot of planes! \\
+        \only<5>{%
+          \alert{Make a prediction:} How many planes for $d$ variables?\\
+          Maybe $\approx d$? $\approx d^2$?
+        }
       }
     \end{textblock}
   }
 \end{frame}
 
 % -------------------------
-%% \framepich[0.8]{images/full_747}{
-%%  \begin{textblock}{7}(0.0,5.7)
-%%     {\tiny Jameson et al. (1986)}
-%%  \end{textblock}
-%% }
+\framepich[0.8]{images/full_747}{
+ \begin{textblock}{7}(0.0,5.7)
+    {\tiny Jameson et al. (1986)}
+ \end{textblock}
+}
 
+% -------------------------
+\framepich[0.7]{images/titan_render}{
+  \only<2>{
+    \begin{textblock}{7}(0.0,4.5)
+      {Simulations run hours to \emph{months}}
+    \end{textblock}
+  }
+}
+
+% -------------------------
+\begin{frame}[t]{Thought Experiment}
+  Suppose our simulation ran in \emph{one second}, \\
+  and we use $10$ points per dimension....
+
+  \bigskip
+  \only<2->{How long would this take to execute?\\}
+  \only<3>{%
+    Scaling is \emph{exponential}, i.e.
+    \begin{equation*}
+      \text{Time} = C^d
+    \end{equation*}
+  }
+\end{frame}
+
+% -------------------------
+\framepicv[0.8]{images/dimensionality}{}
 
 \end{document}
