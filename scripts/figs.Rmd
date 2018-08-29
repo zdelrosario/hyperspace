@@ -1,0 +1,99 @@
+---
+title: "Cartoon Figures"
+author: "Zach"
+date: 2018-08-29
+output:
+  github_document:
+    toc: true
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+## Script parameters ---------------------------------------------------
+ext <- ".eps"
+asp_ratio <- 4 / 4
+img_width <- 5
+img_height <- img_width * asp_ratio
+
+## Helper functions ----------------------------------------------------
+base_breaks <- function(n = 10){
+    function(x) {
+        axisTicks(log10(range(x, na.rm = TRUE)), log = TRUE, n = n)
+    }
+}
+
+## Custom save function
+mysave <- function(name) {
+    ggsave(
+        filename = str_c("../slides/images/", name, ext),
+        height = img_height,
+        width = img_width,
+        units = "in"
+    )
+}
+## Common theme settings
+theme_common <- function() {
+  theme_minimal() %+replace%
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title.x = element_text(margin = margin(4, 4, 4, 4), size = 16),
+    axis.title.y = element_text(margin = margin(4, 4, 4, 4), size = 16, angle = 90),
+
+    aspect.ratio = 1 / 1,
+
+    plot.margin   = unit(c(t = +0, b = +0, r = +0, l = +0), "cm"),
+    panel.spacing = unit(c(t = +0, b = +0, r = +0, l = +0), "cm"),
+
+    legend.text = element_text(size = 10),
+
+    panel.grid.major = element_line(color = "grey90"),
+    panel.grid.minor = element_line(color = "grey90")
+  )
+}
+```
+
+```{r dimensionality}
+df_comment <-
+    tribble(
+        ~time, ~comment,
+        1.0e+0,  "One second",
+        8.6e+5,  "One Day",
+        1.0e+10, "Eleven generations",
+        4.3e+17, "Age of Universe",
+        1.0e+20, "230 x AoU"
+    )
+
+df_dim <-
+    tibble(dimension = c(1, 20)) %>%
+    mutate(time = 10 ^ dimension)
+
+df_dim %>%
+    ggplot(aes(y = time)) +
+    geom_hline(
+        data = df_comment,
+        aes(yintercept = time),
+        linetype = 2,
+        color = "grey70"
+    ) +
+    geom_text(
+        data = df_comment,
+        aes(x = 1, label = comment),
+        nudge_y = 1.0,
+        hjust = 0
+    ) +
+    geom_line(aes(x = dimension)) +
+    scale_x_continuous(trans = scales::log_trans(), breaks = base_breaks()) +
+    scale_y_continuous(
+        trans = scales::log_trans(),
+        breaks = c(1e1, 1e10, 1e20)
+    ) +
+    theme_common() +
+    labs(
+        x = "Dimension",
+        y = "Compute Time"
+    )
+
+mysave("dimensionality")
+```
