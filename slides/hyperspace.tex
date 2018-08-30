@@ -499,23 +499,35 @@
 \end{frame}
 
 % -------------------------
+\begin{frame}{We Will Study:}
+  \underline{Claim}: For any $0<\epsilon<1$ and $n\in\mathbb{Z}_{>0}$, let
+  $k\in\mathbb{Z}_{>0}$ such that
+
+  \begin{equation*}
+    k \geq C \frac{\log(n)}{\epsilon^2},
+  \end{equation*}
+
+  \noindent then for all sets of points $V\subset\R{d}$, there is a projection
+  $P_k:\R{d}\to\R{k}$ such that, for all $u,v\in V$, we have
+
+    \begin{equation*}
+      \alert<2>{(1 - \epsilon)\|\vu - \vv\|^2 \leq \|P_k(\vu) - P_k(\vv)\|^2 \leq %
+      (1 + \epsilon)\|\vu - \vv\|^2
+}    \end{equation*}
+\end{frame}
+
+% -------------------------
 \begin{frame}{}
   % Content
   \only<-5>{%
     \begin{equation*} \begin{aligned}
-        (1 - \alert<3>{\epsilon})\alert<2>{\text{Distance}} &\leq %
-          \alert<4,5>{\text{Projected Distance}} \\
+        (1 - \alert<3>{\epsilon})(\alert<2>{\text{Distance}})^2 &\leq %
+          (\alert<4,5>{\text{Projected Distance}})^2 \\
         &\, \\
-        \alert<4,5>{\text{Projected Distance}} &\leq %
-          (1 + \alert<3>{\epsilon})\alert<2>{\text{Distance}}\\
+        (\alert<4,5>{\text{Projected Distance}})^2 &\leq %
+          (1 + \alert<3>{\epsilon})(\alert<2>{\text{Distance}})^2\\
     \end{aligned} \end{equation*}
   }%
-  \only<6>{%
-    \begin{equation*}
-      (1 - \epsilon)\|\vu - \vv\| \leq \|P_{\alert{k}}(\vu) - P_{\alert{k}}(\vv)\| \leq %
-      (1 + \epsilon)\|\vu - \vv\|
-    \end{equation*}
-  }
   % Annotation
   \visible<2-5>{%
     \begin{textblock}{3}(+1.5,-6.0)
@@ -551,6 +563,25 @@
   }
 \end{frame}
 
+% -------------------------
+\begin{frame}[t]{}
+  % Content
+  \begin{equation*}
+    (1 - \epsilon)\|\vu - \vv\|^2 \leq \|P_{\alert{k}}(\vu) - P_{\alert{k}}(\vv)\|^2 \leq %
+    (1 + \epsilon)\|\vu - \vv\|^2
+  \end{equation*}
+  % Annotation
+  \visible<2->{%
+    \begin{textblock}{6}(+2.5,-0.5)
+      {\textblockcolor{}
+        \centering%
+        \only<2>{\includegraphics[width=1.0\textwidth]{./images/dim_proj3}}
+        \only<3>{\includegraphics[width=1.0\textwidth]{./images/dim_proj2}}
+        \only<4>{\includegraphics[width=1.0\textwidth]{./images/dim_proj1}}
+      }
+    \end{textblock}
+  }
+\end{frame}
 % --------------------------------------------------
 %% SEC: Dimension Reduction
 % --------------------------------------------------
