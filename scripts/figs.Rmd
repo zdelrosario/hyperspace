@@ -54,6 +54,9 @@ theme_common <- function() {
 }
 ```
 
+## Exponential growth
+<!-- -------------------------------------------------- -->
+
 ```{r dimensionality}
 df_comment <-
     tribble(
@@ -92,8 +95,46 @@ df_dim %>%
     theme_common() +
     labs(
         x = "Dimension",
-        y = "Compute Time"
+        y = "Compute Time (Seconds)"
     )
 
 mysave("dimensionality")
+```
+
+## Hypercubes
+<!-- -------------------------------------------------- -->
+
+```{r hypercubes}
+
+```
+
+## Surface Area Distribution
+<!-- -------------------------------------------------- -->
+
+```{r sa_dist}
+dim_seq <- c(1, 2, 3, 5, 10, 50)
+R_seq <- seq(0, 1, length = 100)
+
+df_surf <-
+    map_dfr(
+        dim_seq,
+        function(d) {tibble(
+                         d = d,
+                         rho = R_seq ^ (d - 1),
+                         r = R_seq
+                     )}
+    )
+
+df_surf %>%
+    ggplot(aes(r, rho, color = as.factor(d))) +
+    geom_line() +
+    scale_x_continuous(breaks = c(0, 1/2, 1)) +
+    scale_color_discrete(name = "Dimension") +
+    theme_common() +
+    labs(
+        x = "Radial Position",
+        y = "Surface Density"
+    )
+
+mysave("surface_density")
 ```

@@ -21,6 +21,13 @@
 \begin{document}
 % --------------------------------------------------
 
+% --------------------------------------------------
+\framecard[colorgreen]{{\color{white}\hugetext{%
+      \centering%
+      Please print your\\
+      name on a card!
+}}}
+
 % -------------------------
 \begin{frame}[plain]
 \maketitle
@@ -95,7 +102,7 @@
  \textblockrulecolor{}
   \only<1>{%
     \begin{textblock}{11}(-0.5,-1.5)
-      {
+      {\textblockcolour{}
         \small
         \begin{tabular}{l|r}
         \hline
@@ -117,7 +124,7 @@
   }
   \only<2>{%
     \begin{textblock}{11}(-0.5,-1.5)
-      {
+      {\textblockcolour{}
         \small
         \begin{tabular}{l|r|r}
         \hline
@@ -151,7 +158,7 @@
   }
   \only<3->{%
     \begin{textblock}{11}(-0.5,-1.5)
-      {
+      {\textblockcolour{}
         \small
         \begin{tabular}{l|r|r|r}
         \hline
@@ -187,7 +194,7 @@
   % Annotation
   \only<4->{
     \begin{textblock}{5}(5.5,2.5)
-      {
+      {\textblockcolor{}
         That's a lot of planes! \\
         \only<5>{%
           \alert{Make a prediction:} How many planes for $d$ variables?\\
@@ -209,7 +216,7 @@
 \framepich[0.7]{images/titan_render}{
   \only<2>{
     \begin{textblock}{7}(0.0,4.5)
-      {Simulations run hours to \emph{months}}
+      {Simulations run\\ hours to \emph{months}}
     \end{textblock}
   }
 }
@@ -230,6 +237,131 @@
 \end{frame}
 
 % -------------------------
-\framepicv[0.8]{images/dimensionality}{}
+\framepicv[0.8]{images/dimensionality}{
+  \only<2>{%
+    \begin{textblock}{7}(3.8,3.0)
+        {\textblockcolor{}
+          \alert{The Curse of Dimensionality}
+        }
+    \end{textblock}
+  }
+}
+
+% -------------------------
+\begin{frame}{Outline}
+  \begin{itemize}
+  \item 1. \emph{Accursed} Data
+  \item 2. \emph{Accursed} Geometry
+  \item 3. Lifting the Curse...
+  \item 4. An Activity
+  \end{itemize}
+\end{frame}
+
+% --------------------------------------------------
+\framecard[colorgreen]{{\color{white}\hugetext{%
+      \centering%
+      Big Data\\
+      and\\
+      Dimensionality
+}}}
+
+% -------------------------
+\begin{frame}{The Data Matrix}
+  (Definition)
+\end{frame}
+
+% -------------------------
+\begin{frame}{A Wider Shade of Big}
+  (Big data -- Dimensionality is one direction)
+\end{frame}
+
+% --------------------------------------------------
+\framecard[colorgreen]{{\color{white}\hugetext{%
+      \centering%
+      Weird Facts\\
+      about\\
+      High-\\
+      Dimensional\\
+      Geometry
+}}}
+
+% -------------------------
+\begin{frame}{Fact 1}
+  Basic solids defy intuition
+\end{frame}
+
+% -------------------------
+\begin{frame}{Hypercube}
+  All points between intervals
+\end{frame}
+
+% -------------------------
+\begin{frame}{Hypercube}
+  Distance from origin to boundary
+
+  \begin{tabular}{@{}ll@{}}
+    Min & $1/2$ \\
+    Max & $\sqrt{d/2}$
+  \end{tabular}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Hypersphere}
+  All points within a fixed distance
+\end{frame}
+
+% -------------------------
+\begin{frame}{Hypersphere}
+  Distance from origin to boundary
+
+  \begin{tabular}{@{}ll@{}}
+    Min & $1$ \\
+    Max & $1$
+  \end{tabular}
+\end{frame}
+
+% -------------------------
+\framepich[1.0]{images/box_in_sphere1}{}
+\framepich[1.0]{images/box_in_sphere2}{}
+\framepich[1.0]{images/box_in_sphere3}{}
+
+% -------------------------
+\begin{frame}{Fact 2}
+  The hypersphere has vanishing interior
+\end{frame}
+
+% -------------------------
+\begin{frame}{Unit Hypersphere Volume}
+  \begin{equation*} \begin{aligned}
+      HV &= \frac{\pi ^ {d / 2}}{\Gamma(d / 2 + 1)}\\
+      \visible<2>{%
+        &= \int\cdots\int \alert{r^{d-1}}\,
+           T(\varphi_{1},\dots,\varphi_{d-1})\,
+           dr d\varphi_{1}\cdots d\varphi_{d-1}
+      }
+  \end{aligned} \end{equation*}
+\end{frame}
+
+% -------------------------
+\framepicv[0.8]{images/surface_density}{}
+
+% -------------------------
+\begin{frame}{Fact 3}
+  Johnson-Lindenstrauss....
+\end{frame}
+
+% --------------------------------------------------
+\framecard[colorgreen]{{\color{white}\hugetext{%
+      \centering%
+      Lifting\\
+      the\\
+      Curse
+}}}
+
+% --------------------------------------------------
+\framecard[colorgreen]{{\color{white}\hugetext{%
+      \centering%
+      Activity!
+}}}
 
 \end{document}
