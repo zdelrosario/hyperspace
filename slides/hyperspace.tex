@@ -300,20 +300,73 @@
 
 % -------------------------
 \begin{frame}{The Data Matrix}
-
+  % Content
   \begin{table}
     \begin{tabular}{@{}l|l|l|l@{}}
                       & Variable $1$ & $\cdots$ & Variable $d$ \\
       \hline
-      Observation $1$ & $\vdots$     & $\vdots$ & $\vdots$ \\
+      Observation $1$ & $42$         & $\vdots$ & $0451$ \\
       $\vdots$        & $\vdots$     & $\vdots$ & $\vdots$
     \end{tabular}
   \end{table}
+  % Annotation
+  \only<2->{%
+    \begin{textblock}{7}(4.0,-4.0)
+      {\textblockcolor{}
+        Every \alert{column} is a \alert{variable}\\
+        \only<4->{Increasing dimensionality $\rhd$}
+      }
+    \end{textblock}
+  }
+  \only<3->{%
+    \begin{textblock}{7}(+0.5,+1.0)
+      {\textblockcolor{}
+        Every \alert{row} is an \alert{observation}\\
+        \only<4->{Increasing observations $\bigtriangledown$}
+      }
+    \end{textblock}
+  }
+  \only<5>{%
+    \begin{textblock}{12}(-0.5,+0.0)
+      {\textblockcolor{}
+        \LARGE Both contribute to `Big Data'
+      }
+    \end{textblock}
+  }
 \end{frame}
 
 % -------------------------
-\begin{frame}{A Wider Shade of Big}
-  (Big data -- Dimensionality is one direction)
+\framecard[colorblue]{{\color{white}%
+
+``The trend today is towards more observations but even more so, \alert{to
+      radically larger numbers of variables} – voracious, automatic, systematic
+    collection of hyper-informative detail about each observed instance.''
+
+    \bigskip
+    -- David Donoho, 2000
+
+}}
+
+% -------------------------
+\begin{frame}{How Big is our Data?}
+  \begin{itemize}
+  \item<1-> How many entries in a data matrix?\\
+    \visible<2->{\alert<2>{%
+      -- Observations $\times$ Dimensionality
+    }}
+
+    \bigskip
+  \item<3-> How many Observations needed for Dimensionality?\\
+    \visible<4->{\alert<4>{%
+      -- Exponential in Dimensionality\textsuperscript{*}
+    }}
+
+    \bigskip
+  \item<5-> How many hard drives will we need?!
+
+    \bigskip
+  \item<6> What's so special about high dimensionality?
+  \end{itemize}
 \end{frame}
 
 % --------------------------------------------------
@@ -400,7 +453,7 @@
 
 % -------------------------
 \begin{frame}{Fact 3}
-  Johnson-Lindenstrauss....
+  Johnson-Lindenstrauss Lemma....
 \end{frame}
 
 % --------------------------------------------------
