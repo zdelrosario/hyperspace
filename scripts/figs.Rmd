@@ -138,3 +138,108 @@ df_surf %>%
 
 mysave("surface_density")
 ```
+
+## Distance and Projection
+<!-- -------------------------------------------------- -->
+
+```{r proj_example}
+df_proj <-
+    tribble(
+        ~x, ~y, ~proj,
+        +1, +3, 0L,
+        +1, +0, 1L,
+        +2, +2, 2L,
+        -2, -2, 2L,
+        -1, -0, 1L,
+        -1, -3, 0L
+    )
+```
+
+```{r proj0}
+## Base plot
+df_proj %>%
+    filter(proj == 0) %>%
+    ggplot(aes(x, y)) +
+    geom_point(size = 4) +
+    geom_segment(
+        aes(xend = lag(x), yend = lag(y)),
+        size = 1.5
+    ) +
+    scale_x_continuous(
+        limits = c(-3, +3)
+    ) +
+    scale_y_continuous(
+        limits = c(-3, +3)
+    ) +
+    theme_common()
+
+mysave("proj0")
+```
+
+```{r proj1}
+## First projection
+df_proj %>%
+    filter(proj != 2) %>%
+    ggplot(aes(x, y)) +
+    geom_point(size = 4) +
+    geom_abline(slope = 0, intercept = 0, linetype = 2) +
+    geom_segment(
+        data = df_proj %>% filter(proj != 2, x > 0),
+        mapping = aes(xend = lag(x), yend = lag(y)),
+        linetype = 3
+    ) +
+    geom_segment(
+        data = df_proj %>% filter(proj != 2, x < 0),
+        mapping = aes(xend = lag(x), yend = lag(y)),
+        linetype = 3
+    ) +
+    geom_segment(
+        data = df_proj %>% filter(proj == 1),
+        mapping = aes(xend = lag(x), yend = lag(y)),
+        linetype = 1,
+        size = 1.5
+    ) +
+    scale_x_continuous(
+        limits = c(-3, +3)
+    ) +
+    scale_y_continuous(
+        limits = c(-3, +3)
+    ) +
+    theme_common()
+
+mysave("proj1")
+```
+
+```{r proj2}
+## First projection
+df_proj %>%
+    filter(proj != 1) %>%
+    ggplot(aes(x, y)) +
+    geom_point(size = 4) +
+    geom_abline(slope = 1, intercept = 0, linetype = 2) +
+    geom_segment(
+        data = df_proj %>% filter(proj != 1, x > 0),
+        mapping = aes(xend = lag(x), yend = lag(y)),
+        linetype = 3
+    ) +
+    geom_segment(
+        data = df_proj %>% filter(proj != 1, x < 0),
+        mapping = aes(xend = lag(x), yend = lag(y)),
+        linetype = 3
+    ) +
+    geom_segment(
+        data = df_proj %>% filter(proj == 2),
+        mapping = aes(xend = lag(x), yend = lag(y)),
+        linetype = 1,
+        size = 1.5
+    ) +
+    scale_x_continuous(
+        limits = c(-3, +3)
+    ) +
+    scale_y_continuous(
+        limits = c(-3, +3)
+    ) +
+    theme_common()
+
+mysave("proj2")
+```
