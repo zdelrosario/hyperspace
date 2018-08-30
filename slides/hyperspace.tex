@@ -4,6 +4,8 @@
 \usepackage{config/presento}
 % custom command and packages
 \input{config/custom-command}
+% My macros
+\input{zachs_macros}
 
 % Custom colors
 \usepackage{color}
@@ -34,13 +36,17 @@
 \maketitle
 \end{frame}
 
-% -------------------------
+% --------------------------------------------------
+%% SEC: My Background
+% --------------------------------------------------
 \framepicv[1.0]{images/olin_compressed}{} % Olin
 
 % -------------------------
 \framepicv[1.0]{images/seq}{} % Stanford Engineering Quad
 
-% -------------------------
+% --------------------------------------------------
+%% SEC: Planes -> Dimensionality
+% --------------------------------------------------
 \framepicv[1.0]{images/lax_shuttle-25p}{
  \begin{textblock}{7}(0.0,5.7)
     {\tiny By Aaron Barnaby aaronbarnaby}
@@ -248,127 +254,133 @@
   }
 }
 
-% -------------------------
+% --------------------------------------------------
+%% SEC: Outline
+% --------------------------------------------------
 \begin{frame}{Outline}
   \begin{itemize}
-  \item 1. \emph{Accursed} Data
-  \item 2. \emph{Accursed} Geometry
-  \item 3. Lifting the Curse...
-  \item 4. An Activity
+  %% \item 1. \emph{Accursed} Data
+  \item 1. \emph{Accursed} Geometry
+  \item 2. Lifting the Curse...
+  \item 3. An Activity
   \end{itemize}
 \end{frame}
 
 % --------------------------------------------------
-\framecard[colorgreen]{{\color{white}\hugetext{%
-      \centering%
-      Big Data\\
-      and\\
-      Dimensionality
-}}}
+%% SEC: Big Data
+% --------------------------------------------------
+%% \framecard[colorgreen]{{\color{white}\hugetext{%
+%%       \centering%
+%%       Big Data\\
+%%       and\\
+%%       Dimensionality
+%% }}}
 
-% -------------------------
-\begin{frame}{The Data Matrix}
-  We've already seen one of these!
+%% % -------------------------
+%% \begin{frame}{The Data Matrix}
+%%   We've already seen one of these!
 
-  \begin{table}
-    \begin{tabular}{l|r|r|r}
-      \hline
-      Str & Spar1 & Spar2 & Rib1\\
-      \hline
-      ? & 1 & 1 & 1\\
-      \hline
-      ? & 2 & 1 & 1\\
-      \hline
-      ? & 3 & 1 & 1\\
-      \hline
-      ? & 1 & 2 & 1\\
-      \hline
-      ? & 2 & 2 & 1\\
-      \hline
-      ? & 3 & 2 & 1\\
-      \hline
-      ? & 1 & 3 & 1\\
-      \hline
-      ? & 2 & 3 & 1\\
-      \hline
-      ? & 3 & 3 & 1\\
-      \hline
-      \vdots & \vdots & \vdots & \vdots
-    \end{tabular}
-  \end{table}
-\end{frame}
+%%   \begin{table}
+%%     \begin{tabular}{l|r|r|r}
+%%       \hline
+%%       Str & Spar1 & Spar2 & Rib1\\
+%%       \hline
+%%       ? & 1 & 1 & 1\\
+%%       \hline
+%%       ? & 2 & 1 & 1\\
+%%       \hline
+%%       ? & 3 & 1 & 1\\
+%%       \hline
+%%       ? & 1 & 2 & 1\\
+%%       \hline
+%%       ? & 2 & 2 & 1\\
+%%       \hline
+%%       ? & 3 & 2 & 1\\
+%%       \hline
+%%       ? & 1 & 3 & 1\\
+%%       \hline
+%%       ? & 2 & 3 & 1\\
+%%       \hline
+%%       ? & 3 & 3 & 1\\
+%%       \hline
+%%       \vdots & \vdots & \vdots & \vdots
+%%     \end{tabular}
+%%   \end{table}
+%% \end{frame}
 
-% -------------------------
-\begin{frame}{The Data Matrix}
-  % Content
-  \begin{table}
-    \begin{tabular}{@{}l|l|l|l@{}}
-                      & Variable $1$ & $\cdots$ & Variable $d$ \\
-      \hline
-      Observation $1$ & $42$         & $\vdots$ & $0451$ \\
-      $\vdots$        & $\vdots$     & $\vdots$ & $\vdots$
-    \end{tabular}
-  \end{table}
-  % Annotation
-  \only<2->{%
-    \begin{textblock}{7}(4.0,-4.0)
-      {\textblockcolor{}
-        Every \alert{column} is a \alert{variable}\\
-        \only<4->{Increasing dimensionality $\rhd$}
-      }
-    \end{textblock}
-  }
-  \only<3->{%
-    \begin{textblock}{7}(+0.5,+1.0)
-      {\textblockcolor{}
-        Every \alert{row} is an \alert{observation}\\
-        \only<4->{Increasing observations $\bigtriangledown$}
-      }
-    \end{textblock}
-  }
-  \only<5>{%
-    \begin{textblock}{12}(-0.5,+0.0)
-      {\textblockcolor{}
-        \LARGE Both contribute to `Big Data'
-      }
-    \end{textblock}
-  }
-\end{frame}
+%% % -------------------------
+%% \begin{frame}{The Data Matrix}
+%%   % Content
+%%   \begin{table}
+%%     \begin{tabular}{@{}l|l|l|l@{}}
+%%                       & Variable $1$ & $\cdots$ & Variable $d$ \\
+%%       \hline
+%%       Observation $1$ & $42$         & $\vdots$ & $0451$ \\
+%%       $\vdots$        & $\vdots$     & $\vdots$ & $\vdots$
+%%     \end{tabular}
+%%   \end{table}
+%%   % Annotation
+%%   \only<2->{%
+%%     \begin{textblock}{7}(4.0,-4.0)
+%%       {\textblockcolor{}
+%%         Every \alert{column} is a \alert{variable}\\
+%%         \only<4->{Increasing dimensionality $\rhd$}
+%%       }
+%%     \end{textblock}
+%%   }
+%%   \only<3->{%
+%%     \begin{textblock}{7}(+0.5,+1.0)
+%%       {\textblockcolor{}
+%%         Every \alert{row} is an \alert{observation}\\
+%%         \only<4->{Increasing observations $\bigtriangledown$}
+%%       }
+%%     \end{textblock}
+%%   }
+%%   \only<5>{%
+%%     \begin{textblock}{12}(-0.5,+0.0)
+%%       {\textblockcolor{}
+%%         \LARGE Both contribute to `Big Data'
+%%       }
+%%     \end{textblock}
+%%   }
+%% \end{frame}
 
-% -------------------------
-\framecard[colorblue]{{\color{white}%
+%% % -------------------------
+%% \framecard[colorblue]{{\color{white}%
 
-``The trend today is towards more observations but even more so, \alert{to
-      radically larger numbers of variables} – voracious, automatic, systematic
-    collection of hyper-informative detail about each observed instance.''
+%% ``The trend today is towards more observations but even more so, \alert{to
+%%       radically larger numbers of variables} – voracious, automatic, systematic
+%%     collection of hyper-informative detail about each observed instance.''
 
-    \bigskip
-    -- David Donoho, 2000
+%%     \bigskip
+%%     -- David Donoho, 2000
 
-}}
+%% }}
 
-% -------------------------
-\begin{frame}{How Big is our Data?}
-  \begin{itemize}
-  \item<1-> How many entries in a data matrix?\\
-    \visible<2->{\alert<2>{%
-      -- Observations $\times$ Dimensionality
-    }}
+%% % -------------------------
+%% \begin{frame}{How Big is our Data?}
+%%   \begin{itemize}
+%%   \item<1-> How many entries in a data matrix?\\
+%%     \visible<2->{\alert<2>{%
+%%       -- Observations $\times$ Dimensionality
+%%     }}
 
-    \bigskip
-  \item<3-> How many Observations needed for Dimensionality?\\
-    \visible<4->{\alert<4>{%
-      -- Exponential in Dimensionality\textsuperscript{*}
-    }}
+%%     \bigskip
+%%   \item<3-> How many Observations needed for Dimensionality?\\
+%%     \visible<4->{\alert<4>{%
+%%       -- Exponential in Dimensionality\textsuperscript{*}
+%%     }}
 
-    \bigskip
-  \item<5-> How many hard drives will we need?!
+%%     \bigskip
+%%   \item<5-> How many hard drives will we need?!
 
-    \bigskip
-  \item<6> What's so special about high dimensionality?
-  \end{itemize}
-\end{frame}
+%%     \bigskip
+%%   \item<6> What's so special about high dimensionality?
+%%   \end{itemize}
+%% \end{frame}
 
+% --------------------------------------------------
+%% SEC: High-dimensional geometry
 % --------------------------------------------------
 \framecard[colorgreen]{{\color{white}\hugetext{%
       \centering%
@@ -385,47 +397,77 @@
 \end{frame}
 
 % -------------------------
-\begin{frame}{Hypercube}
-  All points between intervals
+\begin{frame}{Sketching Solids}
+  Hyperspheres and Hypercubes
 \end{frame}
 
 % -------------------------
-\begin{frame}{Hypercube}
-  Distance from origin to boundary
-
-  \begin{tabular}{@{}ll@{}}
-    Min & $1/2$ \\
-    Max & $\sqrt{d/2}$
-  \end{tabular}
-\end{frame}
-
-% -------------------------
-\begin{frame}{Hypersphere}
-  All points within a fixed distance
-\end{frame}
-
-% -------------------------
-\begin{frame}{Hypersphere}
-  Distance from origin to boundary
-
-  \begin{tabular}{@{}ll@{}}
-    Min & $1$ \\
-    Max & $1$
-  \end{tabular}
+\begin{frame}[plain]
+  \begin{textblock}{7}(-0.5,-3.5)
+    {\textblockcolor{}
+      Hypercube on $[-\f12,+\f12]^d$\\
+      Hypersphere of radius $1$\\
+      Which is bigger for $d = 2$?
+    }
+  \end{textblock}
 \end{frame}
 
 % -------------------------
 \framepich[1.0]{images/box_in_sphere1}{
- \begin{textblock}{7}(0.0,5.7)
+  % Annotation
+  \begin{textblock}{2}(+0.5,+4.0)
+    {\textblockcolor{}
+      $d = 2$
+    }
+  \end{textblock}
+
+  % Footer
+  \begin{textblock}{7}(0.0,5.7)
     {\tiny By Venkatesan Guruswami}
- \end{textblock}
+  \end{textblock}
 }
+
+% -------------------------
 \framepich[1.0]{images/box_in_sphere2}{
+  % Annotation
+  \begin{textblock}{2}(+0.5,+4.0)
+    {\textblockcolor{}
+      $d = 2$
+    }
+  \end{textblock}
+
+  \begin{textblock}{2}(+4.7,+4.0)
+    {\textblockcolor{}
+      $d = 4$
+    }
+  \end{textblock}
+
  \begin{textblock}{7}(0.0,5.7)
     {\tiny By Venkatesan Guruswami}
  \end{textblock}
 }
+
+% -------------------------
 \framepich[1.0]{images/box_in_sphere3}{
+  % Annotation
+  \begin{textblock}{2}(+0.5,+4.0)
+    {\textblockcolor{}
+      $d = 2$
+    }
+  \end{textblock}
+
+  \begin{textblock}{2}(+4.7,+4.0)
+    {\textblockcolor{}
+      $d = 4$
+    }
+  \end{textblock}
+
+  \begin{textblock}{2}(+9.0,+4.0)
+    {\textblockcolor{}
+      $d \to \infty$
+    }
+  \end{textblock}
+
  \begin{textblock}{7}(0.0,5.7)
     {\tiny By Venkatesan Guruswami}
  \end{textblock}
@@ -456,6 +498,62 @@
   Johnson-Lindenstrauss Lemma....
 \end{frame}
 
+% -------------------------
+\begin{frame}{Fact:}
+  % Content
+  \only<-5>{%
+    \begin{equation*} \begin{aligned}
+        (1 - \alert<3>{\epsilon})\alert<2>{\text{Distance}} &\leq %
+          \alert<4,5>{\text{Projected Distance}} \\
+        &\, \\
+        \alert<4,5>{\text{Projected Distance}} &\leq %
+          (1 + \alert<3>{\epsilon})\alert<2>{\text{Distance}}\\
+    \end{aligned} \end{equation*}
+  }%
+  \only<6>{%
+    \begin{equation*}
+      (1 - \epsilon)\|\vu - \vv\| \leq \|P_{\alert{k}}(\vu) - P_{\alert{k}}(\vv)\| \leq %
+      (1 + \epsilon)\|\vu - \vv\|
+    \end{equation*}
+  }
+  % Annotation
+  \visible<2-5>{%
+    \begin{textblock}{3}(+1.5,-6.0)
+      {\textblockcolor{}
+        \centering%
+        \only<2>{\includegraphics[width=1.0\textwidth]{./images/proj0_alert}}
+        \only<3-5>{\includegraphics[width=1.0\textwidth]{./images/proj0}}
+      }
+    \end{textblock}
+  }
+  \visible<3-5>{%
+    \begin{textblock}{3}(+5.5,-4.0)
+      {\textblockcolor{}
+        \alert<3>{$\epsilon$ is \emph{small}}
+      }
+    \end{textblock}
+  }
+  \visible<4-5>{%
+    \begin{textblock}{3}(-0.5,+0.0)
+      {\textblockcolor{}
+        \centering%
+        \only<4>{\includegraphics[width=1.0\textwidth]{./images/proj1_alert}}
+        \only<5>{\includegraphics[width=1.0\textwidth]{./images/proj1}}
+      }
+    \end{textblock}
+  }
+  \visible<5-5>{%
+    \begin{textblock}{3}(+3.0,+0.0)
+      {\textblockcolor{}
+        \centering\includegraphics[width=1.0\textwidth]{./images/proj2_alert}
+      }
+    \end{textblock}
+  }
+
+\end{frame}
+
+% --------------------------------------------------
+%% SEC: Dimension Reduction
 % --------------------------------------------------
 \framecard[colorgreen]{{\color{white}\hugetext{%
       \centering%
@@ -464,6 +562,8 @@
       Curse
 }}}
 
+% --------------------------------------------------
+%% SEC: Activity
 % --------------------------------------------------
 \framecard[colorgreen]{{\color{white}\hugetext{%
       \centering%
