@@ -1,6 +1,6 @@
 filename=hyperspace
 
-pdf: links clean
+pdf: clean
 	xelatex ${filename}
 	xelatex ${filename}
 
@@ -15,5 +15,5 @@ clean:
 	rm -f .${filename}.tex.swp
 
 links:
-	ln -sf ~/Git/zachs_macros/zachs_macros.tex zachs_macros.tex
-	ln -sf ~/Git/zachs_macros/numdef.sty numdef.sty
+	cp -f ~/Git/zachs_macros/zachs_macros.tex zachs_macros.tex
+	cp -f ~/Git/zachs_macros/numdef.sty numdef.sty
