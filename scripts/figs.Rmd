@@ -9,6 +9,7 @@ output:
 
 ```{r setup, message=FALSE, warning=FALSE}
 library(tidyverse)
+library(gg3D)
 
 ## Script parameters ---------------------------------------------------
 ext <- ".eps"
@@ -51,6 +52,16 @@ theme_common <- function() {
     panel.grid.major = element_line(color = "grey90"),
     panel.grid.minor = element_line(color = "grey90")
   )
+}
+## Column-named inner product
+named_inner <- function(weights, df_given) {
+    ## Return a matrix formed from the appropriate columns
+    M <-
+        df_given %>%
+        select(names(weights)) %>%
+        as.matrix()
+    ## Carry out inner product
+    c(M %*% weights)
 }
 ```
 
@@ -372,4 +383,123 @@ df_proj %>%
     )
 
 mysave("proj2_alert")
+```
+
+## Dimension of Projection
+<!-- -------------------------------------------------- -->
+
+```{r dim_proj_data}
+set.seed(101)
+n_data <- 25L
+
+## Projection directions
+weights1 <- c(
+    "x" = 1 / sqrt(3),
+    "y" = 1 / sqrt(3),
+    "z" = 1 / sqrt(3)
+)
+weights2 <- c(
+    "x" = 1,
+    "y" = 0,
+    "z" = 0
+)
+
+## Original data
+df_dim_nat <-
+    tibble(
+        x = rnorm(n = n_data),
+        y = rnorm(n = n_data),
+        z = rnorm(n = n_data),
+        proj = 3L
+    )
+
+## Project
+xi1 <- named_inner(weights1, df_dim_nat)
+xi2 <- named_inner(weights2, df_dim_nat)
+
+## Augment
+df_proj1 <-
+    map_dfr(xi1, ~ tibble(
+                    x = weights1["x"] * .,
+                    y = weights1["y"] * .,
+                    z = weights1["z"] * .,
+                    proj = 1
+                ))
+df_proj2 <-
+    map2_dfr(xi1, xi2, ~ tibble(
+                    x = weights1["x"] * .x + weights2["x"] * .y,
+                    y = weights1["y"] * .x + weights2["y"] * .y,
+                    z = weights1["z"] * .x + weights2["z"] * .y,
+                    proj = 2
+                ))
+
+df_dim_data <-
+    bind_rows(
+        df_dim_nat,
+        df_proj1,
+        df_proj2
+    )
+
+dim_col <-
+    c(
+        "3" = "black",
+        "2" = "red",
+        "1" = "blue"
+    )
+```
+
+```{r dim_proj1}
+df_dim_data %>%
+    filter(proj == 3) %>%
+    ggplot(aes(x = x, y = y, z = z, color = as.character(proj))) +
+    axes_3D(color = "black") +
+    stat_3D() +
+    scale_color_manual(values = dim_col) +
+    theme_void() +
+    theme(
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 16)
+    ) +
+    guides(
+        color = guide_legend(title = "K")
+    )
+
+mysave("dim_proj3")
+```
+
+```{r dim_proj2}
+df_dim_data %>%
+    filter(proj >= 2) %>%
+    ggplot(aes(x = x, y = y, z = z, color = as.character(proj))) +
+    axes_3D() +
+    stat_3D() +
+    scale_color_manual(values = dim_col) +
+    theme_void() +
+    theme(
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 16)
+    ) +
+    guides(
+        color = guide_legend(title = "K")
+    )
+
+mysave("dim_proj2")
+```
+
+```{r dim_proj1}
+df_dim_data %>%
+    ggplot(aes(x = x, y = y, z = z, color = as.character(proj))) +
+    axes_3D() +
+    stat_3D() +
+    scale_color_manual(values = dim_col) +
+    theme_void() +
+    theme(
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 16)
+    ) +
+    guides(
+        color = guide_legend(title = "K")
+    )
+
+mysave("dim_proj1")
 ```
