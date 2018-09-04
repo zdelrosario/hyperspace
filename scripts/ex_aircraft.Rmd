@@ -355,7 +355,7 @@ mysave("faa_min_scatter")
 
 Let's demonstrate how a log transform straightens things out.
 
-```{r min_scatter}
+```{r min_scatter_log}
 df_faa %>%
     select(wingspan, length, mtow, approach_speed) %>%
     mutate_all(log10) %>%
@@ -371,6 +371,9 @@ df_min_pca <-
     filter(
         !is.na(wingspan),
         !is.na(length),
+        !is.na(tail_height),
+        !is.na(cmg),
+        !is.na(mgw),
         !is.na(mtow),
         !is.na(approach_speed),
     ) %>%
@@ -384,4 +387,5 @@ df_min_pca %>%
 ```{r min_pca_plot}
 df_min_pca %>%
     do_pca_plot(num_engines)
+mysave("faa_min_pca_plot")
 ```

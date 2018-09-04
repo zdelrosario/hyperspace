@@ -533,7 +533,7 @@ alsoletter={.,_}
   $P_k:\R{d}\to\R{k}$ such that, for all $u,v\in V$, we have
 
     \begin{equation*}
-      \alert<2>{(1 - \epsilon)\|\vu - \vv\|^2 \leq \|P_k(\vu) - P_k(\vv)\|^2 \leq %
+      \alert<2>{(1 - \epsilon)\|\vu - \vv\|^2 \leq \alpha\|P_k(\vu) - P_k(\vv)\|^2 \leq %
       (1 + \epsilon)\|\vu - \vv\|^2
 }    \end{equation*}
 \end{frame}
@@ -545,9 +545,9 @@ alsoletter={.,_}
   \only<-5>{%
     \begin{equation*} \begin{aligned}
         (1 - \alert<3>{\epsilon})(\alert<2>{\text{Distance}})^2 &\leq %
-          (\alert<4,5>{\text{Projected Distance}})^2 \\
+          \alpha(\alert<4,5>{\text{Projected Distance}})^2 \\
         &\, \\
-        (\alert<4,5>{\text{Projected Distance}})^2 &\leq %
+        \alpha(\alert<4,5>{\text{Projected Distance}})^2 &\leq %
           (1 + \alert<3>{\epsilon})(\alert<2>{\text{Distance}})^2\\
     \end{aligned} \end{equation*}
   }%
@@ -591,7 +591,8 @@ alsoletter={.,_}
 \begin{frame}[t]{}
   % Content
   \begin{equation*}
-    (1 - \epsilon)\|\vu - \vv\|^2 \leq \|P_{\alert{k}}(\vu) - P_{\alert{k}}(\vv)\|^2 \leq %
+    (1 - \epsilon)\|\vu - \vv\|^2 \leq %
+    \alert{\alpha}\|P_{\alert{k}}(\vu) - P_{\alert{k}}(\vv)\|^2 \leq %
     (1 + \epsilon)\|\vu - \vv\|^2
   \end{equation*}
   % Annotation
@@ -725,9 +726,9 @@ quantile(relative_difference)
     \hline
     wingspan    & Wingspan [ft] \\
     length      & Length [ft] \\
-    tail\_height & Tail height [ft] \\
-    cmg         & Cockpit-to-main gear [ft] \\
-    mgw         & Main gear width [ft] \\
+    %% tail\_height & Tail height [ft] \\
+    %% cmg         & Cockpit-to-main gear [ft] \\
+    %% mgw         & Main gear width [ft] \\
     mtow        & Maximum take-off weight [lbs] \\
     approach\_speed & Approach speed [kts]
   \end{tabular}
@@ -769,10 +770,10 @@ quantile(relative_difference)
 \end{frame}
 
 % -------------------------
-\begin{frame}{Methods}
+\begin{frame}{Finding Low-Dimensional Structure}
   \begin{itemize}
-  \item Random projections -- JL
-  \item Important directions -- PCA
+  \item Johnson-Lindenstrauss -- Random!
+  \item Important directions -- Data-informed
   \end{itemize}
 \end{frame}
 
@@ -786,30 +787,39 @@ quantile(relative_difference)
 \framepicv[1.0]{images/pca2}{}
 \framepicv[1.0]{images/pca3}{
   \visible<2>{
-    \begin{textblock}{7}(4.5,5.0)
+    \begin{textblock}{7}(4.8,4.0)
       {\textblockcolor{}
-        Direction \alert{from data}
+        Direction \alert{from data} \\
+        Called \emph{principal component analysis}
       }
     \end{textblock}
   }
 }
 
 % -------------------------
-\begin{frame}[fragile]{Ex: PCA}
+\begin{frame}[fragile]{Applied to FAA Data}
   \begin{lstlisting}
-df_min_pca <-
-    df_faa %>%
-    tidy_pca(wingspan, length, mtow, approach_speed)
-
-df_min_pca %>%
+df_faa_pca <- df_faa %>%
+    tidy_pca(
+        wingspan, length,
+        mtow, approach_speed
+    )
+df_faa_pca %>%
     pull(pc_frac)
-> | k |  Var  | Frac |
-> |--:|------:|-----:|
-> | 1 | 1.85  |  62% |
-> | 2 | 0.68  |  85% |
-> | 3 | 0.29  |  95% |
-> | 4 | 0.15  | 100% |
+> | k |  Var |  Frac |
+> --------------------
+> | 1 | 1.87 | 0.64% |
+> | 2 | 0.66 | 0.86% |
+> | 3 | 0.25 | 0.95% |
+> | 4 | 0.15 | 1.00% |
   \end{lstlisting}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Applied to FAA Data}
+  \begin{figure}
+    \centering\includegraphics[width=0.7\textwidth]{./images/faa_min_pca_plot}
+  \end{figure}
 \end{frame}
 
 % --------------------------------------------------
