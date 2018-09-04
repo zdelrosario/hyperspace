@@ -10,7 +10,7 @@ Setup
 -----
 
 <!-- -------------------------------------------------- -->
-The following is a look at the UCI machine learning repository [https://archive.ics.uci.edu/ml/datasets/gene+expression+cancer+RNA-Seq](gene%20expression) database. These data have dimensionality on the order of `20,000`. We will apply randomized dimension reduction -- informed by the Johnson-Lindenstrauss lemma -- to make subsequent analysis more tractable.
+The following is a look at the UCI machine learning repository [gene expression](https://archive.ics.uci.edu/ml/datasets/gene+expression+cancer+RNA-Seq) database. These data have dimensionality on the order of `20,000`. We will apply randomized dimension reduction -- informed by the Johnson-Lindenstrauss lemma -- to make subsequent analysis more tractable.
 
 First we need to read and wrangle the data. Let's standardize every variable before further analysis -- off-center data will play poorly with projection, and high-value data could lead to overflow.
 
@@ -58,15 +58,23 @@ First, let's carry out a Johnson-Lindenstrauss informed projection. A high-dimen
 ## Make reproducible
 set.seed(101)
 ## Calculate dimension
-C <- 8                             # Over-samping factor
+C <- 2                             # Over-samping factor
 n <- dim(mat_data)[1]              # Observations
 d <- dim(mat_data)[2]              # Dimensionality
 
 k <- C * ceiling(log(n) / eps ^ 2) # J-L dimension
+k
+```
+
+    ## [1] 1338
+
+Now we construct the projector; as Ailon and Chazelle (2009) note, we can do so by drawing matrix entries from `N(0,1/d)`.
+
+``` r
 ## Random `projection`
 P <-
-    map_dfc(1:k, function(a) {x = rnorm(d); x / norm(x, type = "2")}) %>%
-    as.matrix(.)
+    rnorm(d * k, sd = 1 / d) %>%
+    matrix(nrow = d, ncol = k)
 ## Project the data
 mat_proj <-
     mat_data %*% P
@@ -105,10 +113,17 @@ D_sub_proj <-
 ## Compute quantiles of discrepancy
 R_diff <- (D_sub_proj - D_sub_orig) / D_sub_orig
 qt <- quantile(R_diff)
-qt
+## qt
+sprintf(
+    "%5.3f%% %5.3f%% %5.3f%% %5.3f%% %5.3f%%",
+    qt[1] * 100,
+    qt[2] * 100,
+    qt[3] * 100,
+    qt[4] * 100,
+    qt[5] * 100
+)
 ```
 
-    ##            0%           25%           50%           75%          100% 
-    ## -4.137900e-02 -6.577605e-03 -1.702939e-05  6.694303e-03  4.333542e-02
+    ## [1] "-7.784% -1.193% 0.082% 1.344% 8.139%"
 
-Our tolerance was 0.1, and the extremes of the distance discrepancy were -0.041379 and 0.0433354. In this case, we found the projection in one shot; in practice, we might have to re-draw until an acceptable projection is found. J-L guarantees we can do this in polynomial time.
+Our tolerance was 0.1, and the extremes of the distance discrepancy were -0.0778446 and 0.0813864. In this case, we found the projection in one shot; in practice, we might have to re-draw until an acceptable projection is found. J-L guarantees we can do this in polynomial time.

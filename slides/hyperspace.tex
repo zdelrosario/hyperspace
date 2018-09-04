@@ -11,6 +11,15 @@
 \usepackage{color}
 \definecolor{ao}{rgb}{0.0, 0.5, 0.0}
 
+% Configure listings for R
+\usepackage{listings}
+
+\lstset{frame=tb,
+language=R,
+keywordstyle=\color{blue},
+otherkeywords={!,!=,~,$,*,\&,\%/\%,\%*\%,\%\%,<-,<<-,\%>\%},
+alsoletter={.,_}
+}
 
 % Information
 \title{LOST IN HYPERSPACE}
@@ -19,6 +28,11 @@
 \institute{zdr@stanford.edu}
 \date{September 6th}
 %% \date{\today}
+
+% For latex 2018
+\makeatletter
+\let\@@magyar@captionfix\relax
+\makeatother
 
 % --------------------------------------------------
 \begin{document}
@@ -43,6 +57,12 @@
 
 % -------------------------
 \framepicv[1.0]{images/seq}{} % Stanford Engineering Quad
+
+% -------------------------
+\framecard[colorgreen]{{\color{white}\hugetext{%
+      \centering%
+      ICME
+}}}
 
 % --------------------------------------------------
 %% SEC: Planes -> Dimensionality
@@ -259,125 +279,127 @@
 % --------------------------------------------------
 \begin{frame}{Outline}
   \begin{itemize}
-  %% \item 1. \emph{Accursed} Data
-  \item 1. \emph{Accursed} Geometry
-  \item 2. Lifting the Curse...
-  \item 3. An Activity
+  \item 1. \emph{Accursed} Data
+  \item 2. \emph{Accursed} Geometry
+  \item 3. Lifting the Curse...
+  \item 4. An Activity
   \end{itemize}
 \end{frame}
 
 % --------------------------------------------------
 %% SEC: Big Data
 % --------------------------------------------------
-%% \framecard[colorgreen]{{\color{white}\hugetext{%
-%%       \centering%
-%%       Big Data\\
-%%       and\\
-%%       Dimensionality
-%% }}}
+\framecard[colorgreen]{{\color{white}\hugetext{%
+      \centering%
+      Big Data\\
+      and\\
+      Dimensionality
+}}}
 
-%% % -------------------------
-%% \begin{frame}{The Data Matrix}
-%%   We've already seen one of these!
+% -------------------------
+\begin{frame}{The Data Matrix}
+  We've already seen one of these!
 
-%%   \begin{table}
-%%     \begin{tabular}{l|r|r|r}
-%%       \hline
-%%       Str & Spar1 & Spar2 & Rib1\\
-%%       \hline
-%%       ? & 1 & 1 & 1\\
-%%       \hline
-%%       ? & 2 & 1 & 1\\
-%%       \hline
-%%       ? & 3 & 1 & 1\\
-%%       \hline
-%%       ? & 1 & 2 & 1\\
-%%       \hline
-%%       ? & 2 & 2 & 1\\
-%%       \hline
-%%       ? & 3 & 2 & 1\\
-%%       \hline
-%%       ? & 1 & 3 & 1\\
-%%       \hline
-%%       ? & 2 & 3 & 1\\
-%%       \hline
-%%       ? & 3 & 3 & 1\\
-%%       \hline
-%%       \vdots & \vdots & \vdots & \vdots
-%%     \end{tabular}
-%%   \end{table}
-%% \end{frame}
+  \begin{table}
+    \begin{tabular}{l|r|r|r}
+      \hline
+      Str & Spar1 & Spar2 & Rib1\\
+      \hline
+      ? & 1 & 1 & 1\\
+      \hline
+      ? & 2 & 1 & 1\\
+      \hline
+      ? & 3 & 1 & 1\\
+      \hline
+      ? & 1 & 2 & 1\\
+      \hline
+      ? & 2 & 2 & 1\\
+      \hline
+      ? & 3 & 2 & 1\\
+      \hline
+      ? & 1 & 3 & 1\\
+      \hline
+      ? & 2 & 3 & 1\\
+      \hline
+      ? & 3 & 3 & 1\\
+      \hline
+      \vdots & \vdots & \vdots & \vdots
+    \end{tabular}
+  \end{table}
+\end{frame}
 
-%% % -------------------------
-%% \begin{frame}{The Data Matrix}
-%%   % Content
-%%   \begin{table}
-%%     \begin{tabular}{@{}l|l|l|l@{}}
-%%                       & Variable $1$ & $\cdots$ & Variable $d$ \\
-%%       \hline
-%%       Observation $1$ & $42$         & $\vdots$ & $0451$ \\
-%%       $\vdots$        & $\vdots$     & $\vdots$ & $\vdots$
-%%     \end{tabular}
-%%   \end{table}
-%%   % Annotation
-%%   \only<2->{%
-%%     \begin{textblock}{7}(4.0,-4.0)
-%%       {\textblockcolor{}
-%%         Every \alert{column} is a \alert{variable}\\
-%%         \only<4->{Increasing dimensionality $\rhd$}
-%%       }
-%%     \end{textblock}
-%%   }
-%%   \only<3->{%
-%%     \begin{textblock}{7}(+0.5,+1.0)
-%%       {\textblockcolor{}
-%%         Every \alert{row} is an \alert{observation}\\
-%%         \only<4->{Increasing observations $\bigtriangledown$}
-%%       }
-%%     \end{textblock}
-%%   }
-%%   \only<5>{%
-%%     \begin{textblock}{12}(-0.5,+0.0)
-%%       {\textblockcolor{}
-%%         \LARGE Both contribute to `Big Data'
-%%       }
-%%     \end{textblock}
-%%   }
-%% \end{frame}
+% -------------------------
+\begin{frame}{The Data Matrix}
+  % Content
+  \begin{table}
+    \begin{tabular}{@{}l|l|l|l@{}}
+                      & Variable $1$ & $\cdots$ & Variable $d$ \\
+      \hline
+      Observation $1$ & $42$         & $\vdots$ & $0451$ \\
+      $\vdots$        & $\vdots$     & $\vdots$ & $\vdots$
+    \end{tabular}
+  \end{table}
+  % Annotation
+  \only<2->{%
+    \begin{textblock}{7}(4.0,-4.0)
+      {\textblockcolor{}
+        Every \alert{column} is a \alert{variable}\\
+        \only<4->{Increasing dimensionality $\rhd$}
+      }
+    \end{textblock}
+  }
+  \only<3->{%
+    \begin{textblock}{7}(+0.5,+1.0)
+      {\textblockcolor{}
+        Every \alert{row} is an \alert{observation}\\
+        \only<4->{Increasing observations $\bigtriangledown$}
+      }
+    \end{textblock}
+  }
+  \only<5>{%
+    \begin{textblock}{12}(-0.5,+0.0)
+      {\textblockcolor{}
+        \LARGE Both contribute to `Big Data'
+      }
+    \end{textblock}
+  }
+\end{frame}
 
-%% % -------------------------
-%% \framecard[colorblue]{{\color{white}%
+% -------------------------
+\framecard[colorblue]{{\color{white}%
 
-%% ``The trend today is towards more observations but even more so, \alert{to
-%%       radically larger numbers of variables} – voracious, automatic, systematic
-%%     collection of hyper-informative detail about each observed instance.''
+``The trend today is towards more observations \emph{but even more so},
+    \alert{to radically larger numbers of variables} – voracious, automatic,
+    systematic collection of hyper-informative detail about each observed
+    instance.''
 
-%%     \bigskip
-%%     -- David Donoho, 2000
+    \bigskip
+    -- David Donoho, 2000\\
+    \tiny (Emphasis added)
 
-%% }}
+}}
 
-%% % -------------------------
-%% \begin{frame}{How Big is our Data?}
-%%   \begin{itemize}
-%%   \item<1-> How many entries in a data matrix?\\
-%%     \visible<2->{\alert<2>{%
-%%       -- Observations $\times$ Dimensionality
-%%     }}
+% -------------------------
+\begin{frame}{How Big is our Data?}
+  \begin{itemize}
+  \item<1-> How many entries in a data matrix?\\
+    \visible<2->{\alert<2>{%
+      -- Observations $\times$ Dimensionality
+    }}
 
-%%     \bigskip
-%%   \item<3-> How many Observations needed for Dimensionality?\\
-%%     \visible<4->{\alert<4>{%
-%%       -- Exponential in Dimensionality\textsuperscript{*}
-%%     }}
+    \bigskip
+  \item<3-> How many Observations needed for Dimensionality?\\
+    \visible<4->{\alert<4>{%
+      -- Exponential in Dimensionality\textsuperscript{*}
+    }}
 
-%%     \bigskip
-%%   \item<5-> How many hard drives will we need?!
+    \bigskip
+  \item<5-> How many hard drives will we need?!
 
-%%     \bigskip
-%%   \item<6> What's so special about high dimensionality?
-%%   \end{itemize}
-%% \end{frame}
+    \bigskip
+  \item<6> What's so special about high dimensionality?
+  \end{itemize}
+\end{frame}
 
 % --------------------------------------------------
 %% SEC: High-dimensional geometry
@@ -516,6 +538,7 @@
 }    \end{equation*}
 \end{frame}
 
+% JL: Distance
 % -------------------------
 \begin{frame}{}
   % Content
@@ -530,7 +553,7 @@
   }%
   % Annotation
   \visible<2-5>{%
-    \begin{textblock}{3}(+1.5,-6.0)
+    \begin{textblock}{3}(+1.5,-5.7)
       {\textblockcolor{}
         \centering%
         \only<2>{\includegraphics[width=1.0\textwidth]{./images/proj0_alert}}
@@ -563,6 +586,7 @@
   }
 \end{frame}
 
+% JL: Projections
 % -------------------------
 \begin{frame}[t]{}
   % Content
@@ -582,6 +606,97 @@
     \end{textblock}
   }
 \end{frame}
+
+% JL: Dimensionality
+% -------------------------
+\begin{frame}{}
+  % Content
+  \begin{equation*}
+    \alert<2>{k} \geq C\frac{\log(\alert<3>{n})}{\alert<4>{\epsilon}^2}
+  \end{equation*}
+  % Annotation
+  \visible<2->{%
+    \begin{textblock}{4}(+0.0,-3.5)
+      {\textblockcolor{}
+        $k$ is the projection dimension
+      }
+    \end{textblock}
+  }
+  \visible<3->{%
+    \begin{textblock}{4}(+0.0,+2.0)
+      {\textblockcolor{}
+        $n$ is the number of observations
+      }
+    \end{textblock}
+  }
+  \visible<4->{%
+    \begin{textblock}{4}(+7.0,+2.0)
+      {\textblockcolor{}
+        $\epsilon$ is the desired error
+      }
+    \end{textblock}
+  }
+  \visible<5->{%
+    \begin{textblock}{4.5}(+7.0,-3.5)
+      {\textblockcolor{}
+        Dimensionality is\\
+        \emph{curiously absent!}
+      }
+    \end{textblock}
+  }
+\end{frame}
+
+% JL: Example
+% -------------------------
+\begin{frame}[fragile]{JL: Example}
+  \begin{lstlisting}
+## Gene data from UCI
+dim(gene_data)
+#       Obs,  Dim
+> [1]   801 20531
+  \end{lstlisting}
+
+  \bigskip
+  Note: This code on GitHub: https://github.com/zdelrosario/hyperspace
+\end{frame}
+
+% -------------------------
+\begin{frame}[fragile]{JL: Example}
+  \begin{lstlisting}
+C <- 2                 # Over-samping
+eps <- 0.1             # 10% distort
+n <- dim(gene_data)[1] # Observations
+d <- dim(gene_data)[2] # Dimension
+
+k <-  ceiling(C * log(n) / eps ^ 2)
+k
+> 1338
+  \end{lstlisting}
+\end{frame}
+
+% -------------------------
+\begin{frame}[fragile]{JL: Example}
+  \begin{lstlisting}
+## Randomly project
+P_k <- random_projection(k x d)
+projected_data = gene_data %*% P_k
+  \end{lstlisting}
+\end{frame}
+
+% -------------------------
+\begin{frame}[fragile]{JL: Example}
+  \begin{lstlisting}
+eps
+# Requested distortion
+>    10%
+quantile(relative_difference)
+# Quantile
+>      0%     25%    50%    75%   100%
+# Realized distortion
+> -7.784% -1.193% 0.082% 1.344% 8.139%
+  \end{lstlisting}
+\end{frame}
+
 % --------------------------------------------------
 %% SEC: Dimension Reduction
 % --------------------------------------------------
@@ -591,6 +706,24 @@
       the\\
       Curse
 }}}
+
+% -------------------------
+\begin{frame}{Dimension Reduction}
+  \huge\underline{Idea:} Find \emph{low-dimensional} structure in data
+\end{frame}
+
+% -------------------------
+\begin{frame}{Methods}
+  \begin{itemize}
+  \item Random projections -- JL
+  \item Important directions -- PCA
+  \end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Important Directions}
+  \huge\underline{Idea:} Find directions that capture variability
+\end{frame}
 
 % --------------------------------------------------
 %% SEC: Activity

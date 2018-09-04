@@ -11,11 +11,11 @@ urlcolor: blue
 ## Setup
 <!-- -------------------------------------------------- -->
 
-The following is a look at the UCI machine learning repository
-[https://archive.ics.uci.edu/ml/datasets/gene+expression+cancer+RNA-Seq](gene
-expression) database. These data have dimensionality on the order of `20,000`.
-We will apply randomized dimension reduction -- informed by the
-Johnson-Lindenstrauss lemma -- to make subsequent analysis more tractable.
+The following is a look at the UCI machine learning repository [gene
+expression](https://archive.ics.uci.edu/ml/datasets/gene+expression+cancer+RNA-Seq)
+database. These data have dimensionality on the order of `20,000`. We will apply
+randomized dimension reduction -- informed by the Johnson-Lindenstrauss lemma --
+to make subsequent analysis more tractable.
 
 ```{r setup, echo=FALSE}
 library(tidyverse)
@@ -110,15 +110,22 @@ multivariate gaussian of the appropriate size and normalize.
 ## Make reproducible
 set.seed(101)
 ## Calculate dimension
-C <- 8                             # Over-samping factor
+C <- 2                             # Over-samping factor
 n <- dim(mat_data)[1]              # Observations
 d <- dim(mat_data)[2]              # Dimensionality
 
 k <- C * ceiling(log(n) / eps ^ 2) # J-L dimension
+k
+```
+
+Now we construct the projector; as Ailon and Chazelle (2009) note, we can do
+so by drawing matrix entries from `N(0,1/d)`.
+
+```{r jl_proj}
 ## Random `projection`
 P <-
-    map_dfc(1:k, function(a) {x = rnorm(d); x / norm(x, type = "2")}) %>%
-    as.matrix(.)
+    rnorm(d * k, sd = 1 / d) %>%
+    matrix(nrow = d, ncol = k)
 ## Project the data
 mat_proj <-
     mat_data %*% P
@@ -157,7 +164,15 @@ D_sub_proj <-
 ## Compute quantiles of discrepancy
 R_diff <- (D_sub_proj - D_sub_orig) / D_sub_orig
 qt <- quantile(R_diff)
-qt
+## qt
+sprintf(
+    "%5.3f%% %5.3f%% %5.3f%% %5.3f%% %5.3f%%",
+    qt[1] * 100,
+    qt[2] * 100,
+    qt[3] * 100,
+    qt[4] * 100,
+    qt[5] * 100
+)
 ```
 
 Our tolerance was `r eps`, and the extremes of the distance discrepancy were `r qt[1]`
