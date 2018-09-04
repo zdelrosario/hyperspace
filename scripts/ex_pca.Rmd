@@ -3,8 +3,7 @@ title: "PCA Example"
 author: "Zach"
 date: 2018-08-10
 output:
-  pdf_document:
-    latex_engine: xelatex
+  html_document:
     toc: true
 ---
 
@@ -14,6 +13,9 @@ library(broom)
 library(knitr)
 library(ggrepel)
 ```
+
+## Real data example
+<!-- -------------------------------------------------- -->
 
 Following https://tbradley1013.github.io/2018/02/01/pca-in-a-tidy-verse-framework/
 

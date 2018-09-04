@@ -649,6 +649,9 @@ alsoletter={.,_}
 % JL: Example
 % -------------------------
 \begin{frame}[fragile]{JL: Example}
+Example: Gene expression levels for tumor types BRCA, KIRC, COAD, LUAD and PRAD.
+
+\bigskip
   \begin{lstlisting}
 ## Gene data from UCI
 dim(gene_data)
@@ -670,7 +673,7 @@ d <- dim(gene_data)[2] # Dimension
 
 k <-  ceiling(C * log(n) / eps ^ 2)
 k
-> 1338
+> 1338 (6.5% of 20531)
   \end{lstlisting}
 \end{frame}
 
@@ -713,6 +716,59 @@ quantile(relative_difference)
 \end{frame}
 
 % -------------------------
+\begin{frame}{Ex: Low-Dimensional Structure}
+  Example: FAA Aircraft characteristic database
+
+  \bigskip
+  \begin{tabular}{@{}ll@{}}
+    Variable & Description \\
+    \hline
+    wingspan    & Wingspan [ft] \\
+    length      & Length [ft] \\
+    tail\_height & Tail height [ft] \\
+    cmg         & Cockpit-to-main gear [ft] \\
+    mgw         & Main gear width [ft] \\
+    mtow        & Maximum take-off weight [lbs] \\
+    approach\_speed & Approach speed [kts]
+  \end{tabular}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Ex: Low-Dimensional Structure}
+  \begin{figure}
+    \centering\includegraphics[width=0.7\textwidth]{./images/faa_wingspan_v_length}
+  \end{figure}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Ex: Low-Dimensional Structure}
+  \begin{figure}
+    \centering\includegraphics[width=0.7\textwidth]{./images/faa_wingspan_v_mtow}
+  \end{figure}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Ex: Low-Dimensional Structure}
+  \begin{figure}
+    \centering\includegraphics[width=0.7\textwidth]{./images/faa_wingspan_v_approach_speed}
+  \end{figure}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Ex: Scatterplot Matrix}
+  \begin{figure}
+    \centering\includegraphics[width=0.7\textwidth]{./images/faa_min_scatter}
+  \end{figure}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Ex: Scatterplot Matrix, log}
+  \begin{figure}
+    \centering\includegraphics[width=0.7\textwidth]{./images/faa_min_scatter_log}
+  \end{figure}
+\end{frame}
+
+% -------------------------
 \begin{frame}{Methods}
   \begin{itemize}
   \item Random projections -- JL
@@ -723,6 +779,37 @@ quantile(relative_difference)
 % -------------------------
 \begin{frame}{Important Directions}
   \huge\underline{Idea:} Find directions that capture variability
+\end{frame}
+
+% -------------------------
+\framepicv[1.0]{images/pca1}{}
+\framepicv[1.0]{images/pca2}{}
+\framepicv[1.0]{images/pca3}{
+  \visible<2>{
+    \begin{textblock}{7}(4.5,5.0)
+      {\textblockcolor{}
+        Direction \alert{from data}
+      }
+    \end{textblock}
+  }
+}
+
+% -------------------------
+\begin{frame}[fragile]{Ex: PCA}
+  \begin{lstlisting}
+df_min_pca <-
+    df_faa %>%
+    tidy_pca(wingspan, length, mtow, approach_speed)
+
+df_min_pca %>%
+    pull(pc_frac)
+> | k |  Var  | Frac |
+> |--:|------:|-----:|
+> | 1 | 1.85  |  62% |
+> | 2 | 0.68  |  85% |
+> | 3 | 0.29  |  95% |
+> | 4 | 0.15  | 100% |
+  \end{lstlisting}
 \end{frame}
 
 % --------------------------------------------------

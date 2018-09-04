@@ -3,8 +3,7 @@ title: "Aircraft Characteristics"
 author: "ZDR"
 date: 2018-08-13
 output:
-  pdf_document:
-    latex_engine: xelatex
+  github_document:
     toc: true
 urlcolor: blue
 ---
@@ -20,8 +19,14 @@ library(readxl)
 library(GGally)
 library(ggrepel)
 
+## Script parameters ---------------------------------------------------
+ext <- ".eps"
+asp_ratio <- 4 / 4
+img_width <- 5
+img_height <- img_width * asp_ratio
+
 ## File location
-filename_faa <- "~/Documents/data/faa/FAA-Aircraft-Char-Database-v2-201801.xlsx"
+filename_faa <- "~/Sync/data/faa/FAA-Aircraft-Char-Database-v2-201801.xlsx"
 
 ## Helper functions
 normsum <- function(v) {
@@ -62,6 +67,35 @@ tidy_pca <- function(data, ..., doCenter = TRUE, doScale = TRUE) {
         ) %>%
         select(-data)
 }
+## Custom save function
+mysave <- function(name) {
+    ggsave(
+        filename = str_c("../slides/images/", name, ext),
+        height = img_height,
+        width = img_width,
+        units = "in"
+    )
+}
+## Common theme settings
+theme_common <- function() {
+  theme_minimal() %+replace%
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title.x = element_text(margin = margin(4, 4, 4, 4), size = 16),
+    axis.title.y = element_text(margin = margin(4, 4, 4, 4), size = 16, angle = 90),
+
+    aspect.ratio = 1 / 1,
+
+    plot.margin   = unit(c(t = +0, b = +0, r = +0, l = +0), "cm"),
+    panel.spacing = unit(c(t = +0, b = +0, r = +0, l = +0), "cm"),
+
+    legend.text = element_text(size = 10),
+
+    panel.grid.major = element_line(color = "grey90"),
+    panel.grid.minor = element_line(color = "grey90")
+  )
+}
 ```
 
 There are a number of comments at the top of this Excel FAA data; let's skip all
@@ -76,7 +110,8 @@ df_raw <-
 First, some basic facts.
 
 ```{r first_look}
-names(df_raw)
+names_orig <- names(df_raw)
+names_orig
 ```
 
 Looking at the Excel file, some of these ought to be numeric. Also, the variable
@@ -111,8 +146,19 @@ df_faa <-
     mutate(
         num_engines = as.integer(num_engines)
     )
+
+df_key <-
+    tibble(
+        var = names(df_faa),
+        description = names_orig
+    )
+
+df_key %>%
+    knitr::kable()
 ```
 
+## Full scatterplot matrix
+<!-- -------------------------------------------------- -->
 Let's focus on the numeric variables for now. A set of pair plots will give us a
 first impression if there's any structure in the data.
 
@@ -267,3 +313,75 @@ df_log %>%
 Here we see the power-law fit captures a large part of the trend; coloring the
 points by aircraft length suggests that other geometric variations (i.e. varying
 aspect ratio) account for part of the misfit.
+
+## Presentation helpers
+<!-- -------------------------------------------------- -->
+
+Art recommended presenting individual pair plots; this will be helpful for
+pedagogical purposes.
+
+```{r wingspan_v_length}
+df_faa %>%
+    ggplot(aes(length, wingspan)) +
+    geom_point() +
+    theme_common()
+mysave("faa_wingspan_v_length")
+```
+
+```{r wingspan_v_mtow}
+df_faa %>%
+    ggplot(aes(mtow, wingspan)) +
+    geom_point() +
+    theme_common()
+mysave("faa_wingspan_v_mtow")
+```
+
+```{r wingspan_v_approach_speed}
+df_faa %>%
+    ggplot(aes(approach_speed, wingspan)) +
+    geom_point() +
+    theme_common()
+mysave("faa_wingspan_v_approach_speed")
+```
+
+Now let's aggregate these into a scatterplot matrix.
+
+```{r min_scatter}
+df_faa %>%
+    select(wingspan, length, mtow, approach_speed) %>%
+    ggpairs()
+mysave("faa_min_scatter")
+```
+
+Let's demonstrate how a log transform straightens things out.
+
+```{r min_scatter}
+df_faa %>%
+    select(wingspan, length, mtow, approach_speed) %>%
+    mutate_all(log10) %>%
+    ggpairs()
+mysave("faa_min_scatter_log")
+```
+
+Finally, let's do an example PCA.
+
+```{r min_pca}
+df_min_pca <-
+    df_faa %>%
+    filter(
+        !is.na(wingspan),
+        !is.na(length),
+        !is.na(mtow),
+        !is.na(approach_speed),
+    ) %>%
+    tidy_pca(wingspan, length, mtow, approach_speed)
+
+df_min_pca %>%
+    pull(pc_frac) %>%
+    knitr::kable()
+```
+
+```{r min_pca_plot}
+df_min_pca %>%
+    do_pca_plot(num_engines)
+```

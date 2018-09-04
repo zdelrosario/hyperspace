@@ -1,6 +1,6 @@
 filename=hyperspace
 
-pdf: clean
+pdf: 
 	xelatex ${filename}
 	xelatex ${filename}
 
