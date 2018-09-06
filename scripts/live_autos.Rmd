@@ -1,0 +1,247 @@
+---
+title: "autos Live"
+author: "The Wellesley Math Department"
+date: 2018-09-06
+output:
+  github_document:
+  toc: true
+---
+  
+The following is a collaborative analysis of the [UCI](https://archive.ics.uci.edu/ml/datasets/automobile) `autos` 
+dataset -- you'll need to download it to run this Rmarkdown file. The data are automobile characteristics and
+(actuarial) risk assments for imported vehicles in 1985.
+
+Also see the `backup_autos.Rmd` for a 'pre-baked' look at the same data.
+
+```{r setup, echo=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidyPca)   # Provides tidy_pca()
+library(ggrepel)
+
+## Data filename 
+file_name <- "~/Sync/data/autos/imports-85.data" # Change to data location on your machine
+## Variable names from the UCI site
+var_names <- 
+  c(
+    "symboling",          # Actuarial risk adjustment: -3 Safest, +3 Riskiest
+    "normalized_losses",  # Average insurance loss, averaged over body_style     
+    "make",               # Manufacturer
+    "fuel_type",          # Gas or diesel 
+    "aspiration",         # Standard or turbo      
+    "num_of_doors",       #      
+    "body_style",         # hardtop, wagon, sedan, hatchback, convertible      
+    "drive_wheels",       # Front, rear, all      
+    "engine_location",    # Front, rear      
+    "wheel_base",         # Distance between front & rear wheels      
+    "length",             #      
+    "width",              #      
+    "height",             #      
+    "curb_weight",        # Weight w/o cargo      
+    "engine_type",        # Engine layout      
+    "num_of_cylinders",   #      
+    "engine_size",        # Total engine displacement      
+    "fuel_system",        # Fuel feed system      
+    "bore",               # Cylinder diameter      
+    "stroke",             # Cylinder displacement distance      
+    "compression_ratio",  # Swept volume compression ratio      
+    "horsepower",         # Engine power      
+    "peak_rpm",           # Peak rotations per minute (redline?)
+    "city_mpg",           # City fuel efficiency      
+    "highway_mpg",        # Highway fuel efficiency      
+    "price"               # MSRP, presumably
+  )
+
+## Helper functions
+## --------------------------------------------------
+## Do a two-PC plot, colored by an additional variable
+do_pca_plot <- function(df, col_var, components = TRUE, scale = 2.0) {
+    col_var <- enquo(col_var)
+
+    df_components <-
+        df %>%
+        pull(pca) %>%
+        .[[1]] %>%
+        .$rotation %>%
+       as_tibble(rownames = "val")
+
+    ## Start the plot
+    fig <-
+        df %>%
+        unnest(data_aug) %>%
+        rename_all(~ str_replace(., patter = "\\.fitted", replacement = "")) %>%
+        ggplot()
+
+    ## Optional color
+    if (rlang::quo_is_missing(col_var)) {
+        fig <-
+            fig +
+            geom_point(aes(PC1, PC2))
+
+    } else {
+        fig <-
+            fig +
+            geom_point(aes(PC1, PC2, color = as.factor(!! col_var)))
+
+    }
+
+    ## Optional component plot
+    if (components) {
+        fig <-
+            fig +
+            geom_segment(
+                data = df_components,
+                aes(x = 0, y = 0, xend = PC1 * scale, yend = PC2 * scale),
+                ## arrow = arrow(),
+                color = "red"
+            )+
+            geom_text_repel(
+                data = df_components,
+                aes(PC1 * scale, PC2 * scale, label = val),
+                color = "red",
+                box.padding = 1.0,
+                segment.size = 0.1
+            )
+    }
+
+    ## Finish and return the plot
+    fig +
+        theme(legend.position = "bottom") +
+        labs(
+            x = "Principal Component Score 1",
+            y = "Principal Component Score 2"
+        )
+}
+
+## Parse character -> integer
+parse_numchar <- function(x) {
+  case_when(
+        x == "two" ~ 2L,
+        x == "three" ~ 3L,
+        x == "four" ~ 4L,
+        x == "five" ~ 5L,
+        x == "six" ~ 6L,
+        x == "seven" ~ 7L,
+        x == "eight" ~ 8L,
+        x == "nine" ~ 9L,
+        x == "ten" ~ 10L,
+        x == "eleven" ~ 11L,
+        x == "twelve" ~ 12L,
+        TRUE ~ NA_integer_
+      )
+}
+```
+
+## Wrangling
+<!-- ------------------------------------------------- -->
+
+The data are essentially in CSV format, though we'll need to do some wrangling.
+
+```{r load_n_wrangle}
+df_raw <- 
+  read_csv(
+    file_name, 
+    col_names = var_names,
+    col_types = cols(
+      .default = col_number(),
+      symboling = col_integer(),
+      normalized_losses = col_integer(),
+      make = col_character(),
+      fuel_type = col_character(),
+      aspiration = col_character(),
+      num_of_doors = col_character(),     # Needs manual fix!
+      body_style = col_character(),
+      drive_wheels = col_character(),
+      engine_location = col_character(),
+      engine_type = col_character(),
+      num_of_cylinders = col_character(), # Also needs manual fix!
+      engine_size = col_integer(),
+      fuel_system = col_character()
+    )
+  )
+```
+
+The string-coded numbers are obnoxious; let's map those to integers.
+
+```{r}
+df_raw %>% pull(num_of_doors) %>% unique()
+df_raw %>% pull(num_of_cylinders) %>% unique()
+```
+
+
+```{r}
+df_autos <- 
+  df_raw %>% 
+  mutate(
+    num_of_doors = parse_numchar(num_of_doors),
+    num_of_cylinders = parse_numchar(num_of_cylinders)
+  )
+```
+
+
+## Analysis
+<!-- ------------------------------------------------- -->
+
+```{r}
+df_autos %>% 
+  glimpse()
+```
+
+## Questions
+<!-- ------------------------------------------------- -->
+
+__q1__ What is the relationship between the geometric variables `length`, `width`, `height`, and `wheel_base`?
+
+```{r}
+pca_geo <- 
+  df_autos %>% 
+  tidy_pca(length, width, height, wheel_base)
+
+pca_geo %>% 
+  pull(pc_frac)
+```
+
+At two dimensions, we capture ~`79`% of the variability in the data -- this is usable low-dimensional structure.
+
+```{r}
+pca_geo %>%
+  do_pca_plot(col_var = body_style)
+```
+
+Interpreting the PCA directions, we see that `height`, `wheel_base`, `length`, and `width` are all positively
+related with the first direction -- this first direction seems to correspond to vehicle size.
+
+The second direction is positively related with `height`, and negatively related with `width` -- this is a sort
+of aspect ratio.
+
+Plotting body type on the PCA scores, we see that sedans tend to be scattered along the 1st direction,
+will little variation on the second. It seems these sedans come in different sizes, but do not vary
+much in shape (aspect ratio).
+
+__q2__ What is the relationship between the engine variables `engine_size`, `bore`, `stroke`, `compression_ratio`, and `num_of_cylinders`?
+
+We suspect all of these variables are positively correlated, as the all pertain to the size of the engine. We can start by analying
+a subset of them
+
+```{r}
+pca_engine <- 
+  df_autos %>% 
+  filter_at(vars(engine_size, bore, stroke), all_vars(!is.na(.))) %>% 
+  tidy_pca(engine_size, bore, stroke)
+
+pca_engine %>% 
+  pull(pc_frac)
+```
+
+We can capture most of the variability with two out of three dimensions.
+
+```{r}
+pca_engine %>% 
+  do_pca_plot()
+```
+
+It's a bit inconvenient, but the engine size is negatively correlated with the first PCA direction -- the first direction depends primarily
+on engine size and bore. The second direction depends primarily on stroke.
+
+__q3__ What about dimensionality made these questions hard?
+
+__q4__ What else is going on in these data?
