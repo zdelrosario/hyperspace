@@ -1,0 +1,88 @@
+---
+title: "Hypersphere Equator Concentration"
+author: "Zach"
+date: 2018-09-27
+output:
+  github_document:
+    toc: true
+    toc_depth: 6
+---
+
+The purpose of this document is to demonstrate some odd phenomena about
+hyperspheres via Monte Carlo simulation.
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(latex2exp)
+
+### Parameters --------------------------------------------------
+N <- 10000L
+d_seq <- c(3, 5, 10, 25, 50, 100)
+d_max <- max(d_seq)
+
+## Filenames
+file.out <- "../images/equator.eps"
+```
+
+## Equator Concentration
+<!-- -------------------------------------------------- -->
+
+Generate data.
+
+```{r gen_data}
+set.seed(101)
+
+z_samples <-
+  rnorm(N * d_max) %>%
+  matrix(., nrow = N, ncol = d_max)
+
+u_samples <-
+  runif(N)
+
+triangle_components <- function(id, dimension) {
+  z_components <-
+    z_samples[id, 1:dimension]
+  hypotenuse <- norm(z_components, type = "2")
+  b_components <-
+    z_components / hypotenuse * (u_samples[id]) ^ (1 / dimension)
+
+  tibble(
+    dim    = dimension,
+    height = norm(b_components[1], type = "2"),
+    base   = norm(b_components[2:dimension], type = "2"),
+    angle  = atan(height / base)
+  )
+}
+
+## triangle_components(id = 1, dimension = 50)
+
+triangle_ensemble <- function(dimension) {
+  map_dfr(
+    seq(1:N),
+    ~ triangle_components(id = ., dimension = dimension)
+  )
+}
+
+## triangle_ensemble(3)
+
+df_all <-
+  map_dfr(d_seq, triangle_ensemble)
+```
+
+Plot the data
+
+```{r plot_data}
+df_all %>%
+  ggplot(aes(angle, group = dim, color = factor(dim))) +
+  geom_freqpoly(bins = 40) +
+  scale_color_discrete(name = "Dimension") +
+  labs(
+    x = "Angle from equator",
+    y = "Count"
+  )
+
+ggsave(filename = file.out)
+```
+
+## Average pointwise distance
+<!-- -------------------------------------------------- -->
