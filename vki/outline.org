@@ -1,0 +1,51 @@
+* Introduction
+** Thought Experiment
+- Thought experiment -- cheap model runs in 1 second
+- Tensor product quadrature -> exponential scaling!
+** My goals
+- Motivate DR -- situate problem in UQ field
+- Explain a few concepts
+- Point to literature
+- Shameless self-promotion
+
+** UQ Tasks
+- Quantification ~ computing expectations
+- Expensive in high dimensions
+
+* Curse of Dimensionality
+- Coined by Bellman -- exhaustive optimization
+- Manifests across disciplines -- different attributes
+
+** High-dimensional geometry
+- Hypersphere is empty
+- Hypersphere equator (!)
+- Johnson-Lindenstrauss
+
+* Lifting the Curse
+** Approaches
+- Faster simulations -- algebraic
+- Smarter DOE -- algebraic?
+- J-L? -- dimension reduction; exponential
+  + J-L not connected to response
+
+** Dimension Reduction
+- /Sensitivity analysis/
+- /Active subspace/
+
+** Sensitivity Analysis
+- Subset reduction
+  + Morris screening
+  + Sobol' indices
+- Subspace reduction
+  + PCA-primer
+  + Active subspaces
+
+** Subset reduction
+- Morris screening -- quick and dirty, interpretation?
+- Sobol' indices -- more expensive, variance attribution
+  + interpretation: variable importance
+
+** Subspace reduction
+- PCA -> identify directions that capture variance
+- AS -> identify directions that capture function variability
+  + interpretation: dimensionless numbers!

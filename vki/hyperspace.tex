@@ -1,0 +1,193 @@
+\documentclass[14pt]{beamer}
+
+% Presento style file
+\usepackage{config/presento}
+% custom command and packages
+\input{config/custom-command}
+% My macros
+\input{zachs_macros}
+
+% Custom colors
+\usepackage{color}
+\definecolor{ao}{rgb}{0.0, 0.5, 0.0}
+
+% Configure listings for R
+\usepackage{listings}
+
+\lstset{frame=tb,
+language=R,
+keywordstyle=\color{blue},
+otherkeywords={!,!=,~,$,*,\&,\%/\%,\%*\%,\%\%,<-,<<-,\%>\%},
+alsoletter={.,_}
+}
+
+% For hierarchical lists
+\usepackage{outlines}
+
+% Information
+\title{LOST IN HYPERSPACE}
+\subtitle{\emph{The Curse of Dimensionality}}
+\author{Zachary del Rosario}
+\institute{zdr@stanford.edu}
+\date{September 6th}
+%% \date{\today}
+
+% For latex 2018
+\makeatletter
+\let\@@magyar@captionfix\relax
+\makeatother
+
+% --------------------------------------------------
+\begin{document}
+% --------------------------------------------------
+\begin{frame}[plain]
+\maketitle
+\end{frame}
+
+% --------------------------------------------------
+%% SEC: Introduction
+% --------------------------------------------------
+\begin{frame}[t]{Thought Experiment: Parameter Study}
+  Simulation time: one second \\
+  Full factorial: $d$ input variables, $10$ points per dimension \\
+
+  \bigskip
+  \only<2>{%
+    Scaling is \emph{exponential}, i.e.
+    \begin{equation*}
+      \text{Time} = (10\text{ seconds})^d
+    \end{equation*}
+  }
+\end{frame}
+
+% -------------------------
+\begin{frame}{Computational Time}
+  \visible<2>{The Curse of Dimensionality}
+  \begin{table}
+    \begin{tabular}{r|r|l}
+    \hline
+    Dimension & Time (s) & Comparison\\
+    \hline
+    1 & 1.0e+01 & Ten seconds\\
+    \hline
+    5 & 8.6e+04 & One Day\\
+    \hline
+    10 & 1.0e+10 & Eleven generations\\
+    \hline
+    18 & 4.3e+17 & Age of Universe\\
+    \hline
+    20 & 1.0e+20 & 230 x AoU\\
+    \hline
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+% -------------------------
+\begin{frame}{UQ Tasks}
+  High-dimensional integrals
+  \begin{itemize}
+  \item Moments $\E[\mX^n]$
+  \item Probabilities $\E[\i1(\mX>x)]$
+  \end{itemize}
+
+  \bigskip Quadrature via full factorial (tensor grid) is exponential \\
+  We need to address the Curse
+\end{frame}
+
+% -------------------------
+\begin{frame}{Goals}
+  \begin{itemize}
+  \item Motivate
+  \item Details and pointers (*)
+  \item Shameless self-promotion
+  \end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Outline}
+  \begin{outline}
+  \1 UQ Tasks (Done)
+  \1 Curse of Dimensionality
+    \2 High-dimensional geometry
+  \1 Lifting the Curse
+    \2 Dimension reduction
+  \end{outline}
+\end{frame}
+
+% --------------------------------------------------
+%% SEC: Curse of Dimensionality
+% --------------------------------------------------
+\begin{frame}{Background}
+  \begin{outline}
+  \1 ``Curse of Dimensionality'' -- Richard Bellman (1961) \\
+  \1 \emph{Vague} term
+    \2 Integration
+    \2 Sampling
+    \2 Machine Learning
+    \2 Distance
+    \2 Big data
+  \end{outline}
+\end{frame}
+
+% -------------------------
+\framecard[colorblue]{{\color{white}%
+
+``The trend today is towards more observations \emph{but even more so},
+    \alert{to radically larger numbers of variables} – voracious, automatic,
+    systematic collection of hyper-informative detail about each observed
+    instance.''
+
+    \bigskip
+    -- David Donoho, 2000\\
+    \tiny (Emphasis added)
+
+}}
+
+% -------------------------
+\begin{frame}{My Point}
+  Curse of Dimensionality is \emph{everywhere} \\
+  Lots of \emph{very different} perspectives
+
+  \bigskip
+  So what's up with high dimensions?
+\end{frame}
+
+% -------------------------
+\framecard[colorgreen]{{\color{white}\hugetext{%
+      \centering%
+      Weird Facts\\
+      about\\
+      High-\\
+      Dimensional\\
+      Geometry
+}}}
+
+% -------------------------
+\begin{frame}{Fact 1}
+  The hypersphere has vanishing interior
+\end{frame}
+
+% -------------------------
+\begin{frame}{Unit Hypersphere Volume}
+  \begin{equation*} \begin{aligned}
+      HV &= \int\cdots\int \alert{r^{d-1}}\,
+           T(\varphi_{1},\dots,\varphi_{d-1})\,
+           dr d\varphi_{1}\cdots d\varphi_{d-1}
+  \end{aligned} \end{equation*}
+\end{frame}
+
+% -------------------------
+\framepicv[0.8]{../images/surface_density}{}
+
+% -------------------------
+\begin{frame}{Fact 2}
+  The hypersphere concentrates at \emph{the} equator
+\end{frame}
+
+% -------------------------
+\framepicv[1.0]{../images/great_circle}{
+ \begin{textblock}{7}(0.0,5.7)
+    {\tiny By P.wormer}
+ \end{textblock}
+}
+\end{document}
