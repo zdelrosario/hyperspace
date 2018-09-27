@@ -204,7 +204,216 @@ alsoletter={.,_}
 
 % -------------------------
 \begin{frame}{Fact 3}
+  Johnson-Lindenstrauss Lemma:
 
+  \bigskip \emph{Random projections} preserve \\
+  \emph{pairwise distances}
 \end{frame}
+
+% JL: Example
+% -------------------------
+\begin{frame}[fragile]{JL: Example}
+Example: Gene expression levels for some tumor types
+
+\bigskip
+  \begin{lstlisting}
+## Gene data from UCI
+dim(gene_data)
+#       Obs,  Dim
+> [1]   801 20531
+  \end{lstlisting}
+
+  \bigskip
+  Note: This code on GitHub: https://github.com/zdelrosario/hyperspace
+\end{frame}
+
+% -------------------------
+\begin{frame}[fragile]{JL: Example}
+  \begin{lstlisting}
+eps <- 0.1             # 10% distort
+n <- dim(gene_data)[1] # Observations
+d <- dim(gene_data)[2] # Dimension
+
+k <-  2 * ceiling(C * log(n) / eps ^ 2)
+k
+> 1338 (6.5% of 20531)
+  \end{lstlisting}
+\end{frame}
+
+% -------------------------
+\begin{frame}[fragile]{JL: Example}
+  \begin{lstlisting}
+## Randomly project
+P_k <- random_projection(k x d)
+projected_data = gene_data %*% P_k
+  \end{lstlisting}
+\end{frame}
+
+% -------------------------
+\begin{frame}[fragile]{JL: Example}
+  \begin{lstlisting}
+eps
+# Requested distortion
+>    10%
+quantile(relative_difference)
+# Quantile
+>      0%     25%    50%    75%   100%
+# Realized distortion
+> -7.784% -1.193% 0.082% 1.344% 8.139%
+  \end{lstlisting}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Why Does This Work?}
+  \underline{Claim}: For any $0<\epsilon<1$ and $n\in\mathbb{Z}_{>0}$, let
+  $k\in\mathbb{Z}_{>0}$ such that
+
+  \begin{equation*}
+    k \geq C \frac{\log(n)}{\epsilon^2},
+  \end{equation*}
+
+  \noindent then for all sets of points $V\subset\R{d}$, there is a projection
+  $P_k:\R{d}\to\R{k}$ such that, for all $u,v\in V$, we have
+
+    \begin{equation*}
+      \alert<2>{(1 - \epsilon)\|\vu - \vv\|^2 \leq \alpha\|P_k(\vu) - P_k(\vv)\|^2 \leq %
+      (1 + \epsilon)\|\vu - \vv\|^2
+}    \end{equation*}
+\end{frame}
+
+% JL: Distance
+% -------------------------
+\begin{frame}{}
+  % Content
+  \only<-5>{%
+    \begin{equation*} \begin{aligned}
+        (1 - \alert<3>{\epsilon})(\alert<2>{\text{Distance}})^2 &\leq %
+          \alpha(\alert<4,5>{\text{Projected Distance}})^2 \\
+        &\, \\
+        \alpha(\alert<4,5>{\text{Projected Distance}})^2 &\leq %
+          (1 + \alert<3>{\epsilon})(\alert<2>{\text{Distance}})^2\\
+    \end{aligned} \end{equation*}
+  }%
+  % Annotation
+  \visible<2-5>{%
+    \begin{textblock}{3}(+1.5,-5.7)
+      {\textblockcolor{}
+        \centering%
+        \only<2>{\includegraphics[width=1.0\textwidth]{../images/proj0_alert}}
+        \only<3-5>{\includegraphics[width=1.0\textwidth]{../images/proj0}}
+      }
+    \end{textblock}
+  }
+  \visible<3-5>{%
+    \begin{textblock}{3}(+5.5,-4.0)
+      {\textblockcolor{}
+        \alert<3>{$\epsilon$ is \emph{small}}
+      }
+    \end{textblock}
+  }
+  \visible<4-5>{%
+    \begin{textblock}{3}(-0.5,+0.0)
+      {\textblockcolor{}
+        \centering%
+        \only<4>{\includegraphics[width=1.0\textwidth]{../images/proj1_alert}}
+        \only<5>{\includegraphics[width=1.0\textwidth]{../images/proj1}}
+      }
+    \end{textblock}
+  }
+  \visible<5-5>{%
+    \begin{textblock}{3}(+3.0,+0.0)
+      {\textblockcolor{}
+        \centering\includegraphics[width=1.0\textwidth]{../images/proj2_alert}
+      }
+    \end{textblock}
+  }
+\end{frame}
+
+% JL: Projections
+% -------------------------
+\begin{frame}[t]{}
+  % Content
+  \begin{equation*}
+    (1 - \epsilon)\|\vu - \vv\|^2 \leq %
+    \alert{\alpha}\|P_{\alert{k}}(\vu) - P_{\alert{k}}(\vv)\|^2 \leq %
+    (1 + \epsilon)\|\vu - \vv\|^2
+  \end{equation*}
+  % Annotation
+  \visible<2->{%
+    \begin{textblock}{6}(+2.5,-0.5)
+      {\textblockcolor{}
+        \centering%
+        \only<2>{\includegraphics[width=1.0\textwidth]{../images/dim_proj3}}
+        \only<3>{\includegraphics[width=1.0\textwidth]{../images/dim_proj2}}
+        \only<4>{\includegraphics[width=1.0\textwidth]{../images/dim_proj1}}
+      }
+    \end{textblock}
+  }
+\end{frame}
+
+% JL: Dimensionality
+% -------------------------
+\begin{frame}{}
+  % Content
+  \begin{equation*}
+    \alert<2>{k} \geq C\frac{\log(\alert<3>{n})}{\alert<4>{\epsilon}^2}
+  \end{equation*}
+  % Annotation
+  \visible<2->{%
+    \begin{textblock}{4}(+0.0,-3.5)
+      {\textblockcolor{}
+        $k$ is the projection dimension
+      }
+    \end{textblock}
+  }
+  \visible<3->{%
+    \begin{textblock}{4}(+0.0,+2.0)
+      {\textblockcolor{}
+        $n$ is the number of observations
+      }
+    \end{textblock}
+  }
+  \visible<4->{%
+    \begin{textblock}{4}(+7.0,+2.0)
+      {\textblockcolor{}
+        $\epsilon$ is the desired error
+      }
+    \end{textblock}
+  }
+  \visible<5->{%
+    \begin{textblock}{4.5}(+7.0,-3.5)
+      {\textblockcolor{}
+        Dimensionality is\\
+        \emph{curiously absent!}
+      }
+    \end{textblock}
+  }
+  \visible<6>{%
+    \begin{textblock}{4.5}(+3.5,-0.0)
+      {\textblockcolor{}
+        $k$ is \emph{intrinsic dimensionality}
+      }
+    \end{textblock}
+  }
+\end{frame}
+
+% --------------------------------------------------
+%% SEC: Dimension Reduction
+% --------------------------------------------------
+\framecard[colorgreen]{{\color{white}\hugetext{%
+      \centering%
+      Lifting\\
+      the\\
+      Curse: \\
+
+      \bigskip
+      \alert{Dimension Reduction}
+}}}
+
+% -------------------------
+\begin{frame}{Dimension Reduction}
+  Idea: Identify low-dimensional structure; reduce effective $d$
+\end{frame}
+
 
 \end{document}
