@@ -48,7 +48,8 @@ alsoletter={.,_}
 %% SEC: Introduction
 % --------------------------------------------------
 \begin{frame}[t]{Thought Experiment: Parameter Study}
-  Simulation time: one second \\
+  Input variables $\vx\in\R{d}$ \\
+  Scalar simulation output $f(\vx)$ \\
   Full factorial: $d$ input variables, $10$ points per dimension \\
 
   \bigskip
@@ -412,8 +413,68 @@ quantile(relative_difference)
 
 % -------------------------
 \begin{frame}{Dimension Reduction}
-  Idea: Identify low-dimensional structure; reduce effective $d$
+  Idea: Identify low-dimensional structure; reduce effective dimension \\
+  If $\text{Cost} = C^d$, then reduce $d$
 \end{frame}
 
+% -------------------------
+\begin{frame}{Dimension Reduction \alert{In UQ}}
+  \bigskip \textcolor{green}{J-L showed us \emph{linear} low-dimensional structure} \\
+  \textcolor{red}{J-L does not separate \emph{inputs} and \emph{response}}
+
+  \bigskip We've talked about $\vx$ \\
+  What about $f(\vx)$?
+\end{frame}
+
+% -------------------------
+\begin{frame}{Dimension Reduction: Methods}
+  \begin{outline}
+    \1 Subset reduction
+      \2 Morris screening
+      \2 Sobol' indices
+    \1 Subspace reduction
+      \2 PCA-primer
+      \2 Active subspaces
+  \end{outline}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Subset Reduction}
+  Suppose $\vx^{\top} = [\vx_A^{\top}, \vx_I^{\top}]$ \\
+  What if some variables were \emph{inactive}? E.g.
+
+  \begin{equation}
+    f(\vx_A, \vx_I) = f(\vx_A, \vx'_I),
+  \end{equation}
+
+  \noindent for $\vx_I \neq \vx'_I$. Can then \emph{ignore} $\vx_I$.
+\end{frame}
+
+% -------------------------
+\begin{frame}{Subset Reduction: Methods}
+  \begin{outline}
+    \1 Morris screening
+      \2 \textcolor{green}{Inexpensive}
+      \2 \textcolor{red}{Difficult to interpret}
+    \1 Sobol' indices
+      \2 \textcolor{green}{Clear interpretation}
+      \2 \textcolor{red}{Can be expensive}
+  \end{outline}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Sobol' Indices}
+  Idea: Attribute \emph{variance in output} $f$ to \emph{different inputs}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Subspace Reduction: Methods}
+  \begin{outline}
+    \1 Principal Component Analysis (PCA)
+      \2 Intuition
+    \1 Active subspaces
+      \2 Application
+  \end{outline}
+\end{frame}
 
 \end{document}

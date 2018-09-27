@@ -28,11 +28,7 @@
 - J-L? -- dimension reduction; exponential
   + J-L not connected to response
 
-** Dimension Reduction
-- /Sensitivity analysis/
-- /Active subspace/
-
-** Sensitivity Analysis
+** Dimension Reduction Methods
 - Subset reduction
   + Morris screening
   + Sobol' indices
