@@ -1,0 +1,214 @@
+---
+title: "Dimension Reduction Examples"
+author: "ZDR"
+date: 2018-09-28
+output:
+  github_document:
+    toc: true
+urlcolor: blue
+---
+
+Examples of dimension reduction techniques applied to pipe flow problem.
+
+## Setup
+<!-- -------------------------------------------------- -->
+
+```{r setup, echo=FALSE}
+library(tidyverse)
+library(piMat)
+
+## Script parameters
+file_as_data0 <- "./as_data0.csv"
+file_as_data1 <- "./as_data1.csv"
+file_as_data2 <- "./as_data2.csv"
+
+file_sobol_data2 <- "./sobol_data2.csv"
+
+sel_idx <- 2
+
+## Metadata
+df_dim <-
+  tribble(
+    ##    rho,   U,   d,  mu, epsilon
+    ~dim, ~Q1, ~Q2, ~Q3, ~Q4, ~Q5,
+     "M",   1,   0,   0,   1,   0,
+     "L",  -3,   1,   1,  -1,   1,
+     "T",   0,  -1,   0,  -1,   0
+  )
+
+df_ref_basis <-
+  tribble(
+    ~out_name, ~Re, ~R,
+         "Q1",   1,  0,
+         "Q2",   1,  0,
+         "Q3",   1, -1,
+         "Q4",  -1,  0,
+         "Q5",   0,  1
+  )
+
+## Common theme settings
+theme_common <- function() {
+  theme_minimal() %+replace%
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title.x = element_text(margin = margin(4, 4, 4, 4), size = 16),
+    axis.title.y = element_text(margin = margin(4, 4, 4, 4), size = 16, angle = 90),
+
+    aspect.ratio = 1 / 1,
+
+    plot.margin   = unit(c(t = +0, b = +0, r = +0, l = +0), "cm"),
+    panel.spacing = unit(c(t = +0, b = +0, r = +0, l = +0), "cm"),
+
+    legend.text = element_text(size = 10),
+
+    panel.grid.major = element_line(color = "grey90"),
+    panel.grid.minor = element_line(color = "grey90")
+  )
+}
+```
+
+Load the data.
+
+```{r load}
+df_sobol_data <-
+  read_csv(file_sobol_data2) %>%
+  select(-X1)
+
+df_as_data <-
+  bind_rows(
+    read_csv(file_as_data0) %>%
+      select(-X1),
+    read_csv(file_as_data1) %>%
+      select(-X1),
+    read_csv(file_as_data2) %>%
+      select(-X1)
+  )
+```
+
+## Sobol' indices
+<!-- -------------------------------------------------- -->
+
+Let's inspect the pre-computed Sobol' indices for the pipe flow problem.
+
+```{r sobol}
+df_sobol_data %>%
+  filter(min_rank(-N) == 1) %>%
+  select(-N) %>%
+  mutate_all(~ round(., digits = 2) * 100) %>%
+  knitr::kable(format = "latex")
+```
+
+These results indicate that the fifth input (roughness lengthscale) contributes
+`95%` of the variance to the output (friction factor). In practice, we could fix
+the first through fourth variables, and lose roughly `6%` of the variance in the
+output. Depending on our application, this could be a negligible loss -- and a
+huge win in terms of dimension reduction.
+
+## Vanilla active subspaces
+<!-- -------------------------------------------------- -->
+
+Estimate the active subspace.
+
+```{r as_nat}
+grad_mat_nat <-
+  df_as_data %>%
+  filter(bnd_idx == sel_idx) %>%
+  select(G1:G5) %>%
+  as.matrix()
+as_mat_nat <-
+  t(grad_mat_nat) %*% grad_mat_nat
+as_svd_nat <-
+  svd(as_mat_nat)
+
+weights_leading_nat <-
+  as_svd_nat$u[ , 1]
+names(weights_leading_nat) <- str_c("Q", seq(1,5))
+```
+
+Assess the (relative) eigenvalue gaps.
+
+```{r as_nat_gap}
+-diff(as_svd_nat$d) / as_svd_nat$d[1]
+```
+
+The spectrum suggests a 1-dimensional active subspace. Let's plot a summary.
+
+```{r summary_nat}
+df_as_data %>%
+  filter(bnd_idx == sel_idx) %>%
+  mutate(xi = named_inner(weights_leading_nat, df_data)) %>%
+  ggplot(aes(xi, F)) +
+  geom_point() +
+  theme_common() +
+  labs(
+    x = "Active Variable 1",
+    y = "Response"
+  )
+```
+
+## Log-trick active subspaces
+<!-- -------------------------------------------------- -->
+
+Estimate the active subspace, but use dimensional analysis to inform this
+operation.
+
+```{r as_pi}
+grad_mat_pi <-
+  df_as_data %>%
+  filter(bnd_idx == sel_idx) %>%
+  mutate(
+    G1p = Q1 * G1,
+    G2p = Q2 * G2,
+    G3p = Q3 * G3,
+    G4p = Q4 * G4,
+    G5p = Q5 * G5
+  ) %>%
+  select(G1p:G5p) %>%
+  as.matrix()
+as_mat_pi <-
+  t(grad_mat_pi) %*% grad_mat_pi
+as_svd_pi <-
+  svd(as_mat_pi)
+
+weights_leading_pi <-
+  as_svd_pi$u[ , 1]
+names(weights_leading_pi) <- str_c("Q", seq(1,5))
+```
+
+Assess the (relative) eigenvalue gaps.
+
+```{r as_pi_gap}
+-diff(as_svd_pi$d) / as_svd_pi$d[1]
+```
+
+The spectrum suggests a 1-dimensional active subspace. Let's plot a summary.
+
+```{r summary_pi}
+df_as_data %>%
+  filter(bnd_idx == sel_idx) %>%
+  mutate(
+    xi = named_inner(
+      weights_leading_pi,
+      df_data %>%
+      mutate_at(vars(Q1:Q5), log)
+    )
+  ) %>%
+  ggplot(aes(xi, F)) +
+  geom_point() +
+  theme_common() +
+  labs(
+    x = "log(pi)",
+    y = "Response"
+  )
+```
+
+Re-express leading AS vector in terms of known dimensionless numbers.
+
+```{r re_express}
+df_given <-
+  bind_rows(weights_leading_pi) %>%
+  mutate(out_name = "pi1")
+
+convert_space(transpose(df_given), df_ref_basis)
+```

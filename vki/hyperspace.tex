@@ -96,7 +96,7 @@ alsoletter={.,_}
 \end{frame}
 
 % -------------------------
-\begin{frame}{Goals}
+\begin{frame}{Speaker Goals}
   \begin{itemize}
   \item Motivate
   \item Details and pointers (*)
@@ -237,6 +237,7 @@ d <- dim(gene_data)[2] # Dimension
 
 k <-  2 * ceiling(C * log(n) / eps ^ 2)
 k
+# Intrinsic dimensionality
 > 1338 (6.5% of 20531)
   \end{lstlisting}
 \end{frame}
@@ -246,7 +247,12 @@ k
   \begin{lstlisting}
 ## Randomly project
 P_k <- random_projection(k x d)
+## Project
 projected_data = gene_data %*% P_k
+## Match mean distances
+a <- mean_distance(gene_data) /
+  mean_distance(projected_data)
+projected_data = a * projected_data
   \end{lstlisting}
 \end{frame}
 
@@ -427,6 +433,11 @@ quantile(relative_difference)
 \end{frame}
 
 % -------------------------
+\begin{frame}{Running Example: Pipe Flow}
+
+\end{frame}
+
+% -------------------------
 \begin{frame}{Dimension Reduction: Methods}
   \begin{outline}
     \1 Subset reduction
@@ -465,6 +476,28 @@ quantile(relative_difference)
 % -------------------------
 \begin{frame}{Sobol' Indices}
   Idea: Attribute \emph{variance in output} $f$ to \emph{different inputs}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Sobol' Example}
+  \begin{table}
+    \centering
+    \begin{tabular}{r|r|r|r|r}
+    \hline
+    $\rho$ & $U$ & $d$ & $\mu$ & $\epsilon$\\
+    \hline
+    0\% & 0\% & 6\% & 0\% & 94\% \\
+    \hline
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+% -------------------------
+\begin{frame}{But wait...}
+  Sobol' indices based on \emph{variance}... \\
+  Variance is an \emph{expectation}... \\
+
+  \bigskip Sobol' is cursed by dimensionality!
 \end{frame}
 
 % -------------------------
