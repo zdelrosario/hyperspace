@@ -54,6 +54,14 @@ alsoletter={.,_}
 
   \bigskip
   \only<2>{%
+    \centering
+    \includegraphics[width=0.4\textwidth]{../images/points1}
+  }
+  \only<3>{%
+    \centering
+    \includegraphics[width=0.4\textwidth]{../images/points2}
+  }
+  \only<4>{%
     Scaling is \emph{exponential}, i.e.
     \begin{equation*}
       \text{Time} = (10\text{ seconds})^d
@@ -99,8 +107,8 @@ alsoletter={.,_}
 \begin{frame}{Speaker Goals}
   \begin{itemize}
   \item Motivate
-  \item Details and pointers (*)
-  \item Shameless self-promotion
+  \item Details and pointers
+  \item New stuff
   \end{itemize}
 \end{frame}
 
@@ -398,7 +406,7 @@ quantile(relative_difference)
   \visible<6>{%
     \begin{textblock}{4.5}(+3.5,-0.0)
       {\textblockcolor{}
-        $k$ is \emph{intrinsic dimensionality}
+        $k$ is an \emph{intrinsic dimensionality}
       }
     \end{textblock}
   }
@@ -433,8 +441,30 @@ quantile(relative_difference)
 \end{frame}
 
 % -------------------------
-\begin{frame}{Running Example: Pipe Flow}
+\begin{frame}{DR Taxonomy}
+  \begin{outline}
+  \1 Generic-space DR (J-L, PCA, etc.)
+    \2 No additional structure on $\R{d}$
+  \1 Output-space DR (ROMs, POD, etc.)
+    \2 $\R{d}$ is state space, often temporal structure
+  \1 \alert<2>{Input-space DR} (...)
+    \2 $\R{d}$ is input space, connected to response
+  \end{outline}
+\end{frame}
 
+% -------------------------
+\begin{frame}{Running Example: Pipe Flow}
+  \centering
+  \includegraphics[width=0.9\textwidth]{../images/pipe_diagram}
+
+  \visible<2>{%
+    \begin{textblock}{4.5}(+0.5,+0.5)
+      {\textblockcolor{}
+        qoi: (normalized) pressure loss
+        inputs: $\rho, u, d, \mu, \epsilon$
+      }
+    \end{textblock}
+  }
 \end{frame}
 
 % -------------------------
@@ -458,7 +488,7 @@ quantile(relative_difference)
     f(\vx_A, \vx_I) = f(\vx_A, \vx'_I),
   \end{equation}
 
-  \noindent for $\vx_I \neq \vx'_I$. Can then \emph{ignore} $\vx_I$.
+  \noindent for all $\vx_I \neq \vx'_I$. Can then \emph{ignore} $\vx_I$.
 \end{frame}
 
 % -------------------------
@@ -476,20 +506,36 @@ quantile(relative_difference)
 % -------------------------
 \begin{frame}{Sobol' Indices}
   Idea: Attribute \emph{variance in output} $f$ to \emph{different inputs}
+
+  \bigskip E.g.
+  \begin{table}
+    \centering
+    \begin{tabular}{@{}llllll@{}}
+     & $\rho$ & $U$ & $d$ & $\mu$ & $\epsilon$\\
+    \hline
+    Var & 0\% & 0\% & 6\% & 0\% & 94\% \\
+    \end{tabular}
+  \end{table}
+
+  How to \emph{attribute} variance?
 \end{frame}
 
 % -------------------------
-\begin{frame}{Sobol' Example}
-  \begin{table}
-    \centering
-    \begin{tabular}{r|r|r|r|r}
-    \hline
-    $\rho$ & $U$ & $d$ & $\mu$ & $\epsilon$\\
-    \hline
-    0\% & 0\% & 6\% & 0\% & 94\% \\
-    \hline
-    \end{tabular}
-  \end{table}
+\begin{frame}{Sobol' Formulation}
+  Variance decomposition
+  \begin{equation}
+    \V[Y^2] = \E[\V[Y|\mX_{\vu}]] + \V[\E[Y|\mX_{\vu}]]
+  \end{equation}
+
+  First-order index
+  \begin{equation}
+    \underline{\tau}_{\{i\}}^2 = \frac{\V[\E[Y|X_i]]}{\V[Y]}.
+  \end{equation}
+
+  Total-order index
+  \begin{equation}
+    \overline{\tau}_{\{i\}}^2 = \frac{\E[\V[Y|X_{-\{i\}}]]}{\V[Y]}
+  \end{equation}
 \end{frame}
 
 % -------------------------

@@ -28,6 +28,11 @@
 - J-L? -- dimension reduction; exponential
   + J-L not connected to response
 
+** Taxonomy
+- Generic-space DR (J-L, PCA, etc.)
+- Output-space DR (ROMs)
+- Input-space DR (...)
+
 ** Dimension Reduction Methods
 - Subset reduction
   + Morris screening
