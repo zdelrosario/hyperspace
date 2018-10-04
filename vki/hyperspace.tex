@@ -565,7 +565,7 @@ quantile(relative_difference)
 
   Example:
   \begin{equation*} \begin{aligned}
-    f(\vx) &= \sin(x_1) + 7\sin^2(x_2) + 0.1 x_3^4\sin(x_1) \\
+    f(\vx) &= \sin(x_1) + 7\sin^2(x_2) + 0.1 \alert<2->{x_3^4\sin(x_1)} \\
     x_1, x_2, x_3 &\sim U[-\pi, \pi], \\
     \alert<2>{\underline{\tau}_{\{3\}}^2} &= \alert<2>{0\%}, \\
     \alert<3>{\overline{\tau}_{\{3\}}^2} &= \alert<3>{24.4\%}
@@ -573,7 +573,9 @@ quantile(relative_difference)
 
   \visible<2->{Input 3 has no main effect}\\
   \visible<3>{\emph{But} input 3 has an interaction}\\
-  \tiny Ishigami \& Homma (1990)
+ \begin{textblock}{5}(0.0,0.0)
+    {\tiny Ishigami \& Homma (1990)}
+ \end{textblock}
 \end{frame}
 
 % -------------------------
@@ -581,7 +583,13 @@ quantile(relative_difference)
   Sobol' indices based on \emph{variance}... \\
   Variance is an \emph{expectation}... \\
 
-  \bigskip Sobol' is cursed by dimensionality!
+  \bigskip Sobol' is cursed by dimensionality! \\
+\end{frame}
+
+% -------------------------
+\begin{frame}{Intrinsic Dimensionality}
+  Idea: Find a method whose computational cost scales with \emph{intrinsic
+    dimensionality} $k$, \alert{not} dimensionality $d$....
 \end{frame}
 
 % -------------------------
@@ -592,6 +600,137 @@ quantile(relative_difference)
     \1 Active subspaces
       \2 Application
   \end{outline}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Principal Component Analysis}
+  \huge\underline{Idea:} Find directions that capture variability
+\end{frame}
+
+% -------------------------
+\framepicv[1.0]{../images/pca1}{}
+\framepicv[1.0]{../images/pca2}{}
+\framepicv[1.0]{../images/pca3}{
+  \visible<2>{
+    \begin{textblock}{7}(4.8,4.0)
+      {\textblockcolor{}
+        Direction \alert{from data} \\
+        Called \emph{principal component analysis}
+      }
+    \end{textblock}
+  }
+}
+
+% -------------------------
+\begin{frame}{PCA Formalism}
+  Given zero-mean data $\mX\in\R{n\times d}$
+
+  \begin{equation*}
+    \mX = \mU\m\Sigma\mV^{\top}
+  \end{equation*}
+
+  \noindent with ordered $\sigma_1\geq\dots\geq\sigma_r\geq0$ standard
+  deviations \\
+
+  Select $k \leq d$, project on first $k$ directions, gives new variables
+  $\mY\in\R{n\times k}$
+
+  \begin{equation*}
+    \mY = \mX\mV_k = \mU\m\Sigma_k
+  \end{equation*}
+
+  Often $k$ selected to capture a fraction of the variance
+\end{frame}
+
+% -------------------------
+\begin{frame}{PCA For Models}
+  PCA is for Generic-spaces \\
+  How to handle Input-spaces?
+
+  \bigskip Idea: Do a PCA on \emph{gradient data}
+\end{frame}
+
+% -------------------------
+\framepicv[1.0]{../images/as_contour0}{}
+\framepicv[1.0]{../images/as_contour1}{}
+
+% -------------------------
+\begin{frame}{Active Subspace}
+  \begin{equation*} \begin{aligned}
+      \mC &= \E[\nabla_{\vx}f\nabla_{\vx}f^{\top}] \\
+          &= \mU\m\Sigma\mV^{\top} \\
+          &\approx \frac{1}{n}\sum_{i=1}^n \nabla_{\vx}f_i\nabla_{\vx}f^{\top}_i
+  \end{aligned} \end{equation*}
+
+  \begin{textblock}{5}(0.0,2.0)
+    {\tiny Constantine (2015)}
+  \end{textblock}
+\end{frame}
+
+% -------------------------
+\begin{frame}{AS Selecting $k$}
+  Standard arguments bound subspace error based on \emph{eigenvalue gap} $\delta
+  = \sigma_{j+1} - \sigma_j$
+
+  \begin{equation*}
+    \|\sin(\m\Theta_0)\| \leq \frac{\|\mR\|}{\delta}
+  \end{equation*}
+
+  For the pipe flow example
+  \begin{table}
+    \centering
+    \begin{tabular}{@{}ll@{}}
+      \hline
+      Gap Fraction & Dimension\\
+      \hline
+      0.9892887 & 1\\
+      \hline
+      0.0053363 & 2\\
+      \hline
+      0.0000129 & 3\\
+      \hline
+      0.0000000 & 4\\
+      \hline
+    \end{tabular}
+  \end{table}
+
+  \begin{textblock}{5}(0.0,0.0)
+    {\tiny Davis \& Kahan (1970)}
+  \end{textblock}
+\end{frame}
+
+% -------------------------
+\begin{frame}{But Wait...}
+  The active subspace matrix $\mC$ is defined via expectation \\
+  It is cursed by dimensionality?
+\end{frame}
+
+% -------------------------
+\begin{frame}{AS Intrinsic Dimensionality}
+  \begin{equation*}
+    n \geq \frac{C}{\epsilon^2}\log\left(\frac{4}{p}\text{intdim}(\mC)\right)
+  \end{equation*}
+
+  where
+
+  \begin{table}
+    \centering
+    \begin{tabular}{@{}ll@{}}
+      $n$ & Required samples \\
+      $\epsilon$ & Desired error tolerance \\
+      $p$ & Probability of success
+    \end{tabular}
+  \end{table}
+
+  and
+
+  \begin{equation*}
+    \text{intdim}(\mC) = \frac{\text{trace}(\mC)}{\|\mC\|_2} \geq 1
+  \end{equation*}
+
+  \begin{textblock}{5}(0.0,0.0)
+    {\tiny Holodnak, Ipsen, and Smith (2018)}
+  \end{textblock}
 \end{frame}
 
 \end{document}

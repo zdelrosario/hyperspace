@@ -16,6 +16,7 @@ Examples of dimension reduction techniques applied to pipe flow problem.
 ```{r setup, echo=FALSE}
 library(tidyverse)
 library(piMat)
+library(ggrepel)
 
 ## Script parameters
 file_as_data0 <- "./as_data0.csv"
@@ -105,6 +106,79 @@ the first through fourth variables, and lose roughly `6%` of the variance in the
 output. Depending on our application, this could be a negligible loss -- and a
 huge win in terms of dimension reduction.
 
+## Active subspace cartoon
+<!-- -------------------------------------------------- -->
+
+Build up a cartoon depiction of the active subspace.
+
+```{r as_cartoon}
+## Contours along
+tibble(
+  x = c(0, 0),
+  y = c(0, 0),
+  xend = c(0.5,  0.5),
+  yend = c(0.5, -0.5),
+  dir = c("Active", "Inactive")
+) %>%
+  ggplot() +
+  geom_abline(slope = -1, intercept = 0) +
+  geom_abline(slope = -1, intercept = -1) +
+  geom_abline(slope = -1, intercept = -1.5) +
+  geom_abline(slope = -1, intercept = +1) +
+  geom_abline(slope = -1, intercept = +1.5) +
+  geom_point(aes(x = 0, y = 0), color = "white") +
+  coord_cartesian(xlim = c(-1, +1), ylim = c(-1, +1)) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_blank(),
+  ) +
+  labs(
+    x = "x1",
+    y = "x2"
+  )
+
+ggsave(filename = "../images/as_contour0.png")
+
+## Dodged labels
+tibble(
+  x = c(0, 0),
+  y = c(0, 0),
+  xend = c(0.5,  0.5),
+  yend = c(0.5, -0.5),
+  dir = c("Active", "Inactive")
+) %>%
+  ggplot() +
+  geom_abline(slope = -1, intercept = 0) +
+  geom_abline(slope = -1, intercept = -1) +
+  geom_abline(slope = -1, intercept = -1.5) +
+  geom_abline(slope = -1, intercept = +1) +
+  geom_abline(slope = -1, intercept = +1.5) +
+  geom_segment(
+    aes(x, y, xend = xend, yend = yend, color = dir),
+    arrow = arrow()
+  ) +
+  geom_text(aes(xend, yend, label = dir), nudge_x = 0.1, nudge_y = 0.1) +
+  coord_cartesian(xlim = c(-1, +1), ylim = c(-1, +1)) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_blank(),
+  ) +
+  labs(
+    x = "x1",
+    y = "x2"
+  )
+
+ggsave(filename = "../images/as_contour1.png")
+```
+
 ## Vanilla active subspaces
 <!-- -------------------------------------------------- -->
 
@@ -129,7 +203,12 @@ names(weights_leading_nat) <- str_c("Q", seq(1,5))
 Assess the (relative) eigenvalue gaps.
 
 ```{r as_nat_gap}
--diff(as_svd_nat$d) / as_svd_nat$d[1]
+(-diff(as_svd_nat$d) / sum(as_svd_nat$d)) %>%
+  tibble(
+    `Gap Fraction` = .,
+    `Dimension` = seq(1, 4)
+  ) %>%
+  knitr::kable(format = "latex")
 ```
 
 The spectrum suggests a 1-dimensional active subspace. Let's plot a summary.
@@ -137,7 +216,7 @@ The spectrum suggests a 1-dimensional active subspace. Let's plot a summary.
 ```{r summary_nat}
 df_as_data %>%
   filter(bnd_idx == sel_idx) %>%
-  mutate(xi = named_inner(weights_leading_nat, df_data)) %>%
+  mutate(xi = named_inner(weights_leading_nat, df_as_data)) %>%
   ggplot(aes(xi, F)) +
   geom_point() +
   theme_common() +
@@ -190,7 +269,7 @@ df_as_data %>%
   mutate(
     xi = named_inner(
       weights_leading_pi,
-      df_data %>%
+      df_as_data %>%
       mutate_at(vars(Q1:Q5), log)
     )
   ) %>%
