@@ -29,7 +29,7 @@ alsoletter={.,_}
 \subtitle{\emph{The Curse of Dimensionality}}
 \author{Zachary del Rosario}
 \institute{zdr@stanford.edu}
-\date{September 6th}
+\date{}
 %% \date{\today}
 
 % For latex 2018
@@ -75,33 +75,33 @@ alsoletter={.,_}
   \begin{table}
     \begin{tabular}{r|r|l}
     \hline
-    Dimension & Time (s) & Comparison\\
+    Dimension & Time (sec) & Comparison\\
     \hline
-    1 & 1.0e+01 & Ten seconds\\
+    1 & $10^{1}$ & Ten seconds\\
     \hline
-    5 & 8.6e+04 & One Day\\
+    5 & $10^{5}$ & One Day\\
     \hline
-    10 & 1.0e+10 & Eleven generations\\
+    10 & $10^{10}$ & Eleven generations\\
     \hline
-    18 & 4.3e+17 & Age of Universe\\
+    18 & $10^{18}$ & Age of Universe\\
     \hline
-    20 & 1.0e+20 & 230 x AoU\\
+    20 & $10^{20}$ & 230 x AoU\\
     \hline
     \end{tabular}
   \end{table}
 \end{frame}
 
 % -------------------------
-\begin{frame}{UQ Tasks}
-  High-dimensional integrals
-  \begin{itemize}
-  \item Moments $\E[\mX^n]$
-  \item Probabilities $\E[\i1(\mX<x)]$
-  \end{itemize}
+%% \begin{frame}{UQ Tasks}
+%%   High-dimensional integrals
+%%   \begin{itemize}
+%%   \item Moments $\E[\mX^n]$
+%%   \item Probabilities $\E[\i1(\mX<x)]$
+%%   \end{itemize}
 
-  \bigskip Quadrature via full factorial (tensor grid) is exponential \\
-  We need to address the Curse
-\end{frame}
+%%   \bigskip Quadrature via full factorial (tensor grid) is exponential \\
+%%   We need to address the Curse
+%% \end{frame}
 
 % -------------------------
 \begin{frame}{Speaker Goals}
@@ -133,6 +133,7 @@ alsoletter={.,_}
     \2 Integration
     \2 Sampling
     \2 Machine Learning
+    \2 Inference
     \2 Distance
     \2 Big data
   \end{outline}
@@ -149,7 +150,6 @@ alsoletter={.,_}
     \bigskip
     -- David Donoho, 2000\\
     \tiny (Emphasis added)
-
 }}
 
 % -------------------------
@@ -484,9 +484,9 @@ quantile(relative_difference)
   Suppose $\vx^{\top} = [\vx_A^{\top}, \vx_I^{\top}]$ \\
   What if some variables were \emph{inactive}? E.g.
 
-  \begin{equation}
+  \begin{equation*}
     f(\vx_A, \vx_I) = f(\vx_A, \vx'_I),
-  \end{equation}
+  \end{equation*}
 
   \noindent for all $\vx_I \neq \vx'_I$. Can then \emph{ignore} $\vx_I$.
 \end{frame}
@@ -517,25 +517,63 @@ quantile(relative_difference)
     \end{tabular}
   \end{table}
 
-  How to \emph{attribute} variance?
+  \visible<2>{\alert{How to \emph{attribute} variance?}}
 \end{frame}
 
 % -------------------------
 \begin{frame}{Sobol' Formulation}
   Variance decomposition
-  \begin{equation}
+  \begin{equation*}
     \V[Y^2] = \E[\V[Y|\mX_{\vu}]] + \V[\E[Y|\mX_{\vu}]]
-  \end{equation}
+  \end{equation*}
 
-  First-order index
-  \begin{equation}
-    \underline{\tau}_{\{i\}}^2 = \frac{\V[\E[Y|X_i]]}{\V[Y]}.
-  \end{equation}
+  Notation: \\
+  Ex. $\vu = \{\rho,u,d,\mu\}$ \\
+  $-\{\epsilon\} = \{\rho,u,d,\mu\}$
+\end{frame}
 
+% -------------------------
+\begin{frame}{First-order Index}
+   First-order index
+  \begin{equation*}
+    \underline{\tau}_{\{i\}}^2 = \frac{\alert<3>{\V[\alert<2>{\E[Y|X_i]}]}}{\V[Y]}.
+  \end{equation*}
+
+  % Annotation
+  \visible<2->{Average over \emph{all but} $X_i$\\}
+  \visible<3>{Variance due to $X_i$ \emph{alone}}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Total-order Index}
   Total-order index
-  \begin{equation}
-    \overline{\tau}_{\{i\}}^2 = \frac{\E[\V[Y|X_{-\{i\}}]]}{\V[Y]}
-  \end{equation}
+  \begin{equation*}
+    \overline{\tau}_{\{i\}}^2 = \frac{\alert<3>{\E[\alert<2>{\V[Y|X_{-\{i\}}]}]}}{\V[Y]}
+  \end{equation*}
+
+  % Annotation
+  \visible<2->{Variance due to \emph{only} $X_i$\\}
+  \visible<3>{\emph{Average variance} due to $X_i$ \emph{with interactions}}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Sobol' Elaboration}
+  \begin{equation*} \begin{aligned}
+      \text{First} &\leq \text{Total} \\
+      0 \leq \underline{\tau}_{\{i\}}^2 &\leq \overline{\tau}_{\{i\}}^2 \leq 1
+  \end{aligned} \end{equation*}
+
+  Example:
+  \begin{equation*} \begin{aligned}
+    f(\vx) &= \sin(x_1) + 7\sin^2(x_2) + 0.1 x_3^4\sin(x_1) \\
+    x_1, x_2, x_3 &\sim U[-\pi, \pi], \\
+    \alert<2>{\underline{\tau}_{\{3\}}^2} &= \alert<2>{0\%}, \\
+    \alert<3>{\overline{\tau}_{\{3\}}^2} &= \alert<3>{24.4\%}
+  \end{aligned} \end{equation*}
+
+  \visible<2->{Input 3 has no main effect}\\
+  \visible<3>{\emph{But} input 3 has an interaction}\\
+  \tiny Ishigami \& Homma (1990)
 \end{frame}
 
 % -------------------------
