@@ -4,6 +4,8 @@
 \usepackage{config/presento}
 % custom command and packages
 \input{config/custom-command}
+%
+\usepackage{booktabs} % \toprule, etc
 % My macros
 \input{zachs_macros}
 
@@ -19,6 +21,11 @@ language=R,
 keywordstyle=\color{blue},
 otherkeywords={!,!=,~,$,*,\&,\%/\%,\%*\%,\%\%,<-,<<-,\%>\%},
 alsoletter={.,_}
+}
+
+% Restore footnote functionality
+\renewcommand\footnoterule{%
+  \moveleft1cm\vbox{\textcolor{blue}{\rule{\paperwidth}{2pt}}\vskip 1mm}%
 }
 
 % For hierarchical lists
@@ -120,6 +127,7 @@ alsoletter={.,_}
     \2 High-dimensional geometry
   \1 Lifting the Curse
     \2 Dimension reduction
+    \2 Intrinsic dimensionality
   \end{outline}
 \end{frame}
 
@@ -445,9 +453,9 @@ quantile(relative_difference)
   \begin{outline}
   \1 Generic-space DR (J-L, PCA, etc.)
     \2 No additional structure on $\R{d}$
-  \1 Output-space DR (ROMs, POD, etc.)
+  \1 Output-space DR (ROMs, CS, etc.)
     \2 $\R{d}$ is state space, often temporal structure
-  \1 \alert<2>{Input-space DR} (...)
+  \1 \alert<2>{Input-space DR} (CS, ...)
     \2 $\R{d}$ is input space, connected to response
   \end{outline}
 \end{frame}
@@ -513,7 +521,7 @@ quantile(relative_difference)
     \begin{tabular}{@{}llllll@{}}
      & $\rho$ & $U$ & $d$ & $\mu$ & $\epsilon$\\
     \hline
-    Var & 0\% & 0\% & 6\% & 0\% & 94\% \\
+    $\V[f]$ & 0\% & 0\% & 6\% & 0\% & 94\% \\
     \end{tabular}
   \end{table}
 
@@ -524,7 +532,7 @@ quantile(relative_difference)
 \begin{frame}{Sobol' Formulation}
   Variance decomposition
   \begin{equation*}
-    \V[Y^2] = \E[\V[Y|\mX_{\vu}]] + \V[\E[Y|\mX_{\vu}]]
+    \V[Y] = \E[\V[Y|\mX_{\vu}]] + \V[\E[Y|\mX_{\vu}]]
   \end{equation*}
 
   Notation: \\
@@ -587,9 +595,16 @@ quantile(relative_difference)
 \end{frame}
 
 % -------------------------
+\begin{frame}{Using Sobol'}
+  Formulated for analytic models
+
+  \bigskip Surrogate models can extend functionality
+\end{frame}
+
+% -------------------------
 \begin{frame}{Intrinsic Dimensionality}
   Idea: Find a method whose computational cost scales with \emph{intrinsic
-    dimensionality} $k$, \alert{not} dimensionality $d$....
+    dimensionality} $k$,\\ \alert{not} dimensionality $d$....
 \end{frame}
 
 % -------------------------
@@ -659,7 +674,8 @@ quantile(relative_difference)
   \begin{equation*} \begin{aligned}
       \mC &= \E[\nabla_{\vx}f\nabla_{\vx}f^{\top}] \\
           &= \mU\m\Sigma\mV^{\top} \\
-          &\approx \frac{1}{n}\sum_{i=1}^n \nabla_{\vx}f_i\nabla_{\vx}f^{\top}_i
+          &\approx \frac{1}{n}\sum_{i=1}^n \nabla_{\vx}f_i\nabla_{\vx}f^{\top}_i \\
+          &= \hat{\mU}\hat{\m\Sigma}\hat{\mV}^{\top}
   \end{aligned} \end{equation*}
 
   \begin{textblock}{5}(0.0,2.0)
@@ -700,9 +716,23 @@ quantile(relative_difference)
 \end{frame}
 
 % -------------------------
+\begin{frame}{Using the AS}
+  \begin{equation*} \begin{aligned}
+      \vx_A &= \mV_A^{\top}\vx \\
+      \vx_I &= \mV_I^{\top}\vx
+  \end{aligned} \end{equation*}
+
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../images/as_summary_nat}
+  \end{figure}
+\end{frame}
+
+% -------------------------
 \begin{frame}{But Wait...}
-  The active subspace matrix $\mC$ is defined via expectation \\
-  It is cursed by dimensionality?
+  The active subspace matrix $\mC$ is defined via expectation
+
+  \bigskip It is cursed by dimensionality?
 \end{frame}
 
 % -------------------------
@@ -718,7 +748,7 @@ quantile(relative_difference)
     \begin{tabular}{@{}ll@{}}
       $n$ & Required samples \\
       $\epsilon$ & Desired error tolerance \\
-      $p$ & Probability of success
+      $p$ & Probability of failure
     \end{tabular}
   \end{table}
 
@@ -731,6 +761,76 @@ quantile(relative_difference)
   \begin{textblock}{5}(0.0,0.0)
     {\tiny Holodnak, Ipsen, and Smith (2018)}
   \end{textblock}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Intrinsic Dimensionality}
+  \huge Where does \emph{intrinsic dimensionality} come from?
+\end{frame}
+
+% -------------------------
+\begin{frame}{Related Concepts}
+  \begin{itemize}
+  \item \textbf{Sparsity} -- Compressed sensing
+  \item \textbf{Low-rank} -- Linear algebra
+  \item \textbf{Dimensionality} -- Dimension reduction
+  \visible<2>{\item \textbf{Pi groups} -- Dimensional analysis}
+  \end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Dimensional Analysis}
+  Buckingham pi
+
+  \begin{equation*} \begin{aligned}
+      \pi &= f(\vz) \\
+          &= \psi(\pi_1,\dots,\pi_{d-r})
+  \end{aligned} \end{equation*}
+
+  where
+
+  \begin{equation}
+    \pi_i = \prod_{j=1}^d z_j^{w_{ij}}
+  \end{equation}
+
+  \begin{textblock}{5}(0.0,+1.0)
+    {\tiny Buckingham (1914)}
+  \end{textblock}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Dimensional Analysis}
+  \alert{Modified}\footnote{del Rosario et al. (2017)} Buckingham pi
+
+  \begin{equation*} \begin{aligned}
+      \pi &= f(\vz) \\
+          &= \psi'(\mW^{\top}\vx)
+  \end{aligned} \end{equation*}
+
+  where $\vx = \log(\vz)$ and
+
+  \begin{equation}
+    \mD\mW = 0
+  \end{equation}
+
+  %% \begin{textblock}{5}(0.0,+1.0)
+  %%   {\tiny del Rosario et al. (2017)}
+  %% \end{textblock}
+\end{frame}
+
+% -------------------------
+\begin{frame}{DA Example}
+  \begin{table}
+    \begin{tabular}{@{}lccccc@{}}
+      \toprule
+      Dimension  & $\rho_F$ & $U_F$   & $d_P$ &  $\mu_F$ & $\epsilon_P$\\
+      \midrule
+      Mass (M)   &   1    &  0    &  0  &    1   &  0 \\
+      Length (L) & \mm3   &  1    &  1  &  \mm1  &  1 \\
+      Time (T)   &   0    & \mm1  &  0  &  \mm1  &  0 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
 \end{frame}
 
 \end{document}
