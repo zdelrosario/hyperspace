@@ -1,0 +1,37 @@
+\mode<presentation>
+
+\newcommand\fbh{1.2}
+
+% Frame title
+\defbeamertemplate*{frametitle}{zdr}[1][]
+{
+\vskip0.5cm%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=\fbh cm]{frametitle}
+  \begin{tikzpicture}
+  \useasboundingbox[fill=white](0,0) rectangle(\the\paperwidth,\fbh);
+  \fill[minorbarcolor] (0,0) rectangle(2.95,\fbh);
+  \fill[barcolor] (3.05,0) rectangle(\the\paperwidth,\fbh);
+   \ifx\insertframesubtitle\@empty%
+      {\node[anchor=west, white,font=\large] at (3.2,0.61){\insertframetitle};}
+      \else%
+      {\node[anchor= west, white,font=\large] at (3.2,0.81){\insertframetitle};%
+       \node[anchor= west, white,font=\small] at (3.2,0.41){\insertframesubtitle};}%
+      \fi
+  \end{tikzpicture}
+  \end{beamercolorbox}
+}
+
+% Section slides
+\AtBeginSection[]{
+  \begin{frame}
+    \begin{tikzpicture}
+  \useasboundingbox[fill=white](0,0.5*\the\paperheight) rectangle(\the\paperwidth,1.2);
+  \fill[minorbarcolor] (0,0) rectangle(2.95,1.2);
+  \fill[barcolor] (3.05,0) rectangle(\the\paperwidth,1.2);
+  \node[anchor=west, white,font=\large] at (3.2,0.61){\insertsectionhead};
+  \end{tikzpicture}
+  \end{frame}
+}
+
+
+\mode<all>

@@ -1,45 +1,62 @@
 Annotated Bibliography
 
-* Fodor (2002)
+* Generic-space
+** Fodor (2002)
 Fodor, Imola K. "A survey of dimension reduction techniques." Center for Applied
 Scientific Computing, Lawrence Livermore National Laboratory 9 (2002): 1-18.
 
 National Lab-sponsored review covering PCA and some of its generalizations.
 Focuses on Generic-space.
 
-* Gorban et al. (2008)
+** Gorban et al. (2008)
 Gorban, Alexander N., et al., eds. Principal manifolds for data visualization
 and dimension reduction. Vol. 58. Berlin: Springer, 2008.
 
 Extensive Springer text on manifold reduction, framed as a generalization of
 PCA. Focuses on Generic-space.
 
-* Cook (2009) Regression Graphics
+* Input-space
+** Cook (2009) Regression Graphics
 Cook, R. Dennis. Regression graphics: ideas for studying regressions through
 graphics. Vol. 482. John Wiley & Sons, 2009.
 
 A statistician's perspective on Input-space (linear) dimension reduction.
 
-* Constantine (2015) Active Subspaces
+** Constantine (2015) Active Subspaces
 Constantine, Paul G. Active subspaces: Emerging ideas for dimension reduction in
 parameter studies. Vol. 2. SIAM, 2015.
 
 A numerical analyst's perspective on Input-space (linear) dimension reduction.
 
-* Saltelli et al. (2004)
+** Holodnak et al. (2018)
+Holodnak, Ipsen, and Smith "A probabilistic subspace bound with application to
+active subspaces" (2018)
+
+Provides sampling estimates and error bounds on estimated active subspaces based
+on /intrinsic dimensionality/.
+
+** Saltelli et al. (2004)
 Saltelli, Andrea, et al. Sensitivity analysis in practice: a guide to assessing
 scientific models. John Wiley & Sons, 2004.
 
 A primer on sensitivity analysis. Focuses on Input-space dimension reduction.
 
-* Mignolet et al. (2013) ROM Review
+** Tang and Iaccarino (2014)
+Tang and Iaccarino, "Subsampled Gauss Quadrature Nodes for Estimating Polynomial
+Chaos Expansions" (2014) JUQ
+
+Using compressed sensing (CS) and generalized Polynomial Chaos (gPC) to recover
+surrogate models over stochastic space. CS applied to the Input-space setting.
+
+* Output-space
+** Mignolet et al. (2013) ROM Review
 Mignolet, Marc P., et al. "A review of indirect/non-intrusive reduced order
 modeling of nonlinear geometric structures." Journal of Sound and Vibration
 332.10 (2013): 2437-2460.
 
 An introduction to reduced-order modeling; the Output-space perspective.
 
-* Lumley (2007)
+** Lumley (2007)
 Lumley, John L. Stochastic tools in turbulence. Courier Corporation, 2007.
 
 The common POD reference in turbulence circles; Output-space perspective

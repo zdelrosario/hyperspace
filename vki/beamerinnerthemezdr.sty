@@ -1,0 +1,112 @@
+\mode<presentation>
+
+%%% Parametric design
+% Horizontal bars
+\newcommand\mbk{0.8}
+\newcommand\mbVt{\mbk*\the\paperheight}  % Title
+\newcommand\mbVh{0.18*\the\paperheight}
+\newcommand\mbVb{\mbVt-\mbVh}
+\newcommand\mbVc{0.29\paperheight}
+
+\newcommand\abVt{0.28*\the\paperheight} % Author
+\newcommand\abVh{0.08*\the\paperheight}
+\newcommand\abVb{\abVt-\abVh}
+
+\newcommand\ibVt{0.48*\the\paperheight} % Date/Institution
+\newcommand\ibVh{0.08*\the\paperheight}
+\newcommand\ibVb{\ibVt-\ibVh}
+
+% Vertical bars
+\newcommand\vPad{0.01*\the\paperheight}
+
+\newcommand\vaVt{\abVb-\vPad}
+\newcommand\vaVb{0.00*\the\paperheight}
+\newcommand\vbVt{\mbVb-\vPad}
+\newcommand\vbVb{\abVt+\vPad}
+\newcommand\vcVt{1.00*\the\paperheight}
+\newcommand\vcVb{\mbVt+\vPad}
+\newcommand\vdVt{\ibVb-\vPad}
+\newcommand\vdVb{\abVt+\vPad}
+\newcommand\veVt{\mbVb-\vPad}
+\newcommand\veVb{\ibVt+\vPad}
+
+% Presentation background
+\setbeamertemplate{background}{
+  \begin{tikzpicture}
+  \node[anchor=center, inner sep=0] at (0.5*\the\paperwidth,0.5*\the\paperheight) {\inserttitlegraphic};
+  \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+  % Main bars
+  \fill[color=barcolor] (0,\mbVb) rectangle(\the\paperwidth,\mbVt); % Title
+  \fill[color=barcolor] (0,\abVb) rectangle(\the\paperwidth,\abVt); % Authors
+  % Pillars
+  \fill[color=minorbarcolor] (0.14*\the\paperwidth,\vaVb) rectangle(0.22*\the\paperwidth,\vaVt); % a
+  \fill[color=minorbarcolor] (0.14*\the\paperwidth,\vbVb) rectangle(0.22*\the\paperwidth,\vbVt); % b
+  \fill[color=minorbarcolor] (0.14*\the\paperwidth,\vcVb) rectangle(0.22*\the\paperwidth,\vcVt); % c
+  % TODO -- make optional
+  \fill[color=barcolor] (0.6*\the\paperwidth,\ibVb) rectangle(\the\paperwidth,\ibVt); % Institution/meeting
+  \fill[color=minorbarcolor] (0.8*\the\paperwidth,\vdVb) rectangle(0.88*\the\paperwidth,\vdVt); % d
+  \fill[color=minorbarcolor] (0.8*\the\paperwidth,\veVb) rectangle(0.88*\the\paperwidth,\veVt); % e
+  % Seal
+  \node[anchor=south west, inner sep=0] at (0.774*\the\paperwidth,.005*\the\paperheight) {\includegraphics[width=1.8cm]{SU_Seal_Black}};
+  % Fill with white if not title page
+  \ifnum\thepage>1\relax%
+   \fill[white,opacity=1] (0,0) rectangle(\the\paperwidth,\the\paperheight);
+   \fi
+  \end{tikzpicture}
+}
+
+% Title page
+\defbeamertemplate*{title page}{zdr}[1][]
+{
+  % Title
+  \begin{textblock*}{\paperwidth}[0.5,0.5](0.5\paperwidth,\mbVc)
+    \begin{center}
+      \vspace*{\fill}
+      \usebeamerfont{title}\color{titlecolor}\inserttitle
+      \vspace*{\fill}
+    \end{center}
+  \end{textblock*}
+  % Author
+  \begin{textblock*}{\paperwidth}[0.5,0.5](0.5\paperwidth,0.76\paperheight)
+    \begin{center}
+      \vspace*{\fill}
+      \usebeamerfont{author}\color{titlecolor}\insertauthor
+      \vspace*{\fill}
+    \end{center}
+  \end{textblock*}
+  % Date
+  \begin{textblock*}{0.4\paperwidth}[0.5,0.5](0.80\paperwidth,0.56\paperheight)
+    \begin{center}
+      \vspace*{\fill}
+        \usebeamerfont{date}\color{titlecolor}\insertdate
+        \vspace*{\fill}
+    \end{center}
+  \end{textblock*}
+  % Institution
+  \begin{textblock*}{0.6\paperwidth}[0.5,0.5](0.5\paperwidth,0.87\paperheight)
+    \parbox[c][0.1\paperheight][c]{0.6\paperwidth}{\centering
+        \usebeamerfont{institute}\color{detailcolor}\insertinstitute
+      }
+  \end{textblock*}
+}
+
+% Items
+\setbeamertemplate{items}[square]
+\setbeamertemplate{sections/subsections in toc}[square]
+
+% Footline
+\setbeamertemplate{footnote}{
+  \hfill{
+    \tikz{
+      \node at (0,0) {\tiny\insertframenumber{} / \inserttotalframenumber};
+    }
+  }
+}
+
+% Footnote
+\setbeamertemplate{footnote}{
+  \parbox[b][1.2cm][t]{10cm}{\tiny $^{\insertfootnotemark}$\footnotesize\insertfootnotetext}
+    }
+
+\mode
+<all>

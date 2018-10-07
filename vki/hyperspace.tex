@@ -1,9 +1,5 @@
 \documentclass[14pt]{beamer}
-
-% Presento style file
-\usepackage{config/presento}
-% custom command and packages
-\input{config/custom-command}
+\usetheme{zdr}
 %
 \usepackage{booktabs} % \toprule, etc
 % My macros
@@ -12,6 +8,14 @@
 % Custom colors
 \usepackage{color}
 \definecolor{ao}{rgb}{0.0, 0.5, 0.0}
+\setbeamercolor{alerted text}{fg=palered}
+
+% Configure fonts
+\usefonttheme{professionalfonts}
+\usefonttheme{serif}
+\usepackage{fontspec}
+\setmainfont{Helvetica Neue}
+\setbeamerfont{note page}{family*=pplx,size=\footnotesize} % Palatino for notes
 
 % Configure listings for R
 \usepackage{listings}
@@ -23,17 +27,12 @@ otherkeywords={!,!=,~,$,*,\&,\%/\%,\%*\%,\%\%,<-,<<-,\%>\%},
 alsoletter={.,_}
 }
 
-% Restore footnote functionality
-\renewcommand\footnoterule{%
-  \moveleft1cm\vbox{\textcolor{blue}{\rule{\paperwidth}{2pt}}\vskip 1mm}%
-}
-
 % For hierarchical lists
 \usepackage{outlines}
 
 % Information
-\title{LOST IN HYPERSPACE}
-\subtitle{\emph{The Curse of Dimensionality}}
+\title{Lost In Hyperspace}
+%% \subtitle{\emph{The Curse of Dimensionality}}
 \author{Zachary del Rosario}
 \institute{zdr@stanford.edu}
 \date{}
@@ -54,22 +53,22 @@ alsoletter={.,_}
 % --------------------------------------------------
 %% SEC: Introduction
 % --------------------------------------------------
-\begin{frame}[t]{Thought Experiment: Parameter Study}
-  Input variables $\vx\in\R{d}$ \\
-  Scalar simulation output $f(\vx)$ \\
-  Full factorial: $d$ input variables, $10$ points per dimension \\
+\begin{frame}[t]{Example: Parameter Study}
+  \only<1>{%
+    $d$ dimensional input space \\
+    Use $p$ points per dimension
+  }
 
-  \bigskip
   \only<2>{%
     \centering
-    \includegraphics[width=0.4\textwidth]{../images/points1}
+    \includegraphics[width=0.6\textwidth]{../images/points1}
   }
   \only<3>{%
     \centering
-    \includegraphics[width=0.4\textwidth]{../images/points2}
+    \includegraphics[width=0.6\textwidth]{../images/points2}
   }
   \only<4>{%
-    Scaling is \emph{exponential}, i.e.
+    Scaling is \emph{exponential}, e.g.
     \begin{equation*}
       \text{Time} = (10\text{ seconds})^d
     \end{equation*}
@@ -78,7 +77,7 @@ alsoletter={.,_}
 
 % -------------------------
 \begin{frame}{Computational Time}
-  \visible<2>{The Curse of Dimensionality}
+  \visible<2>{\alert{The Curse of Dimensionality}}
   \begin{table}
     \begin{tabular}{r|r|l}
     \hline
@@ -148,17 +147,16 @@ alsoletter={.,_}
 \end{frame}
 
 % -------------------------
-\framecard[colorblue]{{\color{white}%
-
+\framecard{\centering
 ``The trend today is towards more observations \emph{but even more so},
-    \alert{to radically larger numbers of variables} – voracious, automatic,
-    systematic collection of hyper-informative detail about each observed
-    instance.''
+\alert{to radically larger numbers of variables} – voracious, automatic,
+systematic collection of hyper-informative detail about each observed
+instance.''
 
-    \bigskip
-    -- David Donoho, 2000\\
-    \tiny (Emphasis added)
-}}
+\bigskip
+-- David Donoho, 2000\\
+\tiny (Emphasis added)
+}
 
 % -------------------------
 \begin{frame}{My Point}
@@ -170,14 +168,11 @@ alsoletter={.,_}
 \end{frame}
 
 % -------------------------
-\framecard[colorgreen]{{\color{white}\hugetext{%
-      \centering%
-      Weird Facts\\
-      about\\
-      High-\\
-      Dimensional\\
+\framecard{\huge\centering%
+      Weird facts about\\
+      High-Dimensional\\
       Geometry
-}}}
+}
 
 % -------------------------
 \begin{frame}{Fact 1}
@@ -194,7 +189,7 @@ alsoletter={.,_}
 \end{frame}
 
 % -------------------------
-\framepicv[0.8]{../images/surface_density}{}
+\framepich{../images/surface_density}{}
 
 % -------------------------
 \begin{frame}{Fact 2}
@@ -202,11 +197,7 @@ alsoletter={.,_}
 \end{frame}
 
 % -------------------------
-\framepicv[1.0]{../images/great_circle}{
- \begin{textblock}{7}(0.0,5.7)
-    {\tiny By P.wormer}
- \end{textblock}
-}
+\framepich{../images/great_circle}{}
 
 % -------------------------
 \begin{frame}{A Wordgame}
@@ -217,7 +208,7 @@ alsoletter={.,_}
 \end{frame}
 
 % -------------------------
-\framepicv[0.8]{../images/equator}{}
+\framepich{../images/equator}{}
 
 % -------------------------
 \begin{frame}{Fact 3}
@@ -307,49 +298,13 @@ quantile(relative_difference)
 % JL: Distance
 % -------------------------
 \begin{frame}{}
-  % Content
-  \only<-5>{%
     \begin{equation*} \begin{aligned}
-        (1 - \alert<3>{\epsilon})(\alert<2>{\text{Distance}})^2 &\leq %
-          \alpha(\alert<4,5>{\text{Projected Distance}})^2 \\
+        (1 - \epsilon)(\text{Distance})^2 &\leq %
+          \alpha(\text{Projected Distance})^2 \\
         &\, \\
-        \alpha(\alert<4,5>{\text{Projected Distance}})^2 &\leq %
-          (1 + \alert<3>{\epsilon})(\alert<2>{\text{Distance}})^2\\
+        \alpha(\text{Projected Distance})^2 &\leq %
+          (1 + \epsilon)(\text{Distance})^2\\
     \end{aligned} \end{equation*}
-  }%
-  % Annotation
-  \visible<2-5>{%
-    \begin{textblock}{3}(+1.5,-5.7)
-      {\textblockcolor{}
-        \centering%
-        \only<2>{\includegraphics[width=1.0\textwidth]{../images/proj0_alert}}
-        \only<3-5>{\includegraphics[width=1.0\textwidth]{../images/proj0}}
-      }
-    \end{textblock}
-  }
-  \visible<3-5>{%
-    \begin{textblock}{3}(+5.5,-4.0)
-      {\textblockcolor{}
-        \alert<3>{$\epsilon$ is \emph{small}}
-      }
-    \end{textblock}
-  }
-  \visible<4-5>{%
-    \begin{textblock}{3}(-0.5,+0.0)
-      {\textblockcolor{}
-        \centering%
-        \only<4>{\includegraphics[width=1.0\textwidth]{../images/proj1_alert}}
-        \only<5>{\includegraphics[width=1.0\textwidth]{../images/proj1}}
-      }
-    \end{textblock}
-  }
-  \visible<5-5>{%
-    \begin{textblock}{3}(+3.0,+0.0)
-      {\textblockcolor{}
-        \centering\includegraphics[width=1.0\textwidth]{../images/proj2_alert}
-      }
-    \end{textblock}
-  }
 \end{frame}
 
 % JL: Projections
@@ -363,7 +318,7 @@ quantile(relative_difference)
   \end{equation*}
   % Annotation
   \visible<2->{%
-    \begin{textblock}{6}(+2.5,-0.5)
+    \begin{textblock}{6}(+5.0,+5.0)
       {\textblockcolor{}
         \centering%
         \only<2>{\includegraphics[width=1.0\textwidth]{../images/dim_proj3}}
@@ -382,37 +337,37 @@ quantile(relative_difference)
     \alert<2>{k} \geq C\frac{\log(\alert<3>{n})}{\alert<4>{\epsilon}^2}
   \end{equation*}
   % Annotation
-  \visible<2->{%
-    \begin{textblock}{4}(+0.0,-3.5)
+  \only<2->{%
+    \begin{textblock}{4}(+0.5,+0.5)
       {\textblockcolor{}
         $k$ is the projection dimension
       }
     \end{textblock}
   }
-  \visible<3->{%
-    \begin{textblock}{4}(+0.0,+2.0)
+  \only<3->{%
+    \begin{textblock}{4}(+0.5,+11.0)
       {\textblockcolor{}
         $n$ is the number of observations
       }
     \end{textblock}
   }
-  \visible<4->{%
-    \begin{textblock}{4}(+7.0,+2.0)
+  \only<4->{%
+    \begin{textblock}{4}(+11.0,+11.0)
       {\textblockcolor{}
         $\epsilon$ is the desired error
       }
     \end{textblock}
   }
-  \visible<5->{%
-    \begin{textblock}{4.5}(+7.0,-3.5)
+  \only<5->{%
+    \begin{textblock}{5.0}(+11.0,+0.5)
       {\textblockcolor{}
         Dimensionality is\\
         \emph{curiously absent!}
       }
     \end{textblock}
   }
-  \visible<6>{%
-    \begin{textblock}{4.5}(+3.5,-0.0)
+  \only<6>{%
+    \begin{textblock}{4.5}(+5.5,+8.0)
       {\textblockcolor{}
         $k$ is an \emph{intrinsic dimensionality}
       }
@@ -423,26 +378,23 @@ quantile(relative_difference)
 % --------------------------------------------------
 %% SEC: Dimension Reduction
 % --------------------------------------------------
-\framecard[colorgreen]{{\color{white}\hugetext{%
-      \centering%
-      Lifting\\
-      the\\
-      Curse: \\
-
-      \bigskip
-      \alert{Dimension Reduction}
-}}}
+\framecard{\huge\centering%
+  Dimension Reduction
+}
 
 % -------------------------
 \begin{frame}{Dimension Reduction}
-  Idea: Identify low-dimensional structure; reduce effective dimension \\
-  If $\text{Cost} = C^d$, then reduce $d$
+  Idea: Identify low-dimensional structure; \\
+  reduce effective dimension
+
+  \bigskip If $\text{Cost} = C^d$, \\
+  greatest payoff is reducing $d$
 \end{frame}
 
 % -------------------------
 \begin{frame}{Dimension Reduction \alert{In UQ}}
-  \bigskip \textcolor{green}{J-L showed us \emph{linear} low-dimensional structure} \\
-  \textcolor{red}{J-L does not separate \emph{inputs} and \emph{response}}
+  \bigskip \textcolor{palegreen}{J-L showed us \emph{linear} low-dimensional structure} \\
+  \textcolor{palered}{J-L does not separate \emph{inputs} and \emph{response}}
 
   \bigskip We've talked about $\vx$ \\
   What about $f(\vx)$?
@@ -465,14 +417,13 @@ quantile(relative_difference)
   \centering
   \includegraphics[width=0.9\textwidth]{../images/pipe_diagram}
 
-  \visible<2>{%
-    \begin{textblock}{4.5}(+0.5,+0.5)
+  \begin{textblock}{6.0}(+0.5,+11.0)
+    \visible<2>
       {\textblockcolor{}
-        qoi: (normalized) pressure loss
+        qoi: (normalized) pressure loss \\
         inputs: $\rho, u, d, \mu, \epsilon$
       }
-    \end{textblock}
-  }
+  \end{textblock}
 \end{frame}
 
 % -------------------------
@@ -496,24 +447,26 @@ quantile(relative_difference)
     f(\vx_A, \vx_I) = f(\vx_A, \vx'_I),
   \end{equation*}
 
-  \noindent for all $\vx_I \neq \vx'_I$. Can then \emph{ignore} $\vx_I$.
+  \noindent for all $\vx_A$ and $\vx_I \neq \vx'_I$. \\
+  Can then \emph{ignore} $\vx_I$.
 \end{frame}
 
 % -------------------------
 \begin{frame}{Subset Reduction: Methods}
   \begin{outline}
     \1 Morris screening
-      \2 \textcolor{green}{Inexpensive}
-      \2 \textcolor{red}{Difficult to interpret}
+      \2 \textcolor{palegreen}{Inexpensive}
+      \2 \textcolor{palered}{Difficult to interpret}
     \1 Sobol' indices
-      \2 \textcolor{green}{Clear interpretation}
-      \2 \textcolor{red}{Can be expensive}
+      \2 \textcolor{palegreen}{Clear interpretation}
+      \2 \textcolor{palered}{Can be expensive}
   \end{outline}
 \end{frame}
 
 % -------------------------
 \begin{frame}{Sobol' Indices}
-  Idea: Attribute \emph{variance in output} $f$ to \emph{different inputs}
+  Idea: Attribute \emph{variance in output} $f$ \\
+  to \emph{different inputs}
 
   \bigskip E.g.
   \begin{table}
@@ -544,7 +497,7 @@ quantile(relative_difference)
 \begin{frame}{First-order Index}
    First-order index
   \begin{equation*}
-    \underline{\tau}_{\{i\}}^2 = \frac{\alert<3>{\V[\alert<2>{\E[Y|X_i]}]}}{\V[Y]}.
+    \underline{\tau}_{\{i\}}^2 = \frac{\alert<3>{\V[\alert<2>{\E[Y|X_i]}]}}{\V[Y]}
   \end{equation*}
 
   % Annotation
@@ -570,8 +523,10 @@ quantile(relative_difference)
       \text{First} &\leq \text{Total} \\
       0 \leq \underline{\tau}_{\{i\}}^2 &\leq \overline{\tau}_{\{i\}}^2 \leq 1
   \end{aligned} \end{equation*}
+\end{frame}
 
-  Example:
+% -------------------------
+\begin{frame}{Sobol' Example}
   \begin{equation*} \begin{aligned}
     f(\vx) &= \sin(x_1) + 7\sin^2(x_2) + 0.1 \alert<2->{x_3^4\sin(x_1)} \\
     x_1, x_2, x_3 &\sim U[-\pi, \pi], \\
@@ -581,15 +536,14 @@ quantile(relative_difference)
 
   \visible<2->{Input 3 has no main effect}\\
   \visible<3>{\emph{But} input 3 has an interaction}\\
- \begin{textblock}{5}(0.0,0.0)
-    {\tiny Ishigami \& Homma (1990)}
- \end{textblock}
+  \footnotetext{\tiny Ishigami \& Homma (1990)}
 \end{frame}
 
 % -------------------------
 \begin{frame}{But wait...}
   Sobol' indices based on \emph{variance}... \\
   Variance is an \emph{expectation}... \\
+  Expectations are \emph{cursed by dimensionality}...
 
   \bigskip Sobol' is cursed by dimensionality! \\
 \end{frame}
@@ -623,17 +577,17 @@ quantile(relative_difference)
 \end{frame}
 
 % -------------------------
-\framepicv[1.0]{../images/pca1}{}
-\framepicv[1.0]{../images/pca2}{}
-\framepicv[1.0]{../images/pca3}{
-  \visible<2>{
-    \begin{textblock}{7}(4.8,4.0)
+\framepich{../images/pca1}{}
+\framepich{../images/pca2}{}
+\framepich{../images/pca3}{
+  \begin{textblock}{7}(+9.0,+10.0)
+    \visible<2>{
       {\textblockcolor{}
         Direction \alert{from data} \\
         Called \emph{principal component analysis}
       }
-    \end{textblock}
-  }
+    }
+  \end{textblock}
 }
 
 % -------------------------
@@ -644,8 +598,8 @@ quantile(relative_difference)
     \mX = \mU\m\Sigma\mV^{\top}
   \end{equation*}
 
-  \noindent with ordered $\sigma_1\geq\dots\geq\sigma_r\geq0$ standard
-  deviations \\
+  \noindent with ordered $\sigma_1\geq\dots\geq\sigma_r\geq0$\\
+  standard deviations \\
 
   Select $k \leq d$, project on first $k$ directions, gives new variables
   $\mY\in\R{n\times k}$
@@ -666,8 +620,8 @@ quantile(relative_difference)
 \end{frame}
 
 % -------------------------
-\framepicv[1.0]{../images/as_contour0}{}
-\framepicv[1.0]{../images/as_contour1}{}
+\framepich{../images/as_contour0}{}
+\framepich{../images/as_contour1}{}
 
 % -------------------------
 \begin{frame}{Active Subspace}
@@ -678,9 +632,7 @@ quantile(relative_difference)
           &= \hat{\mU}\hat{\m\Sigma}\hat{\mV}^{\top}
   \end{aligned} \end{equation*}
 
-  \begin{textblock}{5}(0.0,2.0)
-    {\tiny Constantine (2015)}
-  \end{textblock}
+  \footnotetext{\tiny Constantine (2015)}
 \end{frame}
 
 % -------------------------
@@ -710,9 +662,7 @@ quantile(relative_difference)
     \end{tabular}
   \end{table}
 
-  \begin{textblock}{5}(0.0,0.0)
-    {\tiny Davis \& Kahan (1970)}
-  \end{textblock}
+  \footnotetext{\tiny Davis \& Kahan (1970)}
 \end{frame}
 
 % -------------------------
@@ -758,9 +708,7 @@ quantile(relative_difference)
     \text{intdim}(\mC) = \frac{\text{trace}(\mC)}{\|\mC\|_2} \geq 1
   \end{equation*}
 
-  \begin{textblock}{5}(0.0,0.0)
-    {\tiny Holodnak, Ipsen, and Smith (2018)}
-  \end{textblock}
+  \footnotetext{\tiny Holodnak, Ipsen, and Smith (2018)}
 \end{frame}
 
 % -------------------------
@@ -793,9 +741,7 @@ quantile(relative_difference)
     \pi_i = \prod_{j=1}^d z_j^{w_{ij}}
   \end{equation}
 
-  \begin{textblock}{5}(0.0,+1.0)
-    {\tiny Buckingham (1914)}
-  \end{textblock}
+  \footnotetext{\tiny Buckingham (1914)}
 \end{frame}
 
 % -------------------------
@@ -812,10 +758,6 @@ quantile(relative_difference)
   \begin{equation}
     \mD\mW = 0
   \end{equation}
-
-  %% \begin{textblock}{5}(0.0,+1.0)
-  %%   {\tiny del Rosario et al. (2017)}
-  %% \end{textblock}
 \end{frame}
 
 % -------------------------
@@ -823,14 +765,79 @@ quantile(relative_difference)
   \begin{table}
     \begin{tabular}{@{}lccccc@{}}
       \toprule
-      Dimension  & $\rho_F$ & $U_F$   & $d_P$ &  $\mu_F$ & $\epsilon_P$\\
+      Dimension  & $\rho$ & $u$   & $d$ &  $\mu$ & $\epsilon$\\
       \midrule
       Mass (M)   &   1    &  0    &  0  &    1   &  0 \\
       Length (L) & \mm3   &  1    &  1  &  \mm1  &  1 \\
       Time (T)   &   0    & \mm1  &  0  &  \mm1  &  0 \\
       \bottomrule
+      $Re$       &   1    &  1    &  1  &  \mm1  &  0 \\
+      $R$        &   0    &  0    & \mm1&    0   &  1
     \end{tabular}
   \end{table}
+
+  \visible{\bigskip Dimensionality $5$\\ Intrinsic dimensionality $2$}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Pi Subspace}
+  Active subspace $\subseteq$ \emph{Pi subspace} $\cR(\mW)$
+
+  \bigskip The pi subspace is \emph{a priori bound on dimensionality}
+
+  \bigskip Intuitive notion of intrinsic dimensionality
+\end{frame}
+
+% -------------------------
+\begin{frame}{Pi Subspace Example}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{../images/as_summary_pi}
+  \end{figure}
+
+  % Annotate
+  \begin{textblock}{7}(+6.0,+12.7)
+    \visible<2>{%
+      \begin{tabular}{@{}llllll@{}}
+                & $\rho$ & $u$  & $d$   & $\mu$ & $\epsilon$ \\
+        $\vw_1$ & 0.00   & 0.00 & -0.71 & 0.00  & 0.71
+      \end{tabular}
+    }
+  \end{textblock}
+\end{frame}
+
+% -------------------------
+\framecard{\huge\centering%
+  Concluding thoughts
+}
+
+% -------------------------
+\begin{frame}{The Curse of Dimensionality}
+  \begin{itemize}
+  \item Is everywhere
+  \item Is exponential
+  \item Motivates \emph{dimension reduction}
+  \end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Dimension Reduction}
+  \begin{itemize}
+  \item Finds low-dimensional structure
+  \item Is tailored to different spaces
+  \item Often scales with \emph{intrinsic dimensionality}
+  \end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Intrinsic Dimensionality}
+  \begin{itemize}
+  \item Is problem-dependent
+  \item Requires expert judgement
+  \item Is waiting to be discovered!
+  \end{itemize}
+
+  \bigskip\centering zdr@stanford.edu
 \end{frame}
 
 \end{document}

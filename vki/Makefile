@@ -1,6 +1,6 @@
 filename=hyperspace
 
-pdf: 
+pdf:
 	xelatex ${filename}
 	xelatex ${filename}
 
@@ -17,3 +17,8 @@ clean:
 links:
 	cp -f ~/Git/zachs_macros/zachs_macros.tex zachs_macros.tex
 	cp -f ~/Git/zachs_macros/numdef.sty numdef.sty
+	cp -f ~/Git/zdr.sty/beamerthemezdr.sty .
+	cp -f ~/Git/zdr.sty/beamercolorthemezdr.sty .
+	cp -f ~/Git/zdr.sty/beamerinnerthemezdr.sty .
+	cp -f ~/Git/zdr.sty/beamerouterthemezdr.sty .
+	cp -f ~/Git/zdr.sty/SU_Seal_Black.eps .

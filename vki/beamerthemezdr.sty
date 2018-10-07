@@ -1,0 +1,119 @@
+\mode<presentation>
+
+%%% Requirement
+\RequirePackage{tikz}
+\RequirePackage[absolute,overlay]{textpos} % [showboxes] for debug
+\RequirePackage{color}
+\RequirePackage{tgheros}
+\RequirePackage[most]{tcolorbox}
+
+\usetikzlibrary{tikzmark,fit}
+\tcbuselibrary{breakable}
+
+%%% Settings
+\useinnertheme{zdr}
+\useoutertheme{zdr}
+\usecolortheme{zdr}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+
+%%% Fonts
+\setbeamerfont{title}{size=\huge,series=\bfseries}
+\setbeamerfont{author}{size=\large}
+\setbeamerfont{date}{size=\large}
+\setbeamerfont{institute}{size=\large,series=\bfseries}
+
+%%% Helper commands
+% Provide code for image inclusion
+\newcommand {\titleimage}[1] {
+  \centering
+  \includegraphics[width=\paperwidth,height=\paperheight]{#1}
+}
+
+% Plain textbox
+\newtcolorbox{overbox}{enhanced,sharp corners,
+    boxsep=0.25ex,
+    arc=0mm,
+    colback=white,
+    colframe=minorbarcolor,
+}
+% Alert textbox
+\newtcolorbox{alertbox}{enhanced,sharp corners,
+    boxsep=0.25ex,
+    arc=0mm,
+    colback=white,
+    colframe=barcolor,
+}
+% Autoboxes
+% \autoboxonly{width}{horz-pos}{vert-pos}{Content}
+\newcommand{\autoboxover}[4]{
+  \begin{textblock}{#1}(#2,#3)
+    \begin{overbox} #4 \end{overbox}
+  \end{textblock}
+}
+% \autoboxonly{width}{horz-pos}{vert-pos}{Content}
+\newcommand{\autoboxalert}[4]{
+  \begin{textblock}{#1}(#2,#3)
+    \begin{alertbox} #4 \end{alertbox}
+  \end{textblock}
+}
+% \autoboxonly{slide-number}{width}{horz-pos}{vert-pos}{Content}
+\newcommand{\autoboxonly}[5]{
+  \only<\number\numexpr#1\relax>{\begin{textblock}{#2}(#3,#4)
+      \begin{alertbox} #5 \end{alertbox}
+    \end{textblock}}
+  \only<\number\numexpr#1+1\relax->{\begin{textblock}{#2}(#3,#4)
+      \begin{overbox} #5 \end{overbox}
+  \end{textblock}}%
+}
+% Full-screen picture; fill by width
+\newcommand{\wideimg}[1]{
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[at=(current page.center)] {
+      \includegraphics[width=\paperwidth]{#1}
+    };
+  \end{tikzpicture}
+}
+
+% Full-screen picture; fill by width
+\newcommand{\highimg}[1]{
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[at=(current page.center)] {
+      \includegraphics[height=\paperheight]{#1}
+    };
+  \end{tikzpicture}
+}
+
+% Fullscreen card
+\newcommand{\framecard}[2][minorbarcolor]{
+  {\setbeamercolor{background canvas}{bg=#1}
+    \begin{frame}[plain]
+    \vfill
+    \begin{center}
+     {#2}
+    \end{center}
+    \vfill
+    \end{frame}
+  }
+}
+
+% Horizontal-fill picture
+\newcommand{\framepich}[2]{
+  \begin{frame}[plain]
+    \centering
+    \makebox[\paperheight]{\includegraphics[height=\paperheight]{#1}}
+  #2
+  \end{frame}
+}
+
+% Vertical-fill picture
+\newcommand{\framepicv}[2]{
+  \begin{frame}[plain]
+    \centering
+    \makebox[\paperheight]{\includegraphics[width=\paperwidth]{#1}}
+  #2
+  \end{frame}
+}
+
+\mode<all>
