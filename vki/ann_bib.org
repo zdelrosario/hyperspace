@@ -1,4 +1,17 @@
-Annotated Bibliography
+#+title: Dimension reduction: Annotated Bibliography
+#+author: Zachary del Rosario; zdr@stanford.edu
+
+These will eventually be expanded into proper lecture notes. For now, here is an
+annotated bibliography of what I referenced in putting together my VKI talk.
+
+As noted in the presentation, I break dimension reduction down into three
+perspectives: Generic-space considers no special structure on $\mathbb{R}^d$,
+Output-space (usually) considers some temporal structure, and Input-space is
+connected via some function $f(x)$ to a response.
+
+Note that much of the \emph{mathematical formalism} does not care about which
+perspective one adopts; this taxonomy is more useful for understanding the kinds
+of problems different folks are trying to solve.
 
 * Generic-space
 ** Fodor (2002)
@@ -15,38 +28,12 @@ and dimension reduction. Vol. 58. Berlin: Springer, 2008.
 Extensive Springer text on manifold reduction, framed as a generalization of
 PCA. Focuses on Generic-space.
 
-* Input-space
-** Cook (2009) Regression Graphics
-Cook, R. Dennis. Regression graphics: ideas for studying regressions through
-graphics. Vol. 482. John Wiley & Sons, 2009.
+** Dasgupta and Gupta (2002)
+Dasgupta and Gupta "An Elementary Proof of a Theorem of Johnson and
+Lindenstrauss" (2002) Wiley Periodicals
 
-A statistician's perspective on Input-space (linear) dimension reduction.
-
-** Constantine (2015) Active Subspaces
-Constantine, Paul G. Active subspaces: Emerging ideas for dimension reduction in
-parameter studies. Vol. 2. SIAM, 2015.
-
-A numerical analyst's perspective on Input-space (linear) dimension reduction.
-
-** Holodnak et al. (2018)
-Holodnak, Ipsen, and Smith "A probabilistic subspace bound with application to
-active subspaces" (2018)
-
-Provides sampling estimates and error bounds on estimated active subspaces based
-on /intrinsic dimensionality/.
-
-** Saltelli et al. (2004)
-Saltelli, Andrea, et al. Sensitivity analysis in practice: a guide to assessing
-scientific models. John Wiley & Sons, 2004.
-
-A primer on sensitivity analysis. Focuses on Input-space dimension reduction.
-
-** Tang and Iaccarino (2014)
-Tang and Iaccarino, "Subsampled Gauss Quadrature Nodes for Estimating Polynomial
-Chaos Expansions" (2014) JUQ
-
-Using compressed sensing (CS) and generalized Polynomial Chaos (gPC) to recover
-surrogate models over stochastic space. CS applied to the Input-space setting.
+A fairly lucid proof of the Johnson Lindenstrauss lemma. This fact is really
+just a consequence of concentration of measure properties.
 
 * Output-space
 ** Mignolet et al. (2013) ROM Review
@@ -60,3 +47,82 @@ An introduction to reduced-order modeling; the Output-space perspective.
 Lumley, John L. Stochastic tools in turbulence. Courier Corporation, 2007.
 
 The common POD reference in turbulence circles; Output-space perspective
+** Candes and Wakin (2008)
+Candes and Wakin "An introduction to compressive sensing" (2008) IEEE Signal
+Processing Magazine
+
+Professes to be an introduction to compressed sensing.
+** Brunton et al. (2016)
+Brunton, Proctor, and Kutz "Discovering governing equations from data by sparse
+identification of nonlinear dynamical systems" (2016)
+
+Introduces the Sparse Identification of Nonlinear Dynamics `SINDy' algorithm to
+represent not a signal, but the underlying (nonlinear) generating dynamics. Uses
+ideas from compressed sensing.
+
+* Input-space
+** Cook (2009) Regression Graphics
+Cook, R. Dennis. Regression graphics: ideas for studying regressions through
+graphics. Vol. 482. John Wiley & Sons, 2009.
+
+A statistician's perspective on (linear) dimension reduction.
+
+** Constantine (2015) Active Subspaces
+Constantine, Paul G. Active subspaces: Emerging ideas for dimension reduction in
+parameter studies. Vol. 2. SIAM, 2015.
+
+A numerical analyst's perspective on (linear) dimension reduction.
+
+** Holodnak et al. (2018)
+Holodnak, Ipsen, and Smith "A probabilistic subspace bound with application to
+active subspaces" (2018)
+
+Provides sampling estimates and error bounds on estimated active subspaces based
+on /intrinsic dimensionality/.
+
+** Saltelli et al. (2004)
+Saltelli, Andrea, et al. Sensitivity analysis in practice: a guide to assessing
+scientific models. John Wiley & Sons, 2004.
+
+A primer on sensitivity analysis.
+
+** Sudret (2007)
+Bruno Sudret "Global sensitivity analysis using polynomial chaos expansions"
+(2007) Reliability Engineering and System Safety
+
+Describes how Sobol' indices may be computed /analytically/ from a Polynomial
+Chaos Expansion representation of a function. This effectively pushes the
+computation of Sobol' indices to a quadrature problem.
+
+** Tang & Iaccarino (2014)
+Tang and Iaccarino, "Subsampled Gauss Quadrature Nodes for Estimating Polynomial
+Chaos Expansions" (2014) JUQ
+
+Using compressed sensing (CS) and generalized Polynomial Chaos (gPC) to recover
+surrogate models over stochastic space. CS applied to the Input-space setting.
+
+** Ishigami & Homma (1990)
+Ishigami and Homma "An importance quantification technique in uncertainty
+analysis for computer models" (1990) Uncertainty Modeling and Analysis
+
+Introduced the 'Ishigami function'; commonly used test case for sensitivity
+analysis, esp. Sobol' indices.
+
+** Davis & Kahan (1970)
+Davis & Kahan "The rotation of eigenvectors by a perturbation. iii" (1970) SIAM
+Journal of Numerical Analysis
+
+Classic reference connecting the eigenvalue gap to subspace accuracy.
+
+** Buckingham (1914)
+Buckingham "On physically similar systems; illustrations of the use
+of dimensional equations" (1914)
+
+Introduced the (formal) Buckingham pi theorem.
+
+** del Rosario et al. (2017)
+del Rosario, Lee, and Iaccarino, "Lurking variable detection
+via dimensional analysis" (2017) ArXiv; under journal review
+
+Introduces the pi subspace, uses lack of sufficiency to detect missing
+quantities, so-called /lurking variables/.
