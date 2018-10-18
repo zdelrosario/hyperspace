@@ -14,6 +14,12 @@ perspective one adopts; this taxonomy is more useful for understanding the kinds
 of problems different folks are trying to solve.
 
 * Generic-space
+** Dasgupta and Gupta (2002)
+Dasgupta and Gupta "An Elementary Proof of a Theorem of Johnson and
+Lindenstrauss" (2002) Wiley Periodicals
+
+A fairly lucid proof of the Johnson Lindenstrauss lemma. This fact is really
+just a consequence of concentration of measure properties.
 ** Fodor (2002)
 Fodor, Imola K. "A survey of dimension reduction techniques." Center for Applied
 Scientific Computing, Lawrence Livermore National Laboratory 9 (2002): 1-18.
@@ -27,13 +33,6 @@ and dimension reduction. Vol. 58. Berlin: Springer, 2008.
 
 Extensive Springer text on manifold reduction, framed as a generalization of
 PCA. Focuses on Generic-space.
-
-** Dasgupta and Gupta (2002)
-Dasgupta and Gupta "An Elementary Proof of a Theorem of Johnson and
-Lindenstrauss" (2002) Wiley Periodicals
-
-A fairly lucid proof of the Johnson Lindenstrauss lemma. This fact is really
-just a consequence of concentration of measure properties.
 
 * Output-space
 ** Mignolet et al. (2013) ROM Review
@@ -52,6 +51,7 @@ Candes and Wakin "An introduction to compressive sensing" (2008) IEEE Signal
 Processing Magazine
 
 Professes to be an introduction to compressed sensing.
+
 ** Brunton et al. (2016)
 Brunton, Proctor, and Kutz "Discovering governing equations from data by sparse
 identification of nonlinear dynamical systems" (2016)
@@ -80,6 +80,13 @@ active subspaces" (2018)
 Provides sampling estimates and error bounds on estimated active subspaces based
 on /intrinsic dimensionality/.
 
+** Grey and Constantine (2018)
+Zach Grey and Paul Constantine "Characterizing Subspaces of Engineering Shapes
+using Differential Geometry" (2018)
+
+Going beyond a specific parameterization to consider generic 'shape gradients'
+using differential geometry.
+
 ** Saltelli et al. (2004)
 Saltelli, Andrea, et al. Sensitivity analysis in practice: a guide to assessing
 scientific models. John Wiley & Sons, 2004.
@@ -93,6 +100,11 @@ Bruno Sudret "Global sensitivity analysis using polynomial chaos expansions"
 Describes how Sobol' indices may be computed /analytically/ from a Polynomial
 Chaos Expansion representation of a function. This effectively pushes the
 computation of Sobol' indices to a quadrature problem.
+
+** Seshadri et al. (2018)
+(One of Pranay's papers on quadrature, probably effectively subsampled)
+Seshadri, Narayan, and Mahaevan, "Effectively Subsampled Quadratures for Least
+Squares Polynomial Approximations" (2018) JUQ
 
 ** Tang & Iaccarino (2014)
 Tang and Iaccarino, "Subsampled Gauss Quadrature Nodes for Estimating Polynomial
