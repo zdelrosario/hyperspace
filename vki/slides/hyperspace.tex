@@ -24,7 +24,8 @@
 language=R,
 keywordstyle=\color{blue},
 otherkeywords={!,!=,~,$,*,\&,\%/\%,\%*\%,\%\%,<-,<<-,\%>\%},
-alsoletter={.,_}
+alsoletter={.,_},
+deletekeywords={C}
 }
 
 % For hierarchical lists
@@ -36,7 +37,7 @@ alsoletter={.,_}
 \author{Zachary del Rosario}
 \institute{zdr@stanford.edu}
 \date{}
-%% \date{\today}
+\date{UQCFD}
 
 % For latex 2018
 \makeatletter
@@ -392,7 +393,7 @@ quantile(relative_difference)
 \end{frame}
 
 % -------------------------
-\begin{frame}{Dimension Reduction \alert{In UQ}}
+\begin{frame}{Dimension Reduction \textcolor{palegreen}{In UQ}}
   \bigskip \textcolor{palegreen}{J-L showed us \emph{linear} low-dimensional structure} \\
   \textcolor{palered}{J-L does not separate \emph{inputs} and \emph{response}}
 
@@ -807,6 +808,17 @@ quantile(relative_difference)
 \end{frame}
 
 % -------------------------
+\begin{frame}{Other Uses}
+  \emph{Physically relevant} notion of intrinsic dimensionality has other uses:
+
+  \begin{itemize}
+  \item Identify \emph{unique and relevant} dimensionless numbers\footnote{Constantine et al. (2017)}
+  \item Detect \emph{lurking variables}\footnote{del Rosario et al. (2017)}
+  \item Constrained machine learning (Forthcoming...)
+  \end{itemize}
+\end{frame}
+
+% -------------------------
 \framecard{\huge\centering%
   Concluding thoughts
 }
@@ -833,7 +845,7 @@ quantile(relative_difference)
 \begin{frame}{Intrinsic Dimensionality}
   \begin{itemize}
   \item Is problem-dependent
-  \item Requires expert judgement
+  \item Enables deeper insights
   \item Is waiting to be discovered!
   \end{itemize}
 
