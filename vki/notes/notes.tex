@@ -1,5 +1,417 @@
-\documenttype{article}
+\documentclass{article}
+
+\include{zachs_macros}
+
+\usepackage{cleveref}
+\usepackage{listings}
+\usepackage[top=1in, bottom=1in, left=0.8in, right=0.8in]{geometry}
+
+\definecolor{palegreen}{HTML}{01B7A8}
+\definecolor{palered}{HTML}{C52E35}
 
 \begin{document}
+
+\section{Introduction}
+% --------------------------------------------------
+
+First, an introduction by way of example: Let's imagine we have a function $f$
+of $d$ variables $\vx\in[0,1]^d$, and we seek to carry out a parameter study. In
+this study, we will choose three points per dimension, in order to `evenly'
+sample the space. The number of points required grows exponentially,
+as visually depicted in Figure \ref{fig:samples}.
+
+\begin{figure}[!ht]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \includegraphics[width=0.9\textwidth]{../../images/points1}
+  \end{minipage} %
+  \begin{minipage}{0.45\textwidth}
+    \includegraphics[width=0.9\textwidth]{../../images/points2}
+  \end{minipage}
+  \caption{Visual depiction of samples for $d=1$ and $d=2$.}
+  \label{fig:samples}
+\end{figure}
+
+\emph{Exponential} scaling is bad, but some of the badness can be lost in
+abstraction. If the one-dimensional case took $10$ seconds to execute, Table
+\ref{tab:exponential} give execution times for some values of $d$. Note that by
+$d=20$, the total execution time for our `simple' parameter study is already 240
+times the age of the universe. Clearly, this is quite bad.
+
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{r|r|l}
+  \hline
+  Dimension & Time (sec) & Comparison\\
+  \hline
+  1 & $10^{1}$ & Ten seconds\\
+  \hline
+  5 & $10^{5}$ & One Day\\
+  \hline
+  10 & $10^{10}$ & Eleven generations\\
+  \hline
+  18 & $10^{18}$ & Age of Universe\\
+  \hline
+  20 & $10^{20}$ & 230 x AoU\\
+  \hline
+  \end{tabular}
+  \caption{Example execution times for example parameter study. Punchline exponential
+    scaling is \emph{very, very bad}.}
+  \label{tab:exponential}
+\end{table}
+
+This exponential scaling is one manifestation of \emph{the curse of
+  dimensionality}.
+
+\section{Curse of Dimensionality}
+% --------------------------------------------------
+
+The \textbf{curse of dimensionality}\footnote{Coined by Richard Bellman in the
+  context of `exhaustive optimization'.} is the general phenomena of cost
+scaling exponentially with dimension. This is actually a somewhat \emph{vague}
+term, as dimensionality manifests differently across
+contexts.\cite{donoho2000high} Some (academic) examples include:
+
+\bigskip\noindent\underline{Integration:} Employing a tensor quadrature grid (as
+visualized in Fig. \ref{fig:samples}) for quadrature directly leads to
+exponential cost.
+
+\bigskip\noindent\underline{Sampling:} Sampling according to a tensor design
+leads to exponential cost. Note, however, that the Monte Carlo algorithm
+(sampling from a density to approximate expectations) is \emph{not} cursed by
+dimensionality, as Monte Carlo is dimension
+independent.\cite{owen2013montecarlo}
+
+\bigskip\noindent\underline{Machine Learning:} (Requirement of large data)
+
+\bigskip\noindent\underline{Inference:}
+
+\bigskip\noindent\underline{Distance:}
+
+\bigskip\noindent\underline{Big Data:} In 2000, David Donoho gave a talk on the
+curse of dimensionality as it relates to data analysis.\cite{donoho2000high}
+He noted that in industry,
+
+\begin{quote}
+  The trend today is towards more observations \emph{but even more so},
+  \textcolor{palered}{to radically larger numbers of variables} – voracious,
+  automatic, systematic collection of hyper-informative detail about each
+  observed instance.\footnote{Emphasis mine}
+\end{quote}
+
+Statisticians usually consider data in terms of a matrix; with rows representing
+$n$ observations, and columns representing $d$ variables. Dimensionality is thus
+`one-half' of the bigness of data.
+
+Hopefully one of the contexts above is relevant to you. Assuming this is the
+case, then dimensionality is \emph{your} problem! We've seen one way
+dimensionality affects a particular context (tensor-product sampling designs),
+but why does dimensionality affect all these \emph{different} contexts? To build
+some intuition, let's take a look at some properties of high-dimensional
+geometry.
+
+\subsection{High-Dimensional Geometry}
+% -------------------------
+
+\bigskip\noindent\underline{Fact 1:} The hypersphere has vanishing interior.
+
+\begin{equation*} \begin{aligned}
+    HV &= \int\cdots\int r^{d-1}\,
+         T(\varphi_{1},\dots,\varphi_{d-1})\,
+         dr d\varphi_{1}\cdots d\varphi_{d-1}
+\end{aligned} \end{equation*}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.65\textwidth]{../../images/surface_density}
+  \caption{Radius-dependent portion of the integrant for a hypersphere volume
+    calculation. Note that for higher dimensions, nearly all of the integrand is
+    concentrated near the edge of $r=1$. This demonstrates that the hypersphere
+    is empty -- that all of its volume is concentrated at its edge.}
+  \label{fig:hypervolume}
+\end{figure}
+
+Practically, this means that if we sample uniformly from a hypersphere, then in
+high dimensions, we will surely `miss' the interior. If our intent was to
+understand the relation between input and response, then this is a region of a
+function's input that we will not learn about. Depending on the context, this
+may (or may not!) be an issue.
+
+\bigskip\noindent\underline{Fact 2:} All the volume in a hypersphere is near
+\emph{the} equator.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.65\textwidth]{../../images/equator}
+  \caption{Realized angles away from a chosen equator for a $d$ dimensional
+    hypersphere, estimated as empirical densities. This illustrates that, as
+    $d\to\infty$, most points in the hypersphere (thus the volume) are
+    concentrated near an equator.}
+  \label{fig:equator}
+\end{figure}
+
+Similar to above, in high dimensions we will `miss' some \emph{directions} when
+sampling uniformly from the hypersphere.
+
+\bigskip\noindent\underline{Fact 3:} Random projections preserve pairwise
+distances.
+
+First, we'll illustrate this fact with an example, then describe the theorem
+that backs it up. I use some gene expression data from the UC Irvine machine
+learning databse\cite{blake1998uci} for this example.\footnote{The specific data
+  source is not terribly important here; the point is that the data are not
+  `cooked' for demonstration purposes.} The data are loaded into the variable
+\lstinline{mat_data}; the data have dimensions
+
+\begin{lstlisting}
+## Gene data from UCI
+dim(mat_data)
+#       Observations,  Dimensions
+> [1]   801,           20531
+\end{lstlisting}
+
+We select a random projection of dimensionality \lstinline{k} via some
+mysterious, to-be-described procedure, based on a user-selected error tolerance
+\lstinline{eps}.
+
+\begin{lstlisting}
+## Make reproducible
+set.seed(101)
+## Calculate dimension
+C <- 1                             # Over-samping factor
+n <- dim(mat_data)[1]              # Observations
+d <- dim(mat_data)[2]              # Dimensionality
+
+k <- C * ceiling(log(n) / eps ^ 2) # J-L dimension
+k
+> 1338 (6.5% of 20531)
+\end{lstlisting}
+
+This mysterious procedure has suggested a projection of dimensionality $1338$,
+just $6.5\%$ of $20531$.
+
+A bonus fact is that, in high dimensions, random vectors drawn from an isotonic
+gaussian\footnote{A gaussian possessing a diagonal covariance matrix} will
+essentially be orthogonal.\cite{ailon2009fast} We can use this fact to easily
+construct a random projection of the desired size.
+
+\begin{lstlisting}
+## Random `projection`
+P <-
+  rnorm(d * k, sd = 1 / d) %>%
+  matrix(nrow = d, ncol = k)
+## Project the data
+mat_proj <-
+  mat_data %*% P
+\end{lstlisting}
+
+When we project to a smaller dimensionality, we tend to decrease the average
+distance between points. If we have any hope of preserving pairwise distances,
+we'd better account for this fact.
+
+\begin{lstlisting}
+## Match the original average distance; Subsample for speed
+Ind <- sample(x = 1:n, size = 500)
+
+D_sub_orig <-
+  mat_data[Ind, ] %>%
+  dist()
+
+D_sub_fix <-
+  mat_proj[Ind, ] %>%
+  dist()
+
+factor <-
+  mean(D_sub_orig, na.rm = TRUE) / mean(D_sub_fix, na.rm = TRUE)
+
+mat_proj <-
+  mat_proj * factor
+\end{lstlisting}
+
+The claim is that the projected data \lstinline{mat_proj} is the same as
+\lstinline{mat_data} to within the chosen tolerance \lstinline{eps}; let's check
+if that is the case.
+
+\begin{lstlisting}
+## Re-compute distances with proper scaling
+Ind <- sample(x = 1:n, size = 500) # New draw
+
+D_sub_orig <-
+  mat_data[Ind, ] %>%
+  dist()
+
+D_sub_proj <-
+  mat_proj[Ind, ] %>%
+  dist()
+
+## Compute quantiles of discrepancy
+R_diff <- (D_sub_proj - D_sub_orig) / D_sub_orig
+qt <- quantile(R_diff)
+## qt
+sprintf(
+  "%5.3f%% %5.3f%% %5.3f%% %5.3f%% %5.3f%%",
+  qt[1] * 100,
+  qt[2] * 100,
+  qt[3] * 100,
+  qt[4] * 100,
+  qt[5] * 100
+)
+>      0%     25%    50%    75%   100%
+> -7.784% -1.193% 0.082% 1.344% 8.139%
+\end{lstlisting}
+
+In this case, the realized distortion is indeed within $\pm10\%$. This is a bit
+mysterious -- by \emph{randomly} throwing out information, we were able to
+preserve a great deal of structure in the data. The
+\textbf{Johnson-Lindenstrauss lemma} (J-L) shows that this is no accident, but
+rather a general property of high-dimensional spaces.
+
+\underline{Lemma:} (Johnson-Lindenstrauss) For any $0<\epsilon<1$ and
+$n\in\mathbb{Z}_{>0}$, let $k\in\mathbb{Z}_{>0}$ such that
+
+\begin{equation} \label{eq:jl-bound}
+  k \geq C \frac{\log(n)}{\epsilon^2},
+\end{equation}
+
+\noindent then for all sets of points $V\subset\R{d}$, there is a projection
+$P_k:\R{d}\to\R{k}$ with $\alpha\in\R{}_{>0}$ such that, for all $u,v\in V$, we
+have
+
+\begin{equation} \label{eq:jl-distance}
+  (1 - \epsilon)\|\vu - \vv\|^2 \leq \alpha\|P_k(\vu) - P_k(\vv)\|^2 \leq %
+  (1 + \epsilon)\|\vu - \vv\|^2.
+\end{equation}
+
+\noindent Further, this projection can be found in polynomial time.
+
+Numerous proofs of this statement\footnote{note that I've modified the statement
+  above to emphasize certain elements, in the interest of aiding explanation.
+  The `true' J-L lemma is stated slightly differently; I've made $\alpha$
+  explicit in the statement above} exist, for an example see Dasgupta and
+Gupta.\cite{dasgupta2003elementary}
+
+Let's first try to understand the statement above. \Cref{eq:jl-distance} is a
+statement about pairwise distances $\|\vu-\vv\|$ and their projected versions
+$\|P_k(\vu) - P_k(\vv)\|$. J-L states that \emph{all} points in a given (data)
+set satisfy this condition. Precisely, the projected pairwise distances can only
+be distorted at most by a factor of $(1\pm\epsilon)$.
+
+Note that the projected pairwise distances are multiplied by a positive value
+$\alpha$. This is because projections reduce the \emph{average} distance between
+points, as illustrated in Figure \ref{fig:jl-avg-distance}. If we want any hope
+of matching pairwise distances, we have to account for this fact. I do this very
+simply in the code above by computing $\alpha$ from the ratio of average
+distances between the original and projected data -- we then restore by
+multiplying by alpha.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.65\textwidth]{../../images/dim_proj1}
+  \caption{Example points in 3d space, projected to lower dimensions. Note the
+    average distance between points is reduced with successively smaller
+    projections.}
+  \label{fig:jl-avg-distance}
+\end{figure}
+
+\Cref{eq:jl-bound} provides a target dimensionality based on provided
+quantities. Provided the number of observations $n$ and desired error tolerance
+$\epsilon$, J-L suggests a minimum projection dimension $k$. Note that
+\emph{dimensionality is absent} from this bound. The original dimensionality $d$
+can be arbitrarily large; given the same $n$ and $\epsilon$, the bound on
+projection dimension will be the same.
+
+This dimensionality $k$ is something we'll refer to -- in a somewhat
+\emph{vague} sense -- as \emph{intrinsic dimensionality}. Within a space of
+dimension $d$, there is low-dimensional structure of size $k$ (the mapping
+$\alpha P_k(\cdot)$) that preserves information of interest, here pairwise
+distances. This points forward to a general strategy for lifting the curse of
+dimensionality -- if we can identify low-dimensional that preserves the
+properties we care about, then we can reduce the effective dimensionality from
+$d$ to $k$, and (potentially) render tractable the problems we want to solve.
+This is the idea behind \emph{dimension reduction}.
+
+\section{Dimension Reduction}
+% --------------------------------------------------
+
+\textbf{Dimension reduction} is the general strategy of identifying some form of
+low-dimensional structure within a problem. Since there are many different
+problem settings, objectives, and hence \emph{kinds} of structure, we introduce
+a simple taxonomy to help distinguish different flavors of dimension reduction.
+
+\subsection{A Taxonomy}
+% -------------------------
+We will discuss three flavors of dimension reduction, broadly categorized by the
+interpretation of $\R{d}$. Note that many of the techniques we will introduce
+are applied across different contexts -- the mathematics does not appreciably
+change in these different settings. However, the \emph{interpretation} of
+mathematics changes across settings; if we seek to understand how the math
+applies to our particular setting -- and if we seek to understand work by other
+researchers in different fields -- then this difference in interpretation is
+meaningful.
+
+For instance, the singular value decomposition (SVD) shows up under different
+names in different communities: the Karhunen-Loeve expansion (KLE), the proper
+orthogonal decomposition (POD), principal component analysis (PCA), etc.
+Mathematically, there is little difference between these ideas. However, a
+person using the term KLE will generally be thinking of a different kind of
+problem than someone speaking of PCA. Further, different properties of the SVD
+are relevant in these different contexts. Both the communication aims and
+technical details are conveyed by the different terminology.
+
+We will describe the taxonomy of different settings, then focus on the
+\emph{input-space} setting to give a bit more detail.
+
+\bigskip\noindent A \underline{generic-space} is $\R{d}$ with no special
+assumptions. Techniques like the Johnson-Lindenstrauss lemma and principal
+component analysis\cite{fodor2002survey} are used in this context.
+
+\bigskip\noindent An \underline{output-space} is $\R{d}$ understood as the
+output of some (dynamical) system; the $d$ entries of a vector from $\R{d}$
+could represent a time-varying signal (e.g. a speech sample), the pointwise
+entries of some field (e.g. a mean channel-flow field), or some combination
+(e.g. a time-varying flow field). The techniques of compressed sensing
+(CS)\cite{candes2008introduction} and the proper orthogonal
+decomposition\cite{lumley2007} are often used in this context.
+
+\bigskip\noindent An \underline{input-space} is $\R{d}$ understood as the input
+space to some function $f(\vx)$. Compressed sensing is also used in this
+context,\cite{tang2014subsampled} but other approaches are a bit more common. We
+will discuss these below, under additional broad categorizations.
+
+\subsection{Input-space: Running Example}
+% -------------------------
+To explore input-space dimension reduction techniques, we first introduce the
+simple illustrative problem of rough pipe flow, like that originally studied by
+Osborne Reynolds.\cite{reynolds1883}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.65\textwidth]{../../images/pipe_diagram}
+  \caption{Schematic for example pipe flow problem. A viscous fluid is pumped
+    through a rough pipe. Our output quantity of interest is the (normalized)
+    pressure loss -- a measure of the effort required to pump the fluid. The
+    inputs are the fluid properties and pipe geometry.}
+  \label{fig:pipe_diagram}
+\end{figure}
+
+\subsection{Subset Reduction}
+% -------------------------
+\textbf{Morris screening}
+
+\textbf{Sobol' indices}
+
+\subsection{Subspace Reduction}
+% -------------------------
+\textbf{Principal component analysis}
+
+We can think of the \textbf{active subspace} as an object arising from a PCA on
+gradient data; in fact, an early formulation of the active subspace was exactly
+posed as such.\cite{russi2010uncertainty}
+
+\section{Intrinsic Dimensionality}
+% --------------------------------------------------
+
+\bibliographystyle{plain}
+\bibliography{bibtex_database}
 
 \end{document}

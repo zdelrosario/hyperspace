@@ -102,7 +102,6 @@ Chaos Expansion representation of a function. This effectively pushes the
 computation of Sobol' indices to a quadrature problem.
 
 ** Seshadri et al. (2018)
-(One of Pranay's papers on quadrature, probably effectively subsampled)
 Seshadri, Narayan, and Mahaevan, "Effectively Subsampled Quadratures for Least
 Squares Polynomial Approximations" (2018) JUQ
 
