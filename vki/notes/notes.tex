@@ -65,7 +65,6 @@ This exponential scaling is one manifestation of \emph{the curse of
 
 \section{Curse of Dimensionality}
 % --------------------------------------------------
-
 The \textbf{curse of dimensionality}\footnote{Coined by Richard Bellman in the
   context of `exhaustive optimization'.} is the general phenomena of cost
 scaling exponentially with dimension. This is actually a somewhat \emph{vague}
@@ -112,8 +111,15 @@ geometry.
 
 \subsection{High-Dimensional Geometry}
 % -------------------------
+Why is dimensionality so challenging? Here we talk about a few properties of
+high-dimensional geometry. The intent is to (1) underscore that high-dimensional
+spaces have `surprising' behavior, and (2) build some intuition for
+dimensionality beyond the fact that `it is challenging'.
 
 \bigskip\noindent\underline{Fact 1:} The hypersphere has vanishing interior.
+
+\bigskip
+
 
 \begin{equation*} \begin{aligned}
     HV &= \int\cdots\int r^{d-1}\,
@@ -137,8 +143,41 @@ understand the relation between input and response, then this is a region of a
 function's input that we will not learn about. Depending on the context, this
 may (or may not!) be an issue.
 
+\clearpage
 \bigskip\noindent\underline{Fact 2:} All the volume in a hypersphere is near
 \emph{the} equator.
+
+\bigskip
+Upfront, this is a bit of a wordgame; there are actually \emph{many} equators on
+any sphere. On Earth, we define a single equator, but one can actually think of
+an infinite family of equators, each enclosed by a great circle (Fig.
+\ref{fig:great-circle}). These equators are formed by intersecting a
+3-dimensional sphere (a `3-sphere') with a 2-dimensional plane that passes
+through the sphere's origin, forming a 2-dimensional object. Since there are
+infinitely many such planes, there are infinitely many equators.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.65\textwidth]{../../images/great_circle}
+  \caption{Cartoon depicting the boundary of a great circle for a 3-sphere. The
+    red curve depicts a great circle; which encloses an equator. Thus, for the
+    3-sphere, an equator is a 2-dimensional object. In higher dimensions $d$,
+    the analog of an equator is a $d-1$-dimensional object. From Wikimedia
+    Commons, CC P.wormer.}
+  \label{fig:great-circle}
+\end{figure}
+
+In higher dimensions $d$, an equator is always a $d-1$-dimensional object. Thus,
+as $d$ grows, an equator neglects proportionally less with regard to the full
+dimensionality of the space. Thus, if we were to sample points uniform randomly
+from within the $d$-dimensional sphere, this `neglected' dimension would
+contribute less in higher dimensions. The result is that the volume -- which can
+be linked to the uniform density in the hypersphere -- concentrates towards
+\emph{any} chosen equator. We can see this by picking an arbitrary equator,
+sampling at random, and computing the histogram of angles formed by the vector
+between drawn points, the origin, and the chosen equator. Figure
+\ref{fig:equator} shows results from this computer experiment: The realized
+angles concentrate towards zero as $d$ increases.
 
 \begin{figure}[!ht]
   \centering
@@ -153,9 +192,11 @@ may (or may not!) be an issue.
 Similar to above, in high dimensions we will `miss' some \emph{directions} when
 sampling uniformly from the hypersphere.
 
+\clearpage
 \bigskip\noindent\underline{Fact 3:} Random projections preserve pairwise
 distances.
 
+\bigskip
 First, we'll illustrate this fact with an example, then describe the theorem
 that backs it up. I use some gene expression data from the UC Irvine machine
 learning databse\cite{blake1998uci} for this example.\footnote{The specific data
@@ -206,8 +247,8 @@ mat_proj <-
 \end{lstlisting}
 
 When we project to a smaller dimensionality, we tend to decrease the average
-distance between points. If we have any hope of preserving pairwise distances,
-we'd better account for this fact.
+distance between points. To have any hope of preserving pairwise distances, we'd
+better account for this fact.
 
 \begin{lstlisting}
 ## Match the original average distance; Subsample for speed
@@ -228,9 +269,9 @@ mat_proj <-
   mat_proj * factor
 \end{lstlisting}
 
-The claim is that the projected data \lstinline{mat_proj} is the same as
-\lstinline{mat_data} to within the chosen tolerance \lstinline{eps}; let's check
-if that is the case.
+The claim is that the projected data \lstinline{mat_proj} possesses the same
+pairwise distances $\|\vu-\vv\|$ as \lstinline{mat_data}, to within the chosen
+tolerance \lstinline{eps}; let's check if that is the case.
 
 \begin{lstlisting}
 ## Re-compute distances with proper scaling
@@ -266,6 +307,7 @@ preserve a great deal of structure in the data. The
 \textbf{Johnson-Lindenstrauss lemma} (J-L) shows that this is no accident, but
 rather a general property of high-dimensional spaces.
 
+\bigskip
 \underline{Lemma:} (Johnson-Lindenstrauss) For any $0<\epsilon<1$ and
 $n\in\mathbb{Z}_{>0}$, let $k\in\mathbb{Z}_{>0}$ such that
 
@@ -284,6 +326,7 @@ have
 
 \noindent Further, this projection can be found in polynomial time.
 
+\bigskip
 Numerous proofs of this statement\footnote{note that I've modified the statement
   above to emphasize certain elements, in the interest of aiding explanation.
   The `true' J-L lemma is stated slightly differently; I've made $\alpha$
@@ -335,8 +378,9 @@ This is the idea behind \emph{dimension reduction}.
 
 \textbf{Dimension reduction} is the general strategy of identifying some form of
 low-dimensional structure within a problem. Since there are many different
-problem settings, objectives, and hence \emph{kinds} of structure, we introduce
-a simple taxonomy to help distinguish different flavors of dimension reduction.
+problem settings and objectives -- thus many \emph{kinds} of structure -- we
+introduce a simple taxonomy to help distinguish different flavors of dimension
+reduction.
 
 \subsection{A Taxonomy}
 % -------------------------
