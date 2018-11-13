@@ -5,6 +5,7 @@
 \usepackage{cleveref}
 \usepackage{listings}
 \usepackage[top=1in, bottom=1in, left=0.8in, right=0.8in]{geometry}
+\usepackage{amssymb} % \varnothing
 
 \definecolor{palegreen}{HTML}{01B7A8}
 \definecolor{palered}{HTML}{C52E35}
@@ -55,7 +56,7 @@ times the age of the universe. Clearly, this is quite bad.
   20 & $10^{20}$ & 230 x AoU\\
   \hline
   \end{tabular}
-  \caption{Example execution times for example parameter study. Punchline exponential
+  \caption{Execution times for example parameter study. Punchline: exponential
     scaling is \emph{very, very bad}.}
   \label{tab:exponential}
 \end{table}
@@ -114,7 +115,7 @@ geometry.
 Why is dimensionality so challenging? Here we talk about a few properties of
 high-dimensional geometry. The intent is to (1) underscore that high-dimensional
 spaces have `surprising' behavior, and (2) build some intuition for
-dimensionality beyond the fact that `it is challenging'.
+dimensionality, with an aim towards challenges and potential solutions.
 
 \bigskip\noindent\underline{Fact 1:} The hypersphere has vanishing interior.
 
@@ -352,7 +353,8 @@ multiplying by alpha.
   \includegraphics[width=0.65\textwidth]{../../images/dim_proj1}
   \caption{Example points in 3d space, projected to lower dimensions. Note the
     average distance between points is reduced with successively smaller
-    projections.}
+    projections. This is accounted for in \eqref{jl-distance} by the $\alpha$
+    factor, which corrects for these mean-distance effects.}
   \label{fig:jl-avg-distance}
 \end{figure}
 
@@ -438,9 +440,65 @@ Osborne Reynolds.\cite{reynolds1883}
   \label{fig:pipe_diagram}
 \end{figure}
 
+We will categorize the following input-space reduction techniques into
+\emph{subset reduction} and \emph{subspace reduction} approaches.
+
 \subsection{Subset Reduction}
 % -------------------------
-\textbf{Morris screening}
+When pursuing a \emph{subset reduction}, we aim to select a subset
+$\{x_i\}_{i\in I}$ of the full set of variables $\{x_i\}_{i=1,\dots,d}$. The
+rationale is as follows: Suppose our qoi had some complementary subsets of
+\emph{active} $\{x_i\}_{i\in I_A}$ and \emph{inactive} $\{x_i\}_{i\in I_I}$
+variables, such that $I_A\cup I_I = \{1,\dots,d\}$ and $I_A\cap
+I_I=\varnothing$. Further suppose this split had the property that, for all
+$x_i\neq x'_i$ with $i\in I_I$ and $x_j=x'_j$ with $j\in I_A$, we have
+
+\begin{equation} \label{eq:inactive}
+  f(\vx) = f(\vx').
+\end{equation}
+
+\noindent In words, the inactive variables do not contribute to changes in the
+value of $f$. In this (admittedly contrived) setting, one can safely set the
+inactive variables $\{x_i\}_{i\in I_I}$ to fixed, nominal values, and carry out
+further studies on the active variables -- this reduces dimensionality to $k =
+|I_A|$.\footnote{Where I use $|\cdot|$ to denote set cardinality.}
+
+Of course, one can ask why these supposedly inactive variables were in the
+function to start. Practically, the condition \eqref{eq:inactive} does not
+frequently occur in practice; however, this condition is approximately met in
+many practical applications. The precise definition of `approximately' results
+in different subset reduction techniques. We will discuss two: Morris screening
+and Sobol' indices.
+
+\textbf{Morris screening} Morris screening is closely related to the derivative,
+and can be thought of as studying the mean and variance of the derivative. Ralph
+Smith's textbook \cite{smith2013uncertainty} goes through this procedure in gory
+detail; these notes will give only a brief introduction, as we'll focus more on
+Sobol indices. Morris screening considers statistics of the \emph{elementary
+  effects}, defined by
+
+\begin{equation}\label{eq:elem-effect}
+  d_{i}(\vx_j) = \frac{f(\vx_j+\Delta \ve_i) - f(\vx_j)}{\Delta},
+\end{equation}
+
+\noindent where \(\ve_i\) is the i-th standard basis vector,\footnote{The vector with
+all zeros, except for a one in the i-th entry} and \(\Delta\) is a large stepsize.
+Note that \eqref{eq:elem-effect} is simply a first-order approximation of the
+derivative; however, since \(\Delta\) is relatively large, this is a coarse
+approximation to the derivative. These elementary effects are used to construct
+global sensitivity measures
+
+\begin{equation}\begin{aligned}
+  \mu_i^* &= \frac{1}{r}\sum_{j=1}^r |d_{i}(\vx_j)|, \\
+  \sigma_i^2 &= \frac{1}{r-1}\sum_{j=1}^r(d_{i}(\vx_j)-\mu_i)^2, \\
+  \mu_i &= \frac{1}{r}\sum_{j=1}^rd_{i}(\vx_).
+\end{aligned}\end{equation}
+
+This procedure is called \emph{screening} because it allows us to determine
+whether individual parameters are unimportant, but does not quantify relative
+variable importance. To determine relative importance, we can turn to Sobol
+indices. However, Morris screening is a relatively cheap procedure, and thus is
+a good tool to be aware of.
 
 \textbf{Sobol' indices}
 
