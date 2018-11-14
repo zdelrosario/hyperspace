@@ -16,7 +16,10 @@
 \section{Introduction}
 % --------------------------------------------------
 These notes support a lecture I gave at VKI on 2018-10-17 on the ``Curse of
-Dimensionality.'' This was a part of lecture series STO-AVT-236: Uncertainty
+Dimensionality.''\footnote{The source for these notes are available in a public
+  GitHub repository: https://github.com/zdelrosario/hyperspace. Feel free to
+  send me a pull request if you have a suggestion, or think something here is in
+  error.} This was a part of lecture series STO-AVT-236: Uncertainty
 Quantification in Computational Fluid Dynamics. While the ostensible focus was
 on UQ, I choose to cover issues of dimensionality as they strongly impact
 efforts to quantify uncertainty. Usually when doing UQ, we care about
@@ -692,26 +695,113 @@ expectation. Expectations are subject to the curse of dimensionality.
 
 So is Sobol' itself cursed by dimensionality?
 
+Many of the early applications of Sobol' indices seem to be on relatively cheap
+models for financial and ecological applications.\cite{saltelli2004sensitivity}
+In these cases -- where functions evaluate in fractions of a second -- only
+truly extreme dimensionality would be crippling. More recently, numerical
+analysts have developed quadrature- and polynomial approximation-based
+approaches to estimating Sobol' indices.\cite{sudret2008global} These approaches
+extend the applicability of Sobol' indices to more complex simulations with
+higher computational cost. Of course, many of these techniques are themselves
+cursed by dimensionality, so while they extend the range of dimensionality we
+can treat, they do not `solve' the underlying issue.
 
+Within the framework of subset reduction, we are implicitly assuming that a
+reasonable reduction exists within the variables `as stated'. Subset reduction
+could not, for instance, find a change of variables that reduced the problem to
+one-dimensional. Next, we'll consider an alternative framework for input-space
+dimension reduction that allows for transformation of the input space, hence
+generalizing the kind of low-dimensional structure we can seek.
 
 \subsection{Subspace Reduction}
 % -------------------------
-\textbf{Principal component analysis} \textcolor{red}{TODO:} PCA introduction
+In the \emph{subspace reduction} perspective, we seek low dimensional structure
+of the form $\mW_A\in\R{d\times k}$ such that
 
-We can think of the \textbf{active subspace} as an object arising from a PCA on
+\begin{equation} \label{eq:ridge}
+  f(\vx) = g(\mW_A^{\top}\vx).
+\end{equation}
+
+\noindent In words, we are looking for a set of \emph{active directions} $\mW_A$
+within the input space that capture the variability of $f$. These can be thought
+of additionally in terms of their complementary \emph{inactive directions}
+$\mW_I$, which do not contribute to changes in $f$. Note that in this context,
+it is somewhat more difficult to `freeze' the inactive variables and vary the
+active variables -- for any value of $\v\xi_A = \mW_A^{\top}\vx$, there is an
+infinite family of $\vx$ that produce the same value of $\v\xi_A$. This becomes
+problematic in the case where condition \label{eq:ridge} only approximately
+holds.\cite{constantine2015} We will defer the discussion of applying subspace
+reduction to cited works, and instead focus on the intuition behind existing
+techniques, and eventually point to a dimension reduction strategy that is not
+itself cursed.
+
+\subsubsection{Principal component analysis}
+Before jumping straight to subspace reduction, we first review \emph{principal
+  component analysis} (PCA), as it will aid in understanding what comes next.
+PCA is a classical idea from statistics that helps to reduce dimensionality in
+the generic-space setting. The high-level idea is to find a set of $k$
+directions $\mW_A\in\R{k\times d}$ that capture a desired fraction of the
+`variability' in the data $\mX\in\R{n\times d}$. This idea is visually depicted
+in Figure \ref{fig:pca}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.65\textwidth]{../../images/pca3}
+  \caption{Visual example of PCA. Here we consider 2-dimensional data, and seek
+    a 1-dimensional representation that captures the majority of the
+    `variability' in the data. The dashed line represents the computed
+    direction, and every data point is projected along this single direction to
+    form a 1-dimensional summary of the 2-dimensional data.}
+  \label{fig:pca}
+\end{figure}
+
+The vague concept of variability is made precise for PCA in terms of variance;
+the PCA directions are computed by finding those directions $\mW_A$ that capture
+the largest fraction of the variance. One can perform a PCA by first
+centralizing the data $\mX' = \mX - \overline{\mX}$ by its sample mean
+$\overline{\mX}$, and computing a singular value decomposition of these data
+
+\begin{equation*}
+  \mX' = \mU\m\Sigma\mW^{\top}.
+\end{equation*}
+
+\noindent With this representation, the entries of the diagonal matrix
+$\m\Sigma$ represent the standard deviations of the data along the different PCA
+directions. One can select the first $k$ directions $\mV_K$ -- ordered by the
+descending singular values $\sigma_1 \geq \sigma_2 \geq \dots$ -- in order to
+capture a desired fraction of the total variability $\text{Trace}(\m\Sigma)$. We
+may then project the data to form a k-dimensional representation via
+
+\begin{equation*}
+  \mY = \mX\mV_k = \mU\m\Sigma_k.
+\end{equation*}
+
+PCA is itself useful for data analysis in generic-space, but how can it be used
+for the input-space setting? In other words, how do we connect $f$ to its inputs
+with PCA? This linkage is formalized in the \emph{active subspace}.
+
+\subsubsection{Active subspaces}
+We can think of the \emph{active subspace} as an object arising from a PCA on
 gradient data; in fact, an early formulation of the active subspace was exactly
 posed as such.\cite{russi2010uncertainty}
-
-\textcolor{red}{TODO:} Active subspace tutorial
 
 \textcolor{red}{TODO:} Active subspace example
 
 \section{Intrinsic Dimensionality}
 % --------------------------------------------------
 
+\subsubsection{The importance of vague concepts}
 \textcolor{red}{TODO:} vague concepts
 
 \textcolor{red}{TODO:} Buckingham pi
+
+\section{Annotated Bibliography}
+% --------------------------------------------------
+There is quite a bit more to the story of dimensionality than what I've
+presented above. The last bit of value I'd like to add here is a set of
+suggestions on what to read next.
+
+\textcolor{red}{TODO:} Annotate the entries!
 
 \bibliographystyle{plain}
 \bibliography{bibtex_database}
