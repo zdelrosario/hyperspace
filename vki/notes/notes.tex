@@ -15,6 +15,15 @@
 
 \section{Introduction}
 % --------------------------------------------------
+These notes support a lecture I gave at VKI on 2018-10-17 on the ``Curse of
+Dimensionality.'' This was a part of lecture series STO-AVT-236: Uncertainty
+Quantification in Computational Fluid Dynamics. While the ostensible focus was
+on UQ, I choose to cover issues of dimensionality as they strongly impact
+efforts to quantify uncertainty. Usually when doing UQ, we care about
+dimensionality insofar as it makes our lives challenging; however, towards the
+end of these notes I'll point to some areas where in addressing dimensionality,
+we may actually learn a bit more of the underlying physics.
+
 First, an introduction by way of example: Let's imagine we have a function $f$
 of $d$ variables $\vx\in[0,1]^d$, and we seek to carry out a parameter study. In
 this study, we will choose three points per dimension, in order to `evenly'
@@ -122,21 +131,43 @@ dimensionality, with an aim towards challenges and potential solutions.
 The hypersphere has vanishing interior.
 
 \bigskip
-\textcolor{red}{TODO:} Some explicative text should go here.
+In low dimensions, it can be easy to think of a uniform distribution -- really
+just the volume of a solid -- as being `even' across the space. While this is
+formally what a uniform distribution is, our geometric intuition for what that
+means can start to break down in higher dimensions. As an example, let's
+consider the volume integral for a unit \emph{hypersphere}; the set of all
+points $\cH=\{\vx\in\R{d}\,|\,\|\vx\|\leq 1\}$, given in spherical coordinates
+in \eqref{eq:hypersphere-volume}.
 
-\begin{equation*} \begin{aligned}
-    HV &= \int\cdots\int r^{d-1}\,
+\begin{equation*} \begin{aligned} \label{eq:hypersphere-volume}
+    HV &= \int\cdots\int \textcolor{red}{r^{d-1}}\,
          T(\varphi_{1},\dots,\varphi_{d-1})\,
          dr d\varphi_{1}\cdots d\varphi_{d-1}
 \end{aligned} \end{equation*}
 
+\noindent The integrand of \eqref{eq:hypersphere-volume} can be understood as a
+sort of `volume density' -- the quantity we will integrate to compute the
+volume. In areas where this integrand is large we see more volume contributed,
+while in areas where this is small, relatively little volume is contributed.
+Expressing this integral in spherical coordinates allows us to focus on how
+volume contributions change along the radial coordinate $r$.
+
+Note that the exponent in $r^{d-1}$ already points to some sort of `exponential
+badness' we might expect from dimensionality. This factor in the integrand (Fig.
+\ref{fig:hypervolume}) shows that the integrand tends to grow as one moves from
+the origin towards the edge of the hypersphere. However, this growth becomes
+distorted in higher dimensions; at $d=50$ the integrand is nearly zero until
+about $r>0.9$, which means there is essentially no volume contributed until one
+reaches the edge of the sphere. It is in this sense that we say the hypersphere
+is empty.
+
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.65\textwidth]{../../images/surface_density}
-  \caption{Radius-dependent portion of the integrant for a hypersphere volume
-    calculation. Note that for higher dimensions, nearly all of the integrand is
-    concentrated near the edge of $r=1$. This demonstrates that the hypersphere
-    is empty -- that all of its volume is concentrated at its edge.}
+  \caption{Radius-dependent portion of the integrand for a (unit) hypersphere
+    volume calculation. Note that for higher dimensions, nearly all of the
+    integrand is concentrated near the edge of $r=1$. This demonstrates that the
+    hypersphere is empty -- that all of its volume is concentrated at its edge.}
   \label{fig:hypervolume}
 \end{figure}
 
@@ -193,7 +224,13 @@ angles concentrate towards zero as $d$ increases.
 \end{figure}
 
 Similar to above, in high dimensions we will `miss' some \emph{directions} when
-sampling uniformly from the hypersphere.
+sampling uniformly from the hypersphere. As noted with Fact 1, this may or may
+not be an issue, depending on the context.
+
+Facts 1 and 2 really are pure geometric properties. I suspect that if we could
+visualize higher-dimensional spaces, these `surprising facts' would be obvious.
+The next fact relies on some properties\footnote{concentration of measure} of
+random variables, and so relies on a bit more than geometry alone.
 
 \clearpage
 \subsubsection{Fact 3}
@@ -355,7 +392,7 @@ multiplying by alpha.
   \includegraphics[width=0.65\textwidth]{../../images/dim_proj1}
   \caption{Example points in 3d space, projected to lower dimensions. Note the
     average distance between points is reduced with successively smaller
-    projections. This is accounted for in \eqref{jl-distance} by the $\alpha$
+    projections. This is accounted for in \eqref{eq:jl-distance} by the $\alpha$
     factor, which corrects for these mean-distance effects.}
   \label{fig:jl-avg-distance}
 \end{figure}
@@ -611,14 +648,22 @@ bound; if it is small, then we can be confident that \(X_i\) is unimportant.
 
 \subsection{Subspace Reduction}
 % -------------------------
-\textbf{Principal component analysis}
+\textbf{Principal component analysis} \textcolor{red}{TODO:} PCA introduction
 
 We can think of the \textbf{active subspace} as an object arising from a PCA on
 gradient data; in fact, an early formulation of the active subspace was exactly
 posed as such.\cite{russi2010uncertainty}
 
+\textcolor{red}{TODO:} Active subspace tutorial
+
+\textcolor{red}{TODO:} Active subspace example
+
 \section{Intrinsic Dimensionality}
 % --------------------------------------------------
+
+\textcolor{red}{TODO:} vague concepts
+
+\textcolor{red}{TODO:} Buckingham pi
 
 \bibliographystyle{plain}
 \bibliography{bibtex_database}
