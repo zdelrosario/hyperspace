@@ -644,7 +644,55 @@ lower bound; if it is large, then we can be confident that \(X_i\) is important.
 In contrast the total-order index \(\overline{\tau}_{\{i\}}^2\) is an upper
 bound; if it is small, then we can be confident that \(X_i\) is unimportant.
 
-\textcolor{red}{TODO:} Sobol' example
+Now an example of a Sobol' index computation: A very common test case for
+demonstrating Sobol' indices is the so-called \emph{Ishigami
+  function},\cite{ishigami1990importance} given in \eqref{eq:ishigami}.
+
+\begin{equation*} \begin{aligned} \label{eq:ishigami}
+  f(\vx) &= \sin(x_1) + 7\sin^2(x_2) + 0.1 x_3^4\sin(x_1) \\
+  x_1, x_2, x_3 &\sim U[-\pi, \pi], \\
+  \underline{\tau}_{\{3\}}^2 &= 0\%, \\
+  \overline{\tau}_{\{3\}}^2 &= 24.4\%
+\end{aligned} \end{equation*}
+
+\noindent Above, Sobol' indices for $x_3$ are reported; note that $x_3$ enters
+as a scaling factor on $\sin(x_1)$. The first-order Sobol' index for $x_3$
+indicates that this variable is unimportant in a first-order sense; this is
+because we first average over all other variables ($\sin(\cdot)$ averages to
+zero as it is anti-symmetric) before computing the variance contributed. The
+total-order index tells a different story -- here $x_3$ contributes
+$\approx24\%$ of the total variance, in cooperation with the other inputs. This
+example helps to drive home why total-order indices should be used for dimension
+reduction.
+
+What would we get for total Sobol' indices on the pipe flow problem? The results
+Table \ref{tab:pipe-sobol} suggest that the roughness lengthscale $\epsilon$
+alone is sufficient to capture the vast majority of variance in the output qoi.
+
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{@{}llllll@{}}
+   & $\rho$ & $U$ & $d$ & $\mu$ & $\epsilon$\\
+  \hline
+  $\V[f]$ & 0\% & 0\% & 6\% & 0\% & 94\% \\
+  \end{tabular}
+  \caption{Total Sobol' indices for pipe flow problem. The results suggest that,
+    for capturing variance in $f$, the roughness $\epsilon$ alone is essentially
+    the only relevant variable. Of course, this pre-supposes that variance is
+    the `correct' measure to consider. The distributions for the inputs are
+    chosen such that fully turbulent flow conditions are emphasized; this
+    accounts for why roughness dominates in this setting.}
+  \label{tab:pipe-sobol}
+\end{table}
+
+Sobol' indices seem to be useful for dimension reduction, but let's consider
+their computational expense for a moment. Recall that Sobol' indices are defined
+in terms of variance in the output qoi. Variance is defined in terms of an
+expectation. Expectations are subject to the curse of dimensionality.
+
+So is Sobol' itself cursed by dimensionality?
+
+
 
 \subsection{Subspace Reduction}
 % -------------------------
