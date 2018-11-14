@@ -6,6 +6,7 @@
 \usepackage{listings}
 \usepackage[top=1in, bottom=1in, left=0.8in, right=0.8in]{geometry}
 \usepackage{amssymb} % \varnothing
+\usepackage{cancel} % \cancel{}
 
 \definecolor{palegreen}{HTML}{01B7A8}
 \definecolor{palered}{HTML}{C52E35}
@@ -14,7 +15,6 @@
 
 \section{Introduction}
 % --------------------------------------------------
-
 First, an introduction by way of example: Let's imagine we have a function $f$
 of $d$ variables $\vx\in[0,1]^d$, and we seek to carry out a parameter study. In
 this study, we will choose three points per dimension, in order to `evenly'
@@ -84,9 +84,10 @@ independent.\cite{owen2013montecarlo}
 
 \bigskip\noindent\underline{Machine Learning:} (Requirement of large data)
 
-\bigskip\noindent\underline{Inference:}
+\bigskip\noindent\underline{Inference:} \textcolor{red}{TODO:}
 
-\bigskip\noindent\underline{Distance:}
+\bigskip\noindent\underline{Distance:} \textcolor{red}{TODO:} Failure
+of nearest neighbors.
 
 \bigskip\noindent\underline{Big Data:} In 2000, David Donoho gave a talk on the
 curse of dimensionality as it relates to data analysis.\cite{donoho2000high}
@@ -117,10 +118,11 @@ high-dimensional geometry. The intent is to (1) underscore that high-dimensional
 spaces have `surprising' behavior, and (2) build some intuition for
 dimensionality, with an aim towards challenges and potential solutions.
 
-\bigskip\noindent\underline{Fact 1:} The hypersphere has vanishing interior.
+\subsubsection{Fact 1}
+The hypersphere has vanishing interior.
 
 \bigskip
-
+\textcolor{red}{TODO:} Some explicative text should go here.
 
 \begin{equation*} \begin{aligned}
     HV &= \int\cdots\int r^{d-1}\,
@@ -145,7 +147,7 @@ function's input that we will not learn about. Depending on the context, this
 may (or may not!) be an issue.
 
 \clearpage
-\bigskip\noindent\underline{Fact 2:} All the volume in a hypersphere is near
+\subsubsection{Fact 2} All the volume in a hypersphere is near
 \emph{the} equator.
 
 \bigskip
@@ -194,8 +196,8 @@ Similar to above, in high dimensions we will `miss' some \emph{directions} when
 sampling uniformly from the hypersphere.
 
 \clearpage
-\bigskip\noindent\underline{Fact 3:} Random projections preserve pairwise
-distances.
+\subsubsection{Fact 3}
+Random projections preserve pairwise distances.
 
 \bigskip
 First, we'll illustrate this fact with an example, then describe the theorem
@@ -470,12 +472,13 @@ many practical applications. The precise definition of `approximately' results
 in different subset reduction techniques. We will discuss two: Morris screening
 and Sobol' indices.
 
-\textbf{Morris screening} Morris screening is closely related to the derivative,
-and can be thought of as studying the mean and variance of the derivative. Ralph
-Smith's textbook \cite{smith2013uncertainty} goes through this procedure in gory
-detail; these notes will give only a brief introduction, as we'll focus more on
-Sobol indices. Morris screening considers statistics of the \emph{elementary
-  effects}, defined by
+\subsubsection{Morris screening}
+\emph{Morris screening} can be thought of as studying contributions of variables
+to the qoi through the mean and variance of the derivative. Ralph Smith's
+textbook \cite{smith2013uncertainty} goes through this procedure in gory detail;
+these notes will give only a brief introduction, as we'll focus more on Sobol'
+indices. Morris screening considers statistics of the \emph{elementary effects},
+defined by
 
 \begin{equation}\label{eq:elem-effect}
   d_{i}(\vx_j) = \frac{f(\vx_j+\Delta \ve_i) - f(\vx_j)}{\Delta},
@@ -491,16 +494,120 @@ global sensitivity measures
 \begin{equation}\begin{aligned}
   \mu_i^* &= \frac{1}{r}\sum_{j=1}^r |d_{i}(\vx_j)|, \\
   \sigma_i^2 &= \frac{1}{r-1}\sum_{j=1}^r(d_{i}(\vx_j)-\mu_i)^2, \\
-  \mu_i &= \frac{1}{r}\sum_{j=1}^rd_{i}(\vx_).
+  \mu_i &= \frac{1}{r}\sum_{j=1}^rd_{i}(\vx_j).
 \end{aligned}\end{equation}
 
 This procedure is called \emph{screening} because it allows us to determine
 whether individual parameters are unimportant, but does not quantify relative
-variable importance. To determine relative importance, we can turn to Sobol
+variable importance. To determine relative importance, we can turn to Sobol'
 indices. However, Morris screening is a relatively cheap procedure, and thus is
-a good tool to be aware of.
+a good tool of which to be aware.
 
-\textbf{Sobol' indices}
+\subsubsection{Sobol' indices}
+\emph{Sobol' indices} quantify importance of variables by attributing the
+variance in the qoi to different inputs. They are a useful, well-studied, and
+commonly-used technique for subset reduction, so we will spend some time
+discussing them in detail: I learned this topic through the primer by Saltelli
+et al.\cite{saltelli2004sensitivity}
+
+Sobol' indices require a random variable interpretation of our quantity of
+interest, so we'll introduce some notation used throughout the section. Let
+\(\mX\sim\rho\) be our random input variables, distributed according to a joint
+density \(\rho\) over our input space \(\Omega\).\footnote{Sobol' indices also
+  have some properties that rely on independence of the inputs. We will return
+  to this point later.} Then our output qoi is also a random variable
+\(Y=f(\mX)\). We denote by \(\E[Y] = \int f(\vx)\rho(\vx)d\vx\) the expectation,
+and by \(\V[Y]=\E[(Y-\E[Y])^2]\) the variance. Note that the following useful
+identity involving the variance holds
+
+\begin{equation}
+  \V[Y] = \E[Y^2] - \E[Y]^2.
+\end{equation}
+
+We denote conditioning by a vertical bar; this corresponds to holding particular
+random inputs fixed in value, and leaving them out of the integral for a
+particular expectation. For example, if \(Y=f(X_1,X_2,X_3)\), then
+
+\begin{equation}
+  \E_{X_2,X_3}[Y|X_1=x_1] = \int f(x_1,x_2,x_3)\rho(x_1,x_2,x_3)dx_2dx_2,
+\end{equation}
+
+\noindent where we use subscripts to make explicit the integration variables.
+Note that \(\E_{X_2,X_3}[Y|X_1]\) is still a random variable\footnote{when it
+  lacks the equality \(X_1=x_1\)}, due to the variability arising from \(X_1\).
+We will use conditional variance to decompose the total variance \(\V[Y]\)
+according to different input contributions. This will involve expressions of the
+sort \(\E_{X_2,X_2}[\V_{X_1}[Y|X_1]]\).\footnote{which is no longer a random
+  variable, as we have integrated out all of the variables}
+
+In what follows, we will drop the variable subscripts, as they tend to render
+expressions indecipherable. The same information is implied by the conditioning;
+the expression \(\V[Y|X_1]\) carries out the integration keeping \(X_1\) fixed,
+which is then integrated out in the expression \(\E[\V[Y|X_1]]\).
+
+To construct the Sobol' indices, we will derive a particular variance
+decomposition. First, we will introduce some notation to help keep track of
+variable subsets. Let \(\vu\) be an \emph{index set}; that is
+\(\vu\subseteq\{1,\dots,d\}\). We will use \(\vu\) to denote subsets of the
+input variables; in the example above, we used \(\vu=\{2,3\}\) to give us
+\(\mX_{\vu}=\{X_2,X_3\}\). Let \(-\vu\) be the set complementary to \(\vu\) with
+respect to \(\{1,\dots,d\}\); in the example above \(-\vu=\{1\}\).
+
+Next, we will prove a simple identity, which will allow us to attribute the
+variance \(\V[Y]\) to different inputs. Note that for any index set \(\vu\), we have
+
+\begin{equation}\begin{aligned}\label{eq:var-decomp}
+  \E[\V[Y|\mX_{\vu}]] + \V[\E[Y|\mX_{\vu}]] &= %
+  \E[\E[Y^2|\mX_{\vu}] - \cancel{ \E[Y|\mX_{\vu}]^2 }] \\
+  &+ \cancel{\E[\E[Y|\mX_{\vu}]^2]} - \E[\E[Y|\mX_{\vu}]]^2, \\
+  &= \E[Y^2] - \E[Y]^2, \\
+  &= \V[Y^2].
+\end{aligned}\end{equation}
+
+\noindent \Cref{eq:var-decomp} allows us to decompose the variance into two
+terms that we can interpret. First, note that the expression
+\(\V[\E[Y|X_{\vu}]]\) first averages out all the variables \(\mX_{-\vu}\), then
+computes the variance due only to \(\mX_{\vu}\). We may use this expression with
+a singleton index set \(\vu=\{i\}\) to define the \emph{first-order sensitivity
+  index}
+
+\begin{equation}\label{eq:sobol-first}
+  \underline{\tau}_{\{i\}}^2 = \frac{\V[\E[Y|X_i]]}{\V[Y]}.
+\end{equation}
+
+\noindent \Cref{eq:sobol-first} is bounded between \([0,1]\), and enables us to
+rank variables according to their importance. Practically
+\(\underline{\tau}_{\{i\}}^2\) tells us how much variance reduction we could
+expect if we were able to exactly freeze \(\mX_i\). We could use this information
+to inform which variables we should better characterize, in order to reduce
+variability.
+
+Note that we should not use \(\underline{\tau}_{\{i\}}^2\) to perform dimension
+reduction; the first-order index does not account for interactions with other
+variables, so we may miss some important cross terms. Instead, we may consider
+the \emph{total-order sensitivity index}
+
+\begin{equation}\label{eq:sobol-total}
+  \overline{\tau}_{\{i\}}^2 = \frac{\E[\V[Y|X_{-\{i\}}]]}{\V[Y]} = %
+  1 - \frac{\V[\E[Y|X_{-\{i\}}]]}{\V[Y]}.
+\end{equation}
+
+\noindent \Cref{eq:sobol-total} is also bounded between \([0,1]\), and accounts
+for interactions between \(X_i\) and all other variables. We may interpret
+\eqref{eq:sobol-total} in at least two ways: As the variability in \(Y\) due to
+\(X_i\), averaged over all other inputs (middle expression), or as the complement
+of the variability arising from all the variables excluding \(X_i\) (right
+expression). If \(\overline{\tau}_{\{i\}}^2\) is zero or small, we can be
+confident that \(X_i\) contributes little to the variablility in \(Y\), neither
+through first-order nor interaction effects.
+
+In summary: The notation for the sensitivity indices is suggestive of their use.
+The first-order index \(\underline{\tau}_{\{i\}}^2\) can be thought of as a
+lower bound; if it is large, then we can be confident that \(X_i\) is important.
+In contrast the total-order index \(\overline{\tau}_{\{i\}}^2\) is an upper
+bound; if it is small, then we can be confident that \(X_i\) is unimportant.
+
+\textcolor{red}{TODO:} Sobol' example
 
 \subsection{Subspace Reduction}
 % -------------------------
