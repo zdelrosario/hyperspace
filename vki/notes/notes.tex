@@ -773,7 +773,7 @@ capture a desired fraction of the total variability $\text{Trace}(\m\Sigma)$. We
 may then project the data to form a k-dimensional representation via
 
 \begin{equation*}
-  \mY = \mX\mV_k = \mU\m\Sigma_k.
+  \mY = \mX'\mV_k = \mU\m\Sigma_k.
 \end{equation*}
 
 PCA is itself useful for data analysis in generic-space, but how can it be used
@@ -783,9 +783,148 @@ with PCA? This linkage is formalized in the \emph{active subspace}.
 \subsubsection{Active subspaces}
 We can think of the \emph{active subspace} as an object arising from a PCA on
 gradient data; in fact, an early formulation of the active subspace was exactly
-posed as such.\cite{russi2010uncertainty}
+posed as such.\cite{russi2010uncertainty} Formally, the active
+subspace\cite{constantine2015} is defined in terms of a particular matrix
 
-\textcolor{red}{TODO:} Active subspace example
+\begin{equation} \begin{aligned} \label{eq:c-exact}
+    \mC &= \E[\nabla_{\vx}f\nabla_{\vx}f^{\top}] \\
+        &= \mU\m\Sigma\mV^{\top},
+\end{aligned} \end{equation}
+
+\noindent where $\mC$ is broken into an SVD as above.\footnote{Usually we think
+  of $\mC$ in its eigendecomposition; since $\mC$ is symmetric semi-positive
+  definite, its eigendecomposition and SVD are equivalent.} In practice, we
+cannot compute \eqref{eq:c-exact} exactly; instead, we may carry out a Monte
+Carlo approximation
+
+\begin{equation} \begin{aligned} \label{eq:c-monte-carlo}
+  \hat{\mC} &\approx \frac{1}{n}\sum_{i=1}^n \nabla_{\vx}f_i\nabla_{\vx}f^{\top}_i \\
+            &= \hat{\mU}\hat{\m\Sigma}\hat{\mV}^{\top}.
+\end{aligned} \end{equation}
+
+\noindent We can make the linkage to PCA more explicit by considering our data
+matrix as $\mX = [\nabla_{\vx}f(\mX_1), \dots, \nabla_{\vx}f(\mX_n)]$ and
+performing an SVD on this gradient data.\footnote{Though in this case we do not
+  centralize: In PCA we are not interested in studying the mean trend, while in
+  computing the active subspace, the mean gradient would represent a direction
+  of large average change in the function -- something we would very much like
+  to capture. Minyong Lee investigated some of these sorts of modifications in
+  his PhD thesis.\cite{lee2017prediction}} This operation is equivalent to
+computing and decomposing the $\hat{C}$ matrix above.
+
+While PCA gave us a set of directions $\mV$ that captured variability in the
+generic-space of the data, the set of directions $\mV$ arising from the $\mC$
+matrix describe directions in the input-space that correspond to large changes
+-- on average -- in the output qoi. Figure \ref{fig:as-contour} gives an
+example, where movement along the inactive direction produce no change in the
+qoi, while movement along the active direction accounts for all variability. In
+practice, the inactive directions usually contribute nonzero change -- we must
+select a number of active directions $k$ such that the inactive contributions
+are negligible.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.65\textwidth]{../../images/as_contour1}
+  \caption{Illustration of the active subspace.}
+  \label{fig:as-contour}
+\end{figure}
+
+One way to select the number of active directions is based on \emph{eigenvalue
+  gaps}.\footnote{Recall here that the SVD is closely related to the
+  eigendecomposition; the singular values and eigenvalues are equivalent.} A
+classic analysis bounds the subspace error -- the angle\footnote{where the
+  precise angle is very carefully defined....} between the approximated
+$\cR(\hat{\mV}_k)$ and true $\cR(\mV)$ subspaces -- in terms of the eigenvalue
+gap $\delta = \sigma_k - \sigma_{k+1}$.\cite{davis1970rotation} The angle
+$\m\Theta_0$ between true and approximated subspaces is thus bounded
+
+\begin{equation} \label{eq:sine-bound}
+  \|\sin(\m\Theta_0)\| \leq \frac{\|\mR\}}{\delta},
+\end{equation}
+
+\noindent where the angle $\m\Theta_0$ is expressed as a transformation matrix,
+and the matrix $\mR$ measures the difference between $\hat{\mV}$ and $\mV$ on a
+lower-dimensional space. \Cref{eq:sine-bound} shows that a larger eigenvalue gap
+implies a better-approximated subspace. For such accuracy considerations, it is
+prudent to choose $k$ to correspond to the largest eigenvalue gap.
+
+However, while eigenvalue gaps signal a well-approximated space, it is a
+separate question to ask whether the inactive directions contribute a meaningful
+amount of variability to the qoi. This is more challenging to address.
+Constantine shows that the eigenvalues $\sigma_j$ represent the average
+directional-derivative along direction $\vv_j$. While a small $\sigma_j$
+corresponds to small \textbf{average} change, large changes can still occur over
+a small distance, which can be hidden by this average
+measure.\cite{constantine2015}
+
+The most effective way to check that an active subspace is appropriate is
+through visual inspection. In the case that $k$ is small enough to visualize
+($k=1$, possibly even $k=2$), one can construct a \emph{sufficient summary
+  plot}\cite{cook2009regression} by plotting the response $f_i$ against the
+reduced coordinates $\mV_{A}^{\top}\vx_i$. If the data `collapse' to a single
+curve, then the chosen active subspace can be justified. The example below will
+illustrate this idea.
+
+Returning to the pipe flow example, we approximate the $\hat{\mC}$ matrix via
+Monte Carlo and compute its eigenvalue gaps (Tab. \ref{tab:as-pipe-gaps}). The
+results suggest a one-dimensional active subspace -- we construct a
+one-dimensional summary plot, which well-captures the trend in the data (Fig.
+\ref{fig:as-pipe-summary-nat}).
+
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{@{}ll@{}}
+    \hline
+    Gap Fraction & Dimension\\
+    \hline
+    0.9892887 & 1\\
+    \hline
+    0.0053363 & 2\\
+    \hline
+    0.0000129 & 3\\
+    \hline
+    0.0000000 & 4\\
+    \hline
+  \end{tabular}
+  \caption{Eigenvalue gaps $\delta = \sigma_j - \sigma_{j+1}$ for the pipe flow
+    problem, normalized by the eigenvalue sum $\sum \sigma_j$. Note that the
+    gaps imply that $k=1$ is a good choice for subspace accuracy considerations.
+    We will further probe this choice in Figure \ref{fig:as-pipe-summary-nat}.}
+  \label{tab:as-pipe-gaps}
+\end{table}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.65\textwidth]{../../images/as_summary_nat}
+  \caption{Sufficient summary plot for pipe flow problem. Note that the data
+    nearly collapse to a single curve; this is a pragmatic choice of dimension
+    reduction.}
+  \label{fig:as-pipe-summary-nat}
+\end{figure}
+
+At this point, we should ask the same question as we asked of Sobol'; the active
+subspace is defined in terms of an expectation -- is it cursed by
+dimensionality? The answer in this case is \textbf{no}, and the reasoning points
+to a concept we've introduced earlier.
+
+Holodnak et al.\cite{holodnak2018probabilistic} derived a probabilistic bound on
+the number of gradient samples $n$ required to estimate the active subspace.
+Their bound is
+
+\begin{equation}
+  n \geq \frac{C}{\epsilon^2}\log\left(\frac{4}{p}\text{intdim}(\mC)\right),
+\end{equation}
+
+\noindent where $n$ is the required number of samples, $\epsilon$ is the desired
+error tolerance, $p$ is the desired probability of failure in approximation
+(usually small), and $\text{intdim}(\mC)$ is the \emph{intrinsic dimensionality}
+of the $\mC$ matrix, given by
+
+\begin{equation} \label{eq:int-dim}
+  \text{intdim}(\mC) = \frac{\text{trace}(\mC)}{\|\mC\|_2} \geq 1.
+\end{equation}
+
+\noindent \Cref{eq:int-dim}
 
 \section{Intrinsic Dimensionality}
 % --------------------------------------------------
