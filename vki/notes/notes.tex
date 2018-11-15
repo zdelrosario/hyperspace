@@ -49,7 +49,7 @@ as visually depicted in Figure \ref{fig:samples}.
 abstraction. If the one-dimensional case took $10$ seconds to execute, Table
 \ref{tab:exponential} give execution times for some values of $d$. Note that by
 $d=20$, the total execution time for our `simple' parameter study is already 240
-times the age of the universe. Clearly, this is quite bad.
+times the age of the universe. Clearly, this is \emph{quite bad}.
 
 \begin{table}[!ht]
   \centering
@@ -244,8 +244,11 @@ First, we'll illustrate this fact with an example, then describe the theorem
 that backs it up. I use some gene expression data from the UC Irvine machine
 learning databse\cite{blake1998uci} for this example.\footnote{The specific data
   source is not terribly important here; the point is that the data are not
-  `cooked' for demonstration purposes.} The data are loaded into the variable
-\lstinline{mat_data}; the data have dimensions
+  `cooked' for demonstration purposes.} I intersperse R code with text; the aim
+is to describe in words what's going on, and give the explicit machine
+instructions that will make it happen.\footnote{This too is on the GitHub repo:
+  https://github.com/zdelrosario/hyperspace} The data are loaded into the
+variable \lstinline{mat_data}; the data have dimensions
 
 \begin{lstlisting}
 ## Gene data from UCI
@@ -677,7 +680,7 @@ alone is sufficient to capture the vast majority of variance in the output qoi.
   \begin{tabular}{@{}llllll@{}}
    & $\rho$ & $U$ & $d$ & $\mu$ & $\epsilon$\\
   \hline
-  $\V[f]$ & 0\% & 0\% & 6\% & 0\% & 94\% \\
+  $\overline{\tau}^2$ & 0\% & 0\% & 6\% & 0\% & 94\% \\
   \end{tabular}
   \caption{Total Sobol' indices for pipe flow problem. The results suggest that,
     for capturing variance in $f$, the roughness $\epsilon$ alone is essentially
@@ -693,18 +696,21 @@ their computational expense for a moment. Recall that Sobol' indices are defined
 in terms of variance in the output qoi. Variance is defined in terms of an
 expectation. Expectations are subject to the curse of dimensionality.
 
+\bigskip
 So is Sobol' itself cursed by dimensionality?
 
+\bigskip
 Many of the early applications of Sobol' indices seem to be on relatively cheap
 models for financial and ecological applications.\cite{saltelli2004sensitivity}
 In these cases -- where functions evaluate in fractions of a second -- only
-truly extreme dimensionality would be crippling. More recently, numerical
-analysts have developed quadrature- and polynomial approximation-based
-approaches to estimating Sobol' indices.\cite{sudret2008global} These approaches
-extend the applicability of Sobol' indices to more complex simulations with
-higher computational cost. Of course, many of these techniques are themselves
-cursed by dimensionality, so while they extend the range of dimensionality we
-can treat, they do not `solve' the underlying issue.
+large dimensionality would be crippling.\footnote{Of course, we've seen that
+  modest numbers like $20$ can be `large'!} More recently, numerical analysts
+have developed quadrature- and polynomial approximation-based approaches to
+estimating Sobol' indices.\cite{sudret2008global} These approaches extend the
+applicability of Sobol' indices to more complex simulations with higher
+computational cost. Of course, many of these techniques are themselves cursed by
+dimensionality, so while they extend the range of dimensionality we can treat,
+they do not `solve' the underlying issue.
 
 Within the framework of subset reduction, we are implicitly assuming that a
 reasonable reduction exists within the variables `as stated'. Subset reduction
@@ -924,14 +930,66 @@ of the $\mC$ matrix, given by
   \text{intdim}(\mC) = \frac{\text{trace}(\mC)}{\|\mC\|_2} \geq 1.
 \end{equation}
 
-\noindent \Cref{eq:int-dim}
+\noindent \Cref{eq:int-dim} is a continuous version of what we might intuitively
+think of as `intrinsic dimensionality'. Suppose there were only one nonzero
+eigenvalue $\sigma_1$; then the trace and spectral norm of $\mC$ would be the
+same, and $\text{intdim}(\mC)=1$. Suppose there were two nonzero eigenvalues of
+equal value $\sigma_1=\sigma_2$; then
+$\text{intdim}(\mC)=\frac{2\sigma}{\sigma}=2$. \Cref{eq:int-dim} automatically
+interpolates between the more common case of unequal importance among
+directions.
+
+The punchline is that approximating the active subspace scales not with the
+\emph{ambient dimension} $d$, but rather the underlying intrinsic dimensionality
+$k$. This can be especially relevant when we can refine our parameterization of
+a problem, as is often done in aerodynamic shape design.\cite{economon2016su2}
+It seems that intrinsic dimensionality is important for practical reasons, but
+where does this low-dimensional structure come from?
 
 \section{Intrinsic Dimensionality}
 % --------------------------------------------------
 
-\subsubsection{The importance of vague concepts}
-\textcolor{red}{TODO:} vague concepts
+\subsection{The importance of vague concepts}
+% -------------------------
+Mosteller and Tukey\cite{mosteller1977data} describe in their ``second course in
+statistics'' the importance of \emph{vague concepts}. They note that students
+learn both about `variability' of data, and that they can numerically describe
+this vague concept in different ways, say standard deviation and innerquartile
+range. Further, they note that both the vague notion and different
+operationalizations are \textbf{useful} -- different approaches are well-suited
+for different contexts, and disagreement between methods is an opportunity for
+further discovery.
 
+I believe the same notion is useful in the area of dimension reduction. There
+are many different ways we can think about low-dimensional structure; I propose
+we use the term \emph{intrinsic dimensionality} to describe this vague concept.
+We have already seen various implementations of this idea:
+
+\bigskip\noindent The Sobol' indices allowed us to rank variables, and enabled
+us to fix some inputs, continuing our study in an \textbf{active set} of
+variables, chosen from the coordinates of the input-space.
+
+\bigskip\noindent Holodnak, Ipsen, and Smith introduced a particular notion of
+intrinsic dimensionality in the context of active subspaces, which we studied
+above. What we'll call the \textbf{HIS dimension} describes intrinsic
+dimensionality in terms of the active subspace -- it is framed in terms of
+important directions within input-space.
+
+\bigskip\noindent \textbf{Low-rank} is a concept that appears in linear
+algebra.[TODO Citation needed]
+
+\bigskip\noindent \textbf{Sparsity} is a concept that appears in the compressed
+sensing literature.\cite{candes2008introduction} It describes signals in terms
+of a linear combination of a small number of basis functions, chosen from some
+reference basis for the output-space.
+
+\bigskip
+I am certain there are yet more operationalizations of intrinsic dimensionality.
+But there is one more that gets relatively little attention outside the fluid
+mechanics community.
+
+\subsection{Dimensional Analysis}
+% -------------------------
 \textcolor{red}{TODO:} Buckingham pi
 
 \section{Annotated Bibliography}
