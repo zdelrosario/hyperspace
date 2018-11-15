@@ -11,10 +11,12 @@
 \definecolor{palegreen}{HTML}{01B7A8}
 \definecolor{palered}{HTML}{C52E35}
 
-\begin{document}
+\title{The Curse of Dimensionality: Problems and Strategies}
+\author{Zachary del Rosario}
 
-\section{Introduction}
-% --------------------------------------------------
+\begin{document}
+\maketitle
+
 These notes support a lecture I gave at VKI on 2018-10-17 on the ``Curse of
 Dimensionality.''\footnote{The source for these notes are available in a public
   GitHub repository: https://github.com/zdelrosario/hyperspace. Feel free to
@@ -27,6 +29,8 @@ dimensionality insofar as it makes our lives challenging; however, towards the
 end of these notes I'll point to some areas where in addressing dimensionality,
 we may actually learn a bit more of the underlying physics.
 
+\section{Introduction}
+% --------------------------------------------------
 First, an introduction by way of example: Let's imagine we have a function $f$
 of $d$ variables $\vx\in[0,1]^d$, and we seek to carry out a parameter study. In
 this study, we will choose three points per dimension, in order to `evenly'
@@ -142,11 +146,11 @@ consider the volume integral for a unit \emph{hypersphere}; the set of all
 points $\cH=\{\vx\in\R{d}\,|\,\|\vx\|\leq 1\}$, given in spherical coordinates
 in \eqref{eq:hypersphere-volume}.
 
-\begin{equation*} \begin{aligned} \label{eq:hypersphere-volume}
+\begin{equation} \begin{aligned} \label{eq:hypersphere-volume}
     HV &= \int\cdots\int \textcolor{red}{r^{d-1}}\,
          T(\varphi_{1},\dots,\varphi_{d-1})\,
          dr d\varphi_{1}\cdots d\varphi_{d-1}
-\end{aligned} \end{equation*}
+\end{aligned} \end{equation}
 
 \noindent The integrand of \eqref{eq:hypersphere-volume} can be understood as a
 sort of `volume density' -- the quantity we will integrate to compute the
@@ -180,7 +184,6 @@ understand the relation between input and response, then this is a region of a
 function's input that we will not learn about. Depending on the context, this
 may (or may not!) be an issue.
 
-\clearpage
 \subsubsection{Fact 2} All the volume in a hypersphere is near
 \emph{the} equator.
 
@@ -415,10 +418,10 @@ This dimensionality $k$ is something we'll refer to -- in a somewhat
 dimension $d$, there is low-dimensional structure of size $k$ (the mapping
 $\alpha P_k(\cdot)$) that preserves information of interest, here pairwise
 distances. This points forward to a general strategy for lifting the curse of
-dimensionality -- if we can identify low-dimensional that preserves the
-properties we care about, then we can reduce the effective dimensionality from
-$d$ to $k$, and (potentially) render tractable the problems we want to solve.
-This is the idea behind \emph{dimension reduction}.
+dimensionality -- if we can identify low-dimensional structure that preserves
+the properties we care about, then we can reduce the effective dimensionality
+from $d$ to $k$, and (potentially) render tractable the problems we want to
+solve. This is the idea behind \emph{dimension reduction}.
 
 \section{Dimension Reduction}
 % --------------------------------------------------
@@ -431,7 +434,7 @@ reduction.
 
 \subsection{A Taxonomy}
 % -------------------------
-We will discuss three flavors of dimension reduction, broadly categorized by the
+We will note three flavors of dimension reduction, broadly categorized by the
 interpretation of $\R{d}$. Note that many of the techniques we will introduce
 are applied across different contexts -- the mathematics does not appreciably
 change in these different settings. However, the \emph{interpretation} of
@@ -452,20 +455,20 @@ technical details are conveyed by the different terminology.
 We will describe the taxonomy of different settings, then focus on the
 \emph{input-space} setting to give a bit more detail.
 
-\bigskip\noindent A \underline{generic-space} is $\R{d}$ with no special
-assumptions. Techniques like the Johnson-Lindenstrauss lemma and principal
-component analysis\cite{fodor2002survey} are used in this context.
+\bigskip\noindent A \emph{generic-space} is $\R{d}$ with no special assumptions.
+Techniques like the Johnson-Lindenstrauss lemma and principal component
+analysis\cite{fodor2002survey} are used in this context.
 
-\bigskip\noindent An \underline{output-space} is $\R{d}$ understood as the
-output of some (dynamical) system; the $d$ entries of a vector from $\R{d}$
-could represent a time-varying signal (e.g. a speech sample), the pointwise
-entries of some field (e.g. a mean channel-flow field), or some combination
-(e.g. a time-varying flow field). The techniques of compressed sensing
+\bigskip\noindent An \emph{output-space} is $\R{d}$ understood as the output of
+some (dynamical) system; the $d$ entries of a vector from $\R{d}$ could
+represent a time-varying signal (e.g. a speech sample), the pointwise entries of
+some field (e.g. a mean channel-flow field), or some combination (e.g. a
+time-varying flow field). The techniques of compressed sensing
 (CS)\cite{candes2008introduction} and the proper orthogonal
 decomposition\cite{lumley2007} are often used in this context.
 
-\bigskip\noindent An \underline{input-space} is $\R{d}$ understood as the input
-space to some function $f(\vx)$. Compressed sensing is also used in this
+\bigskip\noindent An \emph{input-space} is $\R{d}$ understood as the input space
+to some function $f(\vx)$. Compressed sensing is also used in this
 context,\cite{tang2014subsampled} but other approaches are a bit more common. We
 will discuss these below, under additional broad categorizations.
 
@@ -601,8 +604,8 @@ variance \(\V[Y]\) to different inputs. Note that for any index set \(\vu\), we 
 
 \begin{equation}\begin{aligned}\label{eq:var-decomp}
   \E[\V[Y|\mX_{\vu}]] + \V[\E[Y|\mX_{\vu}]] &= %
-  \E[\E[Y^2|\mX_{\vu}] - \cancel{ \E[Y|\mX_{\vu}]^2 }] \\
-  &+ \cancel{\E[\E[Y|\mX_{\vu}]^2]} - \E[\E[Y|\mX_{\vu}]]^2, \\
+  \E\left[\E[Y^2|\mX_{\vu}] - \cancel{\E[Y|\mX_{\vu}]^2 }\right] \\
+  &+ \cancel{\E\left[\E[Y|\mX_{\vu}]^2\right]} - \E\left[\E[Y|\mX_{\vu}]\right]^2, \\
   &= \E[Y^2] - \E[Y]^2, \\
   &= \V[Y^2].
 \end{aligned}\end{equation}
@@ -735,7 +738,7 @@ $\mW_I$, which do not contribute to changes in $f$. Note that in this context,
 it is somewhat more difficult to `freeze' the inactive variables and vary the
 active variables -- for any value of $\v\xi_A = \mW_A^{\top}\vx$, there is an
 infinite family of $\vx$ that produce the same value of $\v\xi_A$. This becomes
-problematic in the case where condition \label{eq:ridge} only approximately
+problematic in the case where condition \ref{eq:ridge} only approximately
 holds.\cite{constantine2015} We will defer the discussion of applying subspace
 reduction to cited works, and instead focus on the intuition behind existing
 techniques, and eventually point to a dimension reduction strategy that is not
@@ -840,28 +843,28 @@ One way to select the number of active directions is based on \emph{eigenvalue
   eigendecomposition; the singular values and eigenvalues are equivalent.} A
 classic analysis bounds the subspace error -- the angle\footnote{where the
   precise angle is very carefully defined....} between the approximated
-$\cR(\hat{\mV}_k)$ and true $\cR(\mV)$ subspaces -- in terms of the eigenvalue
+$\cR(\hat{\mV}_k)$ and true $\cR(\mV_k)$ subspaces -- in terms of the eigenvalue
 gap $\delta = \sigma_k - \sigma_{k+1}$.\cite{davis1970rotation} The angle
 $\m\Theta_0$ between true and approximated subspaces is thus bounded
 
 \begin{equation} \label{eq:sine-bound}
-  \|\sin(\m\Theta_0)\| \leq \frac{\|\mR\}}{\delta},
+  \|\sin(\m\Theta_0)\| \leq \frac{\|\mR\|}{\delta},
 \end{equation}
 
 \noindent where the angle $\m\Theta_0$ is expressed as a transformation matrix,
-and the matrix $\mR$ measures the difference between $\hat{\mV}$ and $\mV$ on a
-lower-dimensional space. \Cref{eq:sine-bound} shows that a larger eigenvalue gap
-implies a better-approximated subspace. For such accuracy considerations, it is
-prudent to choose $k$ to correspond to the largest eigenvalue gap.
+and the matrix $\mR$ measures the difference between $\hat{\mV_k}$ and $\mV_k$
+on a lower-dimensional space. \Cref{eq:sine-bound} shows that a larger
+eigenvalue gap implies a better-approximated subspace. For such accuracy
+considerations, it is prudent to choose $k$ to correspond to the largest
+eigenvalue gap.
 
 However, while eigenvalue gaps signal a well-approximated space, it is a
 separate question to ask whether the inactive directions contribute a meaningful
 amount of variability to the qoi. This is more challenging to address.
-Constantine shows that the eigenvalues $\sigma_j$ represent the average
-directional-derivative along direction $\vv_j$. While a small $\sigma_j$
-corresponds to small \textbf{average} change, large changes can still occur over
-a small distance, which can be hidden by this average
-measure.\cite{constantine2015}
+Constantine\cite{constantine2015} shows that the eigenvalues $\sigma_j$
+represent the average directional-derivative along direction $\vv_j$. While a
+small $\sigma_j$ corresponds to small \textbf{average} change, large changes can
+still occur over a small distance, which can be hidden by this average measure.
 
 The most effective way to check that an active subspace is appropriate is
 through visual inspection. In the case that $k$ is small enough to visualize
@@ -907,6 +910,7 @@ one-dimensional summary plot, which well-captures the trend in the data (Fig.
     reduction.}
   \label{fig:as-pipe-summary-nat}
 \end{figure}
+\clearpage
 
 At this point, we should ask the same question as we asked of Sobol'; the active
 subspace is defined in terms of an expectation -- is it cursed by
@@ -962,8 +966,9 @@ further discovery.
 
 I believe the same notion is useful in the area of dimension reduction. There
 are many different ways we can think about low-dimensional structure; I propose
-we use the term \emph{intrinsic dimensionality} to describe this vague concept.
-We have already seen various implementations of this idea:
+we use the term \emph{intrinsic dimensionality} to describe the number of
+dimensions implied by this vague concept. We have already seen various
+implementations of this idea:
 
 \bigskip\noindent The Sobol' indices allowed us to rank variables, and enabled
 us to fix some inputs, continuing our study in an \textbf{active set} of
