@@ -699,11 +699,11 @@ In these cases -- where functions evaluate in fractions of a second -- only
 large dimensionality would be crippling.\footnote{Of course, we've seen that
   modest numbers like $20$ can be `large'!} More recently, numerical analysts
 have developed quadrature- and polynomial approximation-based approaches to
-estimating Sobol' indices.\cite{sudret2008global} These approaches extend the
-applicability of Sobol' indices to more complex simulations with higher
-computational cost. Of course, many of these techniques are themselves cursed by
-dimensionality, so while they extend the range of dimensionality we can treat,
-they do not `solve' the underlying issue.
+estimating Sobol' indices.\cite{sudret2008global,seshadri2017effectively} These
+approaches extend the applicability of Sobol' indices to more complex
+simulations with higher computational cost. Of course, many of these techniques
+are themselves cursed by dimensionality, so while they extend the range of
+dimensionality we can treat, they do not `solve' the underlying issue.
 
 Within the framework of subset reduction, we are implicitly assuming that a
 reasonable reduction exists within the variables `as stated'. Subset reduction
@@ -942,8 +942,12 @@ directions.
 The punchline is that approximating the active subspace scales not with the
 \emph{ambient dimension} $d$, but rather the underlying intrinsic dimensionality
 $k$. This can be especially relevant when we can refine our parameterization of
-a problem, as is often done in aerodynamic shape design.\cite{economon2016su2}
-It seems that intrinsic dimensionality is important for practical reasons, but
+a problem, as is often done in aerodynamic shape
+design.\cite{economon2016su2}\footnote{However, as one changes the
+  parameterization of a shape, one changes the input-space considered, and the
+  meaning of the gradient. I recommend recent work using differential geometry
+  to recover the intrinsic `shape gradient'.\cite{grey2018characterizing}} It
+seems that intrinsic dimensionality is important for practical reasons, but
 where does this low-dimensional structure come from?
 
 \section{Intrinsic Dimensionality}
