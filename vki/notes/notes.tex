@@ -7,6 +7,7 @@
 \usepackage[top=1in, bottom=1in, left=0.8in, right=0.8in]{geometry}
 \usepackage{amssymb} % \varnothing
 \usepackage{cancel} % \cancel{}
+\usepackage{booktabs} % \toprule, etc
 
 \definecolor{palegreen}{HTML}{01B7A8}
 \definecolor{palered}{HTML}{C52E35}
@@ -58,19 +59,15 @@ times the age of the universe. Clearly, this is \emph{quite bad}.
 \begin{table}[!ht]
   \centering
   \begin{tabular}{r|r|l}
-  \hline
+  \toprule
   Dimension & Time (sec) & Comparison\\
-  \hline
+  \midrule
   1 & $10^{1}$ & Ten seconds\\
-  \hline
   5 & $10^{5}$ & One Day\\
-  \hline
   10 & $10^{10}$ & Eleven generations\\
-  \hline
   18 & $10^{18}$ & Age of Universe\\
-  \hline
   20 & $10^{20}$ & 230 x AoU\\
-  \hline
+  \bottomrule
   \end{tabular}
   \caption{Execution times for example parameter study. Punchline: exponential
     scaling is \emph{very, very bad}.}
@@ -97,13 +94,6 @@ leads to exponential cost. Note, however, that the Monte Carlo algorithm
 (sampling from a density to approximate expectations) is \emph{not} cursed by
 dimensionality, as Monte Carlo is dimension
 independent.\cite{owen2013montecarlo}
-
-\bigskip\noindent\underline{Machine Learning:} (Requirement of large data)
-
-\bigskip\noindent\underline{Inference:} \textcolor{red}{TODO:}
-
-\bigskip\noindent\underline{Distance:} \textcolor{red}{TODO:} Failure
-of nearest neighbors.
 
 \bigskip\noindent\underline{Big Data:} In 2000, David Donoho gave a talk on the
 curse of dimensionality as it relates to data analysis.\cite{donoho2000high}
@@ -834,7 +824,13 @@ are negligible.
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.65\textwidth]{../../images/as_contour1}
-  \caption{Illustration of the active subspace.}
+  \caption{Illustration of the active subspace. Black curves are isocontours of
+    the function; clearly moving along the inactive direction (blue) would
+    create no change in the function value. Moving along the active direction
+    (red) in this case would account for all of the variation in the function.
+    In practice, the active subspace is usually not `perfect' -- the inactive
+    directions do not contribute exactly zero variation -- but finding the
+    active subspace can lead to a pragmatic choice of dimension reduction.}
   \label{fig:as-contour}
 \end{figure}
 
@@ -980,9 +976,6 @@ above. What we'll call the \textbf{HIS dimension} describes intrinsic
 dimensionality in terms of the active subspace -- it is framed in terms of
 important directions within input-space.
 
-\bigskip\noindent \textbf{Low-rank} is a concept that appears in linear
-algebra.[TODO Citation needed]
-
 \bigskip\noindent \textbf{Sparsity} is a concept that appears in the compressed
 sensing literature.\cite{candes2008introduction} It describes signals in terms
 of a linear combination of a small number of basis functions, chosen from some
@@ -995,17 +988,139 @@ mechanics community.
 
 \subsection{Dimensional Analysis}
 % -------------------------
-\textcolor{red}{TODO:} Buckingham pi
+The Buckingham pi theorem\cite{buckingham1914} is based on a simple observation;
+the physical world is indiffernt to the arbitrary unit system we use to measure
+it. Working through the implications of this fact, one realizes that the
+quantitative behavior of the universe must be determined by something
+unit-independent: \emph{dimensionless numbers}. Formally, with some
+dimensionless qoi $\pi$ dependent on $\vz\in\R{d}$ physical quantities, the
+theorem states
 
-\section{Annotated Bibliography}
+\begin{equation} \begin{aligned}
+    \pi &= f(\vz) \\
+        &= \psi(\pi_1,\dots,\pi_{d-r}),
+\end{aligned} \end{equation}
+
+\noindent where
+
+\begin{equation}
+  \pi_i = \prod_{j=1}^d z_j^{w_{ij}},
+\end{equation}
+
+\noindent and the $\vw_i$ are chosen such that the units in $\pi_i$ cancel --
+the $\pi_i$ are \emph{dimensionless numbers}. If $\mD\in\R{l\times d}$ is a
+matrix of the physical units for the $\vz$, then each vector satisfies
+$\mD\vw_i=0$.
+
+The quantity $d-r$ is a bound on the intrinsic dimensionality of the physical
+problem, where $r$ is the number of independent physical units affecting the
+problem (the rank of $\mD$). This $d-r$ is only a bound, as the function $\psi$
+may have additional low-dimensional structure -- Buckingham pi only tells us how
+many dimensionless numbers \textbf{may} exist, not which ones are most relevant.
+
+We can make the linkage to active subspaces more explicit through a simple
+modification.\cite{delRosario2017lurking} Suppose we take a log transform of the
+physical inputs $\vx\equiv\log(\vz)$; then Buckingham pi may be re-expressed as
+
+\begin{equation} \begin{aligned} \label{eq:pi-subspace}
+    \pi &= f(\vz) \\
+        &= \psi'(\mW^{\top}\vx).
+\end{aligned} \end{equation}
+
+\noindent \Cref{eq:pi-subspace} implies that the active subspace -- in the
+log-transformed variables -- is constrained to live within $\cR{\mW}$. Since
+$\cR{\mW}$ arises from the Buckingham pi theorem, it is called the \emph{pi
+  subspace}. This provides an a priori bound on the intrinsic dimensionality,
+but stated in terms of subspaces. Further, we can now interpret active
+directions as dimensionless numbers.
+
+Returning to the pipe flow problem for an example, we note that it has a
+dimension matrix $\mD$ given in Table \ref{tab:pipe-dim}. Table
+\ref{tab:pipe-dim} also gives examples of a choice of vectors $\mW$; we make the
+familiar choice of the Reynolds number $Re$ and relative roughness $R$.
+
+\begin{table}
+  \centering
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    Dimension  & $\rho$ & $u$   & $d$ &  $\mu$ & $\epsilon$\\
+    \midrule
+    Mass (M)   &   1    &  0    &  0  &    1   &  0 \\
+    Length (L) & \mm3   &  1    &  1  &  \mm1  &  1 \\
+    Time (T)   &   0    & \mm1  &  0  &  \mm1  &  0 \\
+    \bottomrule
+    $Re$       &   1    &  1    &  1  &  \mm1  &  0 \\
+    $R$        &   0    &  0    & \mm1&    0   &  1
+  \end{tabular}
+  \caption{Dimension matrix (top) and dimensionless numbers (bottom) for pipe
+    flow problem. The entries are the exponents for the various physical
+    dimensions, for each input variable. For instance $[\rho] = M^1L^{-3}T^0$.}
+  \label{tab:pipe-dim}
+\end{table}
+
+As above, we approximate the active subspace via Monte Carlo, inspect its
+eigenvalues to determine an appropriate choice of $k$ (we again select one), and
+construct a sufficient summary plot in Figure \ref{fig:pipe-summary-pi}. The
+dimensional collapse in this formulation is perfect -- we have recovered the
+`correct' dimensionless number for this setting.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{../../images/as_summary_pi}
+  \caption{Sufficient summary plot for pipe flow problem in log-transformed
+    variables. Note that the data collapse here is perfect. In this case, we
+    have uncovered the relative roughness $\epsilon/d$ in the fully turbulent
+    regime -- we have found the sole controlling dimensionless number for this
+    limit, which is expressed in terms of the active subspace vector weights.
+    Not only have we found a dimension reduction, the reduction itself has
+    physical meaning.}
+  \label{fig:pipe-summary-pi}
+\end{figure}
+
+Table \ref{tab:pipe-as-pi} further underscores the physical meaning of the
+active subspace in this setting; the vector weights correspond to (a power of)
+the relative roughness $\epsilon/d$, which is the dimensionless number known to
+control behavior in the fully rough regime of pipe flow.
+
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{@{}llllll@{}}
+            & $\rho$ & $u$  & $d$   & $\mu$ & $\epsilon$ \\
+    \midrule
+    $\vw_1$ & 0.00   & 0.00 & -0.71 & 0.00  & 0.71
+  \end{tabular}
+  \caption{Vector weights for leading active subspace direction in
+    log-transformed variables. Note that the active direction involves
+    $\epsilon$ and $d$ in ratio, raised to a power -- this is the relative
+    roughness $\epsilon/d$, which is known to control the fully rough regime of
+    pipe flow.}
+  \label{tab:pipe-as-pi}
+\end{table}
+
+My point with this example is that intrinsic dimensionality reflects some
+`special' structure in a problem. My own research has investigated how physical
+phenomena may explain why this low-dimensional structure exists, and how we
+might uncover it. In the setting above, we not only found low-dimensional
+structure, but also learned\footnote{really, reminded ourselves} about a
+dimensionless number that governs the setting. It is my hunch that further study
+of intrinsic dimensionality -- and \textbf{why} it arises -- will be a fruitful
+line of inquiry across different settings, both for reducing dimensionality,
+and for learning more about the problem at hand.
+
+\section{Conclusion}
 % --------------------------------------------------
-There is quite a bit more to the story of dimensionality than what I've
-presented above. The last bit of value I'd like to add here is a set of
-suggestions on what to read next.
+Dimensionality is exponentially hard. Our inability to visualize more than three
+dimensions leaves us with crippled intuition for higher dimensions. To address
+the computational issues in high dimensions, we pursue dimension reduction --
+finding ways to reduce the effective dimension of the problem, possibly at the
+expense of some form of approximation error. The cost of dimension reduction can
+itself scale exponentially if we are not careful; however, we found that some
+strategies scale instead with the intrinsic dimensionality of the problem. This
+intrinsic low-dimensional structure is different across problem settings and
+dimension reduction strategies -- it is a vague concept. We also found that
+intrinsic dimensionality can reflect a deeper understanding of the problem at
+hand, and thus an object itself worth studying.
 
-\textcolor{red}{TODO:} Annotate the entries!
-
-\bibliographystyle{plain}
-\bibliography{bibtex_database}
+\bibliographystyle{plain} \bibliography{bibtex_database}
 
 \end{document}
