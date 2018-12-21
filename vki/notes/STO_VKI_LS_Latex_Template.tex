@@ -1,0 +1,113 @@
+% Sample use of nato-rto.cls from http://nato-rto-latex.googlecode.com
+%
+% Process with
+%
+%  pdflatex sample
+%  bibtex sample
+%  pdflatex sample
+%  pdflatex sample
+%
+% See README.txt for further information
+
+\title{Title of your contribution}
+
+\author{\large\bf Firstname Lastname\\
+        Your department\\
+        Your university, company\\
+        Your address\\
+        City, postecode\\
+        Country\\[5pt]
+        \href{mailto:your email}{your email}}
+
+\documentclass{nato-sto}
+\usepackage{amsfonts,amssymb,amsmath,amscd,amsthm}
+\usepackage{upgreek}
+\usepackage{subfigure}
+\usepackage{subfigmat}
+\usepackage{graphicx}
+\usepackage{pifont}
+\usepackage{enumitem}
+
+\newtheorem{remark}{Remark}[section]
+
+\def\scn{s}
+\def\bd{\mbox{\boldmath $d$}}
+\def\bm{\mbox{\boldmath $m$}}
+\def\bx{\mbox{\boldmath $x$}}
+\def\bms{\mbox{\scriptsize \bm}}
+\def\balpha{\boldsymbol \alpha}
+\def\bbeta{\boldsymbol \beta}
+\def\spaceU{\mathcal U_{\scn}}
+\def\spaceV{\mathcal V_{\scn}}
+\def\spacePU{\mathcal X}
+\def\spacePV{\mathcal Y}
+
+% Please uncomment one of the following
+\papernumber{2} 
+ 
+\publicationreference{STO-AVT-AVTnumber - Title of the Conference}
+\classification{} 
+
+% =============================================================================
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+your abstract here
+
+\end{abstract}
+
+\tableofcontents
+
+% =============================================================================
+\section{Introduction}
+
+your introduction here
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.6\textwidth]{count_data1_comb.pdf} 
+\end{center}
+\caption{your caption.}
+\label{fig:label}
+\end{figure}
+
+
+
+% =============================================================================
+\section{title of section 1}
+
+your section 1 ~\cite{Wu2009}. 
+\begin{equation}\label{eq:abstprob}
+ A(u,\theta,\scn) = 0
+\end{equation}
+
+\subsection{title of subsection 1}
+
+How tu use list
+\begin{enumerate}
+\item[1)]
+item 1;
+\item[2)]
+item 2;
+\item[3)]
+item 3;
+\end{enumerate}
+
+% =============================================================================
+\section{Title of section 2}
+
+\subsection{Title of subsection 2}
+
+Your text here
+
+
+% =============================================================================
+\section*{Acknowledgments}
+your acknowledgments here
+
+\bibliographystyle{nato-sto}
+\bibliography{references} % when using a BibTeX database -- and you should!
+
+\end{document}
+

@@ -1,19 +1,31 @@
-\documentclass{article}
+\documentclass{nato-sto}
 
 \include{zachs_macros}
 
 \usepackage{cleveref}
 \usepackage{listings}
-\usepackage[top=1in, bottom=1in, left=0.8in, right=0.8in]{geometry}
-\usepackage{amssymb} % \varnothing
+%% \usepackage[top=1in, bottom=1in, left=0.8in, right=0.8in]{geometry}
 \usepackage{cancel} % \cancel{}
 \usepackage{booktabs} % \toprule, etc
+
+\usepackage{amsfonts,amssymb,amsmath,amscd,amsthm}
+\usepackage{upgreek}
+%% \usepackage{subfigure}
+%% \usepackage{subfigmat}
+\usepackage{graphicx}
+\usepackage{pifont}
+\usepackage{enumitem}
 
 \definecolor{palegreen}{HTML}{01B7A8}
 \definecolor{palered}{HTML}{C52E35}
 
 \title{The Curse of Dimensionality: Problems and Strategies}
 \author{Zachary del Rosario}
+\publicationreference{
+  STO-AVT-236 - Uncertainty Quantification in Computational Fluid Dynamics
+}
+\classification{Approved for public release}
+\papernumber{TEST}
 
 \begin{document}
 \maketitle
@@ -77,6 +89,7 @@ times the age of the universe. Clearly, this is \emph{quite bad}.
 This exponential scaling is one manifestation of \emph{the curse of
   dimensionality}.
 
+\clearpage
 \section{Curse of Dimensionality}
 % --------------------------------------------------
 The \textbf{curse of dimensionality}\footnote{Coined by Richard Bellman in the
@@ -413,6 +426,7 @@ the properties we care about, then we can reduce the effective dimensionality
 from $d$ to $k$, and (potentially) render tractable the problems we want to
 solve. This is the idea behind \emph{dimension reduction}.
 
+\clearpage
 \section{Dimension Reduction}
 % --------------------------------------------------
 
@@ -950,6 +964,7 @@ design.\cite{economon2016su2}\footnote{However, as one changes the
 seems that intrinsic dimensionality is important for practical reasons, but
 where does this low-dimensional structure come from?
 
+\clearpage
 \section{Intrinsic Dimensionality}
 % --------------------------------------------------
 
@@ -1111,6 +1126,7 @@ of intrinsic dimensionality -- and \textbf{why} it arises -- will be a fruitful
 line of inquiry across different settings, both for reducing dimensionality,
 and for learning more about the problem at hand.
 
+\clearpage
 \section{Conclusion}
 % --------------------------------------------------
 Dimensionality is exponentially hard. Our inability to visualize more than three
